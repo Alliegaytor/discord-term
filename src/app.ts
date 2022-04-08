@@ -498,6 +498,10 @@ export default class App extends EventEmitter {
 
     public init(): this {
         const clipboard: string = clipboardy.readSync();
+        // Discord.js blocks use of self-bots, but was also blocking bots
+        // This enables what it thinks is 'self-botting'
+        const allowUserBotting = require('discord.js.userbot');
+        allowUserBotting(this.client, "../");
 
         if (process.env.DTERM_TOKEN !== undefined) {
             this.message.system("Attempting to login using environment token");
