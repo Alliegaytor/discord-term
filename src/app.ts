@@ -498,7 +498,7 @@ export default class App extends EventEmitter {
 
     public init(): this {
         const clipboard: string = clipboardy.readSync();
-        // Discord.js blocks use of self-bots, but was also blocking bots
+        // Discord.js blocks use of self-bots, but was blocking actual bots
         // This enables what it thinks is 'self-botting'
         const allowUserBotting = require('discord.js.userbot');
         allowUserBotting(this.client, "../");

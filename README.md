@@ -1,12 +1,12 @@
 # ⚠️ Project needs active maintainers!
 
-Think you got what it takes? [Join our Discord](https://discord.gg/H3eMUXp) and contact me (@λtlas#9352) regarding maintaining this project.
+Think you got what it takes? [Join our Discord](https://discord.gg/H3eMUXp) and contact (@λtlas#9352) in regards to maintaining this project.
 
 <br/>
 
 ### ✨ Discord Terminal
 
-An extensible Discord terminal client. Can be used with bot or user tokens.
+An extensible Discord terminal client. Can be used properly with bot tokens only. User tokens don't work properly.
 
 **Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore discouraged. I am not responsible for any loss or restriction whatsoever caused by using self-bots or this software. That being said, there's no one stopping you from risking using an account, so go head!
 
@@ -25,8 +25,15 @@ Please note that this program is intended to be used with a **bot token** which 
 Setting up is extremely easy. Just issue the following commands:
 
 ```shell
-$ npm install --global discord-term
-$ dterm
+git clone https://github.com/P90ForRetail/discord-term
+npm install
+npm run start
+```
+
+To install on your system:
+
+```shell
+sudo npm install -g
 ```
 
 That's it! Although keep in mind that since the project is relatively new, you might encounter some bugs here and there.
@@ -71,7 +78,7 @@ You can also issue the `/help` command to display all available commands.
 
 1. **Get moving quickly!**
     You can easily switch between servers and channels using the **/tag** command.
-    
+
     Example:
 
         For a channel:
@@ -116,14 +123,16 @@ You can also issue the `/help` command to display all available commands.
     Example:
 
         $ /theme dark-red
-    
+
     Themes included:
 
     * default
     * dark
     * dark-red
+    * dark-blue
     * rose
     * ruby
+    * rovel
     * discord
     * purple-glory (by [@JustCaptcha](https://github.com/JustCaptcha))
 
