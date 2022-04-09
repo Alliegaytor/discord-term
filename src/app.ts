@@ -15,6 +15,7 @@ import State, {IState, IStateOptions} from "./state/state";
 import {defaultState} from "./state/stateConstants";
 import MessageFactory from "./core/messageFactory";
 import Tags from "./tags";
+import allowUserBotting from "discord.js.userbot"
 
 export type IAppNodes = {
     readonly messages: Widgets.BoxElement;
@@ -500,7 +501,6 @@ export default class App extends EventEmitter {
         const clipboard: string = clipboardy.readSync();
         // Discord.js blocks use of self-bots, but was blocking actual bots
         // This enables what it thinks is 'self-botting'
-        const allowUserBotting = require('discord.js.userbot');
         allowUserBotting(this.client, "../");
 
         if (process.env.DTERM_TOKEN !== undefined) {
