@@ -341,7 +341,7 @@ export default class App extends EventEmitter {
             }
 
             if (channelName.length > 25) {
-                channelName = channelName.substring(0, 10) + " ...";
+                channelName = channelName.substring(0, 21) + " ...";
             }
 
             const channelNode: Widgets.BoxElement = blessed.box({

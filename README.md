@@ -1,12 +1,12 @@
 # ⚠️ Project needs active maintainers!
 
-Think you got what it takes? [Join our Discord](https://discord.gg/H3eMUXp) and contact (@λtlas#9352) in regards to maintaining this project.
+Think you got what it takes? [Join our Discord](https://discord.gg/H3eMUXp) and contact (@λtlas#9352) in regards of maintaining this project.
 
 <br/>
 
 ### ✨ Discord Terminal
 
-An extensible Discord terminal client. Can be used properly with bot tokens only. User tokens don't work properly.
+An extensible Discord terminal client. Can be used properly with bot tokens only. User tokens don't work properly as discord.js blocks them from being used.
 
 **Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore discouraged. I am not responsible for any loss or restriction whatsoever caused by using self-bots or this software. That being said, there's no one stopping you from risking using an account, so go head!
 
@@ -34,6 +34,10 @@ To install on your system:
 
 ```shell
 sudo npm install -g
+```
+or
+```shell
+npm install discord-term -g
 ```
 
 That's it! Although keep in mind that since the project is relatively new, you might encounter some bugs here and there.
