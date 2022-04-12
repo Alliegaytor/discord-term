@@ -18,23 +18,24 @@ export default function setupEvents(app: App): void {
     // Input.
     app.options.nodes.input.on("keypress", () => {
         // TODO: If logged in.
-        //app.startTyping();
-    });
-
-    app.options.nodes.input.key("tab", () => {
+        app.startTyping();
         const rawInput: string = app.getInput();
         const input: string = rawInput.substr(app.options.commandPrefix.length);
 
-        if (rawInput.startsWith(app.options.commandPrefix) && input.length >= 2 && input.indexOf(" ") === -1) {
-            for (let [name, handler] of app.commands) {
-                if (name.startsWith(input)) {
-                    app.clearInput(`${app.options.commandPrefix}${name} `);
+        app.options.nodes.input.key("tab", () => {
+            if (rawInput.startsWith(app.options.commandPrefix) && input.length >= 2 && input.indexOf(" ") === -1) {
+                for (let [name, handler] of app.commands) {
+                    if (name.startsWith(input)) {
+                        app.clearInput(`${app.options.commandPrefix}${name} `);
 
-                    break;
+                        break;
+                    }
                 }
             }
-        }
+        });
     });
+
+
 
     app.options.nodes.input.key("enter", () => {
         let input: string = app.getInput(true);
@@ -58,7 +59,7 @@ export default function setupEvents(app: App): void {
             const base: string = args[0];
 
             if (input.startsWith(app.options.commandPrefix + "edit")) {
-                app.message.system(`Changed message to ${input.split(' ').slice(2)}`);
+                app.message.system(`Changed message to ${input.split(' ').slice(2).splice(0,1)}`);
                 args.splice(0, 1);
                 app.commands.get(base)!(args, this);
             }
@@ -81,7 +82,7 @@ export default function setupEvents(app: App): void {
                     msg = "$dt_" + Encryption.encrypt(msg, app.state.get().decriptionKey);
                 }
 
-                app.state.get().channel.send(msg).catch((error: Error) => {
+                app.state.get().channel.send({ content: msg }).catch((error: Error) => {
                     app.message.system(`Unable to send message: ${error.message}`);
                 });
             }
@@ -109,9 +110,9 @@ export default function setupEvents(app: App): void {
     });
 
     app.options.nodes.input.key("down", () => {
-        if (app.client.user && app.client.user.lastMessage && app.client.user.lastMessage.deletable) {
-            app.client.user.lastMessage.delete();
-        }
+      //  if (app.client.user && app.client.user.lastMessage && app.client.user.lastMessage.deletable) {
+      //      app.client.user.lastMessage.delete();
+      //  }
     });
 
     app.options.nodes.input.key("C-c", async () => {
@@ -120,5 +121,9 @@ export default function setupEvents(app: App): void {
 
     app.options.nodes.input.key("C-x", () => {
         process.exit(0);
+    });
+
+    app.options.nodes.input.key("p", () => {
+      return;
     });
 }

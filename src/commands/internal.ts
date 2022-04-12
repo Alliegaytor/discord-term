@@ -69,14 +69,14 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
-    app.commands.set("edit", async (args: string[]) => {
+    app.commands.set("edit", async (args: string[], message) => {
         // TODO: Display message.
         if (!args[0] || !args[1] || !app.state.get().channel) {
             return;
         }
-        
+
         try {
-            const message: Message = await app.state.get().channel.messages.fetch(args[0]) as Message;
+            const message: Message = await app.state.get().lastMessage.channel.messages.fetch(app.state.get().lastMessage.id) as Message;
             await message.edit(args.slice(1).join(" "));
         }
         catch {
@@ -205,16 +205,12 @@ export default function setupInternalCommands(app: App): void {
         }
 
         args[0] = args[0].replace(/\D/g, "");
-        if (app.client.users.cache.has(args[0])) {
-            const recipient: User = app.client.users.cache.get(args[0]);
 
-            (await recipient.createDM()).send(args.slice(1).join(" ")).catch((error: Error) => {
+        await app.client.users.fetch(args[0]).then(user => {
+            user.send(args.slice(1).join(" ")).catch((error: Error) => {
                 app.message.system(`Unable to send message: ${error.message}`);
             });
-        }
-        else {
-            app.message.system("Such user does not exist or has not been cached");
-        }
+        });
     });
 
     app.commands.set("fullscreen", () => {
@@ -341,7 +337,7 @@ export default function setupInternalCommands(app: App): void {
             app.setActiveChannel(app.state.get().guild.channels.cache.get(args[0]) as TextChannel);
         }
         else {
-            const channel = app.state.get().guild.channels.cache.find((channel) => channel.type === "text" && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
+            const channel = app.state.get().guild.channels.cache.find((channel) => channel.type === "GUILD_TEXT" && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
 
             if (channel) {
                 app.setActiveChannel(channel as TextChannel);

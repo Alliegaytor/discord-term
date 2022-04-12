@@ -1,4 +1,4 @@
-import {TextChannel, Guild, Client, Message, DMChannel, ClientOptions, GuildChannel} from "discord.js";
+import {TextChannel, Guild, Client, Message, DMChannel, ClientOptions, GuildChannel, Intents} from "discord.js";
 import Utils from "./utils";
 import blessed, {Widgets} from "blessed";
 import chalk from "chalk";
@@ -15,7 +15,8 @@ import State, {IState, IStateOptions} from "./state/state";
 import {defaultState} from "./state/stateConstants";
 import MessageFactory from "./core/messageFactory";
 import Tags from "./tags";
-import allowUserBotting from "discord.js.userbot"
+
+
 
 export type IAppNodes = {
     readonly messages: Widgets.BoxElement;
@@ -109,8 +110,7 @@ export default class App extends EventEmitter {
             this.state.saveSync();
         });
 
-        this.client.on("message", this.handleMessage.bind(this));
-        this.client.on("messageUpdate", this.handleMessage.bind(this));
+        this.client.on("messageCreate", this.handleMessage.bind(this));
 
         this.client.on("error", (error: Error) => {
             this.message.system(`An error occurred within the client: ${error.message}`);
@@ -178,33 +178,34 @@ export default class App extends EventEmitter {
         }
 
         if (msg.author.id === this.client.user.id) {
-            if (msg.channel.type === "text") {
+            if (msg.channel.type === "GUILD_TEXT") {
                 this.message.self(this.client.user.tag, content);
             }
-            else if (msg.channel.type === "dm") {
+            else if (msg.channel.type === "DM") {
                 this.message.special(`${chalk.green("=>")} DM`, (msg.channel as DMChannel).recipient.tag, content, "blue");
             }
         }
+
         else if (this.state.get().guild && this.state.get().channel && msg.channel.id === this.state.get().channel.id) {
             // TODO: Turn this into a function
             const modifiers: string[] = [];
 
             if (msg.guild && msg.member) {
-                if (msg.member.hasPermission("MANAGE_MESSAGES")) {
+                if (msg.member.permissions.has("MANAGE_MESSAGES")) {
                     modifiers.push(chalk.red("+"));
                 }
 
                 if (msg.author.bot) {
                     modifiers.push(chalk.blue("&"));
                 }
-                if (msg.member.hasPermission("MANAGE_GUILD")) {
+                if (msg.member.permissions.has("MANAGE_GUILD")) {
                     modifiers.push(chalk.green("$"));
                 }
             }
 
             this.message.user(msg.author.tag, content, modifiers);
         }
-        else if (msg.channel.type === "dm") {
+        else if (msg.channel.type === "DM") {
             this.message.special(`${chalk.green("<=")} DM`, msg.author.tag, content, "blue");
         }
         else if (this.state.get().globalMessages) {
@@ -215,15 +216,15 @@ export default class App extends EventEmitter {
     public showChannels(): this {
         if (this.options.nodes.channels.hidden) {
             // Messages.
-            this.options.nodes.messages.width = "75%+2";
+            this.options.nodes.messages.width = "75%+1";
             this.options.nodes.messages.left = "25%";
 
             // Input.
-            this.options.nodes.input.width = "75%+2";
+            this.options.nodes.input.width = "75%+1";
             this.options.nodes.input.left = "25%";
 
             // Header.
-            this.options.nodes.header.width = "75%+2";
+            this.options.nodes.header.width = "75%+1";
             this.options.nodes.header.left = "25%";
 
             this.options.nodes.channels.show();
@@ -271,32 +272,8 @@ export default class App extends EventEmitter {
      * active channel.
      */
     public startTyping(): this {
-        if (!this.state.get().muted && this.state.get().guild && this.state.get().channel && this.state.get().typingTimeout === undefined) {
-            this.state.get().channel.startTyping();
-
-            this.state.update({
-                typingTimeout: setTimeout(() => {
-                    this.stopTyping();
-                }, 10000)
-            });
-        }
-
-        return this;
-    }
-
-    /**
-     * Stop the client from typing in the currently
-     * active channel if applicable.
-     */
-    public stopTyping(): this {
-        if (this.state.get().guild && this.state.get().channel && this.state.get().typingTimeout !== undefined) {
-            clearTimeout(this.state.get().typingTimeout);
-
-            this.state.update({
-                typingTimeout: undefined
-            });
-
-            this.state.get().channel.stopTyping();
+        if (!this.state.get().muted && this.state.get().guild && this.state.get().channel) {
+            this.state.get().channel.sendTyping();
         }
 
         return this;
@@ -335,7 +312,6 @@ export default class App extends EventEmitter {
      * the application.
      */
     public async shutdown(exitCode: number = 0): Promise<void> {
-        this.stopTyping();
         await this.client.destroy();
         this.state.saveSync();
         process.exit(exitCode);
@@ -351,19 +327,21 @@ export default class App extends EventEmitter {
             this.options.nodes.channels.remove(this.options.nodes.channels.children[0]);
         }
 
-        const channels: TextChannel[] = this.state.get().guild.channels.cache.array().filter((channel: GuildChannel) => channel.type === "text") as TextChannel[];
+        // Grab all available text channels
+        const channels: TextChannel[] = Array.from(this.state.get().guild.channels.cache.filter(channel => channel.type === "GUILD_TEXT").values()) as TextChannel[];
 
         for (let i: number = 0; i < channels.length; i++) {
             let channelName: string = channels[i].name;
 
             // TODO: Use a constant for the pattern.
             // This fixes UI being messed up due to channel names containing unicode emojis.
+
             while (/[^a-z0-9-_?]+/gm.test(channelName)) {
                 channelName = channelName.replace(/[^a-z0-9-_]+/gm, "?");
             }
 
             if (channelName.length > 25) {
-                channelName = channelName.substring(0, 21) + " ...";
+                channelName = channelName.substring(0, 10) + " ...";
             }
 
             const channelNode: Widgets.BoxElement = blessed.box({
@@ -499,9 +477,6 @@ export default class App extends EventEmitter {
 
     public init(): this {
         const clipboard: string = clipboardy.readSync();
-        // Discord.js blocks use of self-bots, but was blocking actual bots
-        // This enables what it thinks is 'self-botting'
-        allowUserBotting(this.client, "../");
 
         if (process.env.DTERM_TOKEN !== undefined) {
             this.message.system("Attempting to login using environment token");
@@ -598,8 +573,6 @@ export default class App extends EventEmitter {
     }
 
     public setActiveChannel(channel: TextChannel): this {
-        this.stopTyping();
-
         this.state.update({
             channel
         });

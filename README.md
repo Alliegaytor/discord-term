@@ -58,7 +58,13 @@ You can also issue the `/help` command to display all available commands.
 
 - [X] Re-write & expand codebase
 
-- [ ] Auto-complete pop-up
+- [X] Discord.js v13
+
+- [X] Editable DMs
+
+- [ ] Support threads
+
+- [ ] Userbot
 
 - [ ] Status bar (current channel, guild, etc.)
 
@@ -67,8 +73,6 @@ You can also issue the `/help` command to display all available commands.
 - [ ] Better, powerful plugin API
 
 - [ ] Visual plugin manager
-
-- [ ] UI re-write
 
 - [ ] Tested codebase (unit testing)
 
@@ -168,3 +172,4 @@ Thanks to all these wonderful people for contributing to the project:
 * [@anirudhbs](https://github.com/anirudhbs)
 * [@jellz](https://github.com/jellz)
 * [@JustCaptcha](https://github.com/JustCaptcha)
+* [@P90ForRetail](https://github.com/P90ForRetail)
