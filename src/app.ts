@@ -573,13 +573,19 @@ export default class App extends EventEmitter {
     }
 
     public setActiveChannel(channel: TextChannel): this {
+        const previousMessages = channel.messages.fetch();
+
         this.state.update({
             channel
         });
 
-
         this.updateTitle();
         this.message.system(`Switched to channel '{bold}${this.state.get().channel.name}{/bold}'`);
+
+        previousMessages.then(messages => {
+          this.message.system(`Loading ${messages.size} most recent messages`);
+          messages.reverse().forEach(msg => this.handleMessage(msg))
+        })
 
         return this;
     }
