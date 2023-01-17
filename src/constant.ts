@@ -38,7 +38,9 @@ export const defaultAppOptions: IAppOptions = {
     stateFilePath: "state.json",
     pluginsPath: "plugins",
     headerAutoHideTimeoutPerChar: 100,
-
+    rightWidth: "92%-11",
+    leftWidth: "8%+11",
+    
     screen: blessed.screen({
         smartCSR: true,
         fullUnicode: true
@@ -65,42 +67,44 @@ export const defaultAppOptions: IAppOptions = {
             top: "0%",
             left: "0%",
             height: "100%",
-            width: "25%",
-            scrollable: true,
-            padding: 1,
-            hidden: true,
 
             style: {
                 fg: defaultState.themeData.channels.foregroundColor,
                 bg: defaultState.themeData.channels.backgroundColor
-            } as any
+            } as any,
+            
+            scrollable: true,
+            padding: 1,
+            hidden: true
         }),
 
         input: blessed.textbox({
+            bottom: "0",
+            left: "0%",
+            width: "100%",
+            height: "shrink",
+            
             style: {
                 fg: defaultState.themeData.input.foregroundColor,
                 bg: defaultState.themeData.input.backgroundColor
             },
-
-            left: "0%",
-            bottom: "0",
-            width: "100%",
+            
             inputOnFocus: true,
-            height: "shrink",
             padding: 1
         }),
 
         header: blessed.box({
+            top: "0%",
+            left: "0%",
+            height: "0%+3",
+            width: "100%",
+            
             style: {
                 fg: defaultState.themeData.header.foregroundColor,
                 bg: defaultState.themeData.header.backgroundColor
             },
-
-            top: "0%",
-            left: "0%",
-            height: "0%+3",
+            
             padding: 1,
-            width: "100%",
             hidden: true,
             tags: true
         })

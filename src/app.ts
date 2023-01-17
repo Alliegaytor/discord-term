@@ -44,6 +44,10 @@ export interface IAppOptions extends IStateOptions {
     readonly clientOptions: ClientOptions;
 
     readonly pluginsPath: string;
+    
+    readonly leftWidth: string;
+    
+    readonly rightWidth: string;
 }
 
 export enum SpecialSenders {
@@ -216,16 +220,19 @@ export default class App extends EventEmitter {
     public showChannels(): this {
         if (this.options.nodes.channels.hidden) {
             // Messages.
-            this.options.nodes.messages.width = "75%+1";
-            this.options.nodes.messages.left = "25%";
+            this.options.nodes.messages.width = this.options.rightWidth;
+            this.options.nodes.messages.left = this.options.leftWidth;
 
             // Input.
-            this.options.nodes.input.width = "75%+1";
-            this.options.nodes.input.left = "25%";
+            this.options.nodes.input.width = this.options.rightWidth;
+            this.options.nodes.input.left = this.options.leftWidth;
 
             // Header.
-            this.options.nodes.header.width = "75%+1";
-            this.options.nodes.header.left = "25%";
+            this.options.nodes.header.width = this.options.rightWidth;
+            this.options.nodes.header.left = this.options.leftWidth;
+            
+            // Channels
+            this.options.nodes.channels.width = this.options.leftWidth;
 
             this.options.nodes.channels.show();
             this.render();
