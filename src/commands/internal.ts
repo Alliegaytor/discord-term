@@ -24,7 +24,7 @@ export default function setupInternalCommands(app: App): void {
         else {
             app.message.system("No active guild");
         }
-    });
+    })
 
     app.commands.set("mute", () => {
         app.state.update({
@@ -69,15 +69,24 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
-    app.commands.set("edit", async (args: string[], message) => {
+    app.commands.set("edit", async (args: string[]) => {
         // TODO: Display message.
-        if (!args[0] || !args[1] || !app.state.get().channel) {
+        if (!args[0] || !app.state.get().channel) {
             return;
         }
 
         try {
-            const message: Message = await app.state.get().lastMessage.channel.messages.fetch(app.state.get().lastMessage.id) as Message;
-            await message.edit(args.slice(1).join(" "));
+            const message: Message = await app.state.get().lastMessage.channel.messages.fetch(args[0]);
+            // Delete if the edit is ""
+            if (!args[1]) {
+                await message.delete();
+                app.message.system("Message deleted");
+            } 
+            else {
+                const editedMessage = args.slice(1).join(" ");
+                await message.edit(editedMessage);
+                app.message.system(`Message edited to "${editedMessage}"`);
+            }
         }
         catch {
             app.message.system("That message doesn't exist or it is not editable");

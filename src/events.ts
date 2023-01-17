@@ -58,13 +58,7 @@ export default function setupEvents(app: App): void {
             const args: string[] = input.substr(app.options.commandPrefix.length).split(" ");
             const base: string = args[0];
 
-            if (input.startsWith(app.options.commandPrefix + "edit")) {
-                const editedMessage = input.split(' ').slice(2).join(' ');
-                app.message.system(`Message edited to "${editedMessage}"`);
-                args.splice(0, 1);
-                app.commands.get(base)!(args, this);
-            }
-            else if (app.commands.has(base)) {
+            if (app.commands.has(base)) {
                 args.splice(0, 1);
                 app.commands.get(base)!(args, this);
             }
