@@ -1,16 +1,15 @@
-# ⚠️ Project needs active maintainers!
+# ⚠️ In active development!
+Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree.
 
-Think you got what it takes? [Join our Discord](https://discord.gg/H3eMUXp) and contact (@λtlas#9352) in regards of maintaining this project.
+The project needs active maintainers. Any help would be greatly appreciated!
 
 <br/>
 
 ### ✨ Discord Terminal
 
-An extensible Discord terminal client. Can be used properly with bot tokens only. User tokens don't work properly as discord.js blocks them from being used.
+A cross platform extensible Discord terminal client. Can currently be only used with bot tokens. User tokens don't work properly as [discord.js](https://github.com/discordjs/discord.js) blocks them from being used. This is unwanted behaviour, however. We are trying to patch user tokens back in.
 
-**Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore discouraged. I am not responsible for any loss or restriction whatsoever caused by using self-bots or this software. That being said, there's no one stopping you from risking using an account, so go head!
-
-Please note that this program is intended to be used with a **bot token** which is 100% compliant with Discord's Terms of Service.
+**Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore heavily discouraged. We am not responsible for any bans whatsoever caused by this software. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
 
 ### Screenshots
 
@@ -25,7 +24,7 @@ Please note that this program is intended to be used with a **bot token** which 
 Setting up is extremely easy. Just issue the following commands:
 
 ```shell
-git clone https://github.com/P90ForRetail/discord-term
+git clone https://gitlab.com/P-90-For-Retail/discord-term.git
 npm install
 npm run start
 ```
@@ -35,12 +34,8 @@ To install on your system:
 ```shell
 sudo npm install -g
 ```
-or
-```shell
-npm install discord-term -g
-```
 
-That's it! Although keep in mind that since the project is relatively new, you might encounter some bugs here and there.
+That's it! Although keep in mind that since the project is unfinished, you might encounter some bugs here and there. Please report them if you do find them!
 
 **This project has been tested and verified as working on native Ubuntu terminal and Windows command prompt + PowerShell using Node.js 10**
 
@@ -49,14 +44,16 @@ Pst. Consider **starring** the repository if you like it! <3
 
 ### Usage
 
-Once you've started the program, use `/login <token>` to connect to Discord.
+Once you've started the program, use `/login <token>` to connect to Discord. Alternatively you can use the environmental variable `DTERM_TOKEN` to login.
 
 See the links below for information on retrieving login tokens:
 
 * [Retrieve a bot token](https://discordapp.com/developers/applications/me)
-* [Retrieve a user token](https://discordhelp.net/discord-token)
+<!--* [Retrieve a user token](https://discordhelp.net/discord-token)-->
 
-You can also issue the `/help` command to display all available commands.
+You can issue the `/help` command to display all available commands.
+
+Discord Terminal will show you the first channel in the first server that the Discord API is set to find. The channels are on the left hand side and you can click on them to navigate through them. The previous  
 
 ### Planned Features
 
@@ -65,6 +62,8 @@ You can also issue the `/help` command to display all available commands.
 - [X] Discord.js v13
 
 - [X] Editable DMs
+
+- [ ] Documentation
 
 - [ ] Support threads
 
@@ -142,11 +141,11 @@ You can also issue the `/help` command to display all available commands.
     * ruby
     * rovel
     * discord
-    * purple-glory (by [@JustCaptcha](https://github.com/JustCaptcha))
+    * purple-glory
 
     Want more? Make your own! Checkout how those themes were made under the **themes** directory (Psst. It's easy!).
 
-    Don't forget to create a pull request submitting your awesome theme so everyone can use it!
+    Don't forget to create a merge request submitting your awesome theme so everyone can use it!
 
 4. **Pasting in the terminal** You can use **CTRL + SHIFT + V** to paste data in most terminals.
 
@@ -176,4 +175,4 @@ Thanks to all these wonderful people for contributing to the project:
 * [@anirudhbs](https://github.com/anirudhbs)
 * [@jellz](https://github.com/jellz)
 * [@JustCaptcha](https://github.com/JustCaptcha)
-* [@P90ForRetail](https://github.com/P90ForRetail)
+* [@Alliegaytor](https://gitlab.com/P-90-For-Retail/)
