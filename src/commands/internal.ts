@@ -385,4 +385,16 @@ export default function setupInternalCommands(app: App): void {
         app.loadPreviousMessages(channel as TextChannel);
         app.whereAmI(channel as TextChannel, guild as Guild);
     });
+
+    // Deletes channels
+    app.commands.set("deletechannel", () => {
+        const channel = app.state.get().channel as TextChannel;
+        const guild = app.state.get().guild as Guild;
+
+        // Move to another channel
+        app.setActiveGuild(guild as Guild);
+        // Delete the channel specified
+        app.deleteChannel(channel as TextChannel);
+
+    });
 }

@@ -17,6 +17,12 @@ import MessageFactory from "./core/messageFactory";
 import Tags from "./tags";
 
 
+// Stops log spam caused by the bot typing in a delted channel
+// Also stops the bot from spamming discord every keystroke
+// See startTyping() for more info
+export var __TYPING_LAST_STARTED__ : number = null;
+export var __TYPING_LAST_CHANNEL__ : TextChannel = null;
+
 
 export type IAppNodes = {
     readonly messages: Widgets.BoxElement;
@@ -279,12 +285,24 @@ export default class App extends EventEmitter {
      * Show the client as typing in the currently
      * active channel.
      */
-    public startTyping(): this {
-        if (!this.state.get().muted && this.state.get().guild && this.state.get().channel) {
-            this.state.get().channel.sendTyping();
-        }
+    // TODO: Cleanup startTyping()
+    public async startTyping(): Promise<void> {
+        let state = this.state.get() as IState;
 
-        return this;
+        // If it can type
+        if (!state.muted && state.guild && state.channel) {
+            // If it has never typed or it has been more than 10 seconds since the last time
+            if (__TYPING_LAST_CHANNEL__ !== state.channel || new Date().getTime() - __TYPING_LAST_STARTED__ > 10000) {
+                // Update global variables
+                __TYPING_LAST_STARTED__ = new Date().getTime();
+                __TYPING_LAST_CHANNEL__ = state.channel;
+
+                // Start typing and catch errors
+                await state.channel.sendTyping().catch((error: Error) => {
+                    this.message.system(`startTyping() failed: ${error.message}`);
+                })
+            }
+        }
     }
 
     public getInput(clear: boolean = false): string {
@@ -587,7 +605,7 @@ export default class App extends EventEmitter {
         });
 
         this.updateTitle();
-        this.message.system(`Switched to channel '{bold}${this.state.get().channel.name}{/bold}'`);
+        this.message.system(`Switched to channel '{bold}${channel.name}{/bold}'`);
 
         this.loadPreviousMessages(channel);
 
@@ -621,6 +639,7 @@ export default class App extends EventEmitter {
     }
 
     // Displays where the client is
+    // TODO: Display whereAmI at the top of the screen at all times
     public whereAmI(channel: TextChannel, guild: Guild): this {
         if (guild && channel) {
             this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`)
@@ -632,5 +651,14 @@ export default class App extends EventEmitter {
             this.message.system("No active guild");
         }
         return this;
+    }
+
+    // Deletes specified channel
+    // TODO: ADD SAFEGAURDS TO THIS
+    public async deleteChannel(channel: TextChannel): Promise<void> {
+        await channel.delete().then(() => {
+          this.updateChannels();
+          this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
+        }).catch(err => this.message.system(err));
     }
 }
