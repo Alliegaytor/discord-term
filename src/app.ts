@@ -1,4 +1,4 @@
-import {TextChannel, Guild, Client, Message, DMChannel, ClientOptions, GuildChannel, Intents} from "discord.js";
+import {TextChannel, Guild, Client, Message, DMChannel, ClientOptions} from "discord.js";
 import Utils from "./utils";
 import blessed, {Widgets} from "blessed";
 import chalk from "chalk";
@@ -15,13 +15,6 @@ import State, {IState, IStateOptions} from "./state/state";
 import {defaultState} from "./state/stateConstants";
 import MessageFactory from "./core/messageFactory";
 import Tags from "./tags";
-
-
-// Stops log spam caused by the bot typing in a delted channel
-// Also stops the bot from spamming discord every keystroke
-// See startTyping() for more info
-export var __TYPING_LAST_STARTED__ : number = null;
-export var __TYPING_LAST_CHANNEL__ : TextChannel = null;
 
 
 export type IAppNodes = {
@@ -86,6 +79,12 @@ export default class App extends EventEmitter {
 
     public helpString : string = "";
 
+    // Stops log spam caused by the bot typing in a delted channel
+    // Also stops the bot from spamming discord every keystroke
+    // See startTyping() for more info
+    public __TYPING_LAST_STARTED__ : number = 0;
+    public __TYPING_LAST_CHANNEL__ : TextChannel | null = null;
+
     public constructor(options?: Partial<IAppOptions>, commands: Map<string, ICommandHandler> = new Map()) {
         super();
 
@@ -107,12 +106,18 @@ export default class App extends EventEmitter {
             this.hideHeader();
 
             this.state.update({
-                token: this.client.token
+                token: this.client.token as string
             });
+
+            // Return if this.clien.user is null just in case
+            if (this.client.user === null) {
+                this.message.system(`Error: this.client.user is null`);
+                return;
+            }
 
             this.message.system(`Successfully connected as {bold}${this.client.user.tag}{/bold}`);
 
-            const firstGuild: Guild = this.client.guilds.cache.first();
+            const firstGuild: Guild | undefined = this.client.guilds.cache.first();
 
             if (firstGuild) {
                 this.setActiveGuild(firstGuild);
@@ -156,24 +161,34 @@ export default class App extends EventEmitter {
     }
 
     private handleMessage(msg: Message): void {
+        // Client should not be able to get here if this.client.user is null
+        if (this.client.user === null) {
+            this.message.system(`Error: this.client.user is null`);
+            throw("Error: this.client.user is null");
+        }
+
+        const state: IState = this.state.get();
+        const channel: TextChannel | undefined = state.channel;
+
+
         if (msg.author.id === this.client.user.id) {
             this.state.update({
                 lastMessage: msg
             });
         }
 
-        if (this.state.get().ignoredUsers.includes(msg.author.id)) {
+        if (state.ignoredUsers.includes(msg.author.id)) {
             return;
         }
-        else if (this.state.get().trackList.includes(msg.author.id)) {
+        else if (state.trackList.includes(msg.author.id)) {
             this.message.special("Track", msg.author.tag, msg.content);
 
             return;
         }
-        else if (this.state.get().ignoreBots && msg.author.bot && msg.author.id !== this.client.user.id) {
+        else if (state.ignoreBots && msg.author.bot && msg.author.id !== this.client.user.id) {
             return;
         }
-        else if (this.state.get().ignoreEmptyMessages && !msg.content) {
+        else if (state.ignoreEmptyMessages && !msg.content) {
             return;
         }
 
@@ -181,7 +196,7 @@ export default class App extends EventEmitter {
 
         if (content.startsWith("$dt_")) {
             try {
-                content = Encryption.decrypt(content.substr(4), this.state.get().decriptionKey);
+                content = Encryption.decrypt(content.substr(4), state.decriptionKey);
             }
             catch (error) {
                 // Don't show the error.
@@ -198,7 +213,7 @@ export default class App extends EventEmitter {
             }
         }
 
-        else if (this.state.get().guild && this.state.get().channel && msg.channel.id === this.state.get().channel.id) {
+        else if (state.guild && channel && msg.channel.id === channel.id) {
             // TODO: Turn this into a function
             const modifiers: string[] = [];
 
@@ -294,10 +309,10 @@ export default class App extends EventEmitter {
         // If it can type
         if (!state.muted && state.guild && state.channel) {
             // If it has never typed or it has been more than 10 seconds since the last time
-            if (__TYPING_LAST_CHANNEL__ !== state.channel || new Date().getTime() - __TYPING_LAST_STARTED__ > 10000) {
+            if (this.__TYPING_LAST_CHANNEL__ !== state.channel || new Date().getTime() - this.__TYPING_LAST_STARTED__ > 10000) {
                 // Update global variables
-                __TYPING_LAST_STARTED__ = new Date().getTime();
-                __TYPING_LAST_CHANNEL__ = state.channel;
+                this.__TYPING_LAST_STARTED__ = new Date().getTime();
+                this.__TYPING_LAST_CHANNEL__ = state.channel;
 
                 // Start typing and catch errors
                 await state.channel.sendTyping().catch((error: Error) => {
@@ -346,9 +361,14 @@ export default class App extends EventEmitter {
     }
 
     public updateChannels(render: boolean = false): this {
-        if (!this.state.get().guild) {
+        const guild: Guild | undefined = this.state.get().guild;
+
+        // Return if undefined
+        if (!guild) {
             return this;
         }
+
+        const channel = this.state.get().channel as TextChannel;
 
         // Fixes "ghost" children bug.
         while (this.options.nodes.channels.children.length > 0) {
@@ -356,7 +376,7 @@ export default class App extends EventEmitter {
         }
 
         // Grab all available text channels
-        const channels: TextChannel[] = Array.from(this.state.get().guild.channels.cache.filter(channel => channel.type === "GUILD_TEXT").values()) as TextChannel[];
+        const channels: TextChannel[] = Array.from(guild.channels.cache.filter(channel => channel.type === "GUILD_TEXT").values()) as TextChannel[];
 
         for (let i: number = 0; i < channels.length; i++) {
             let channelName: string = channels[i].name;
@@ -378,7 +398,7 @@ export default class App extends EventEmitter {
                     fg: this.state.get().themeData.channels.foregroundColor,
 
                     // TODO: Not working
-                    bold: this.state.get().channel !== undefined && this.state.get().channel.id === channels[i].id,
+                    bold: this.state.get().channel !== undefined && this.state.get().channel?.id === channels[i].id,
 
                     hover: {
                         bg: this.state.get().themeData.channels.backgroundColorHover,
@@ -395,7 +415,7 @@ export default class App extends EventEmitter {
             });
 
             channelNode.on("click", () => {
-                if (this.state.get().guild && this.state.get().channel && channels[i].id !== this.state.get().channel.id && this.state.get().guild.channels.cache.has(channels[i].id)) {
+                if (this.state.get().guild && channel && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
                     this.setActiveChannel(channels[i]);
                 }
             });
@@ -418,7 +438,7 @@ export default class App extends EventEmitter {
 
     public loadTheme(name: string): this {
         if (!name) {
-            return;
+            return this;
         }
         // TODO: Trivial expression.
         /*else if (this.state.theme === name) {
@@ -483,10 +503,10 @@ export default class App extends EventEmitter {
 
     private updateTitle(): this {
         if (this.state.get().guild && this.state.get().channel) {
-            this.options.screen.title = `Discord Terminal @ ${this.state.get().guild.name} # ${this.state.get().channel.name}`;
+            this.options.screen.title = `Discord Terminal @ ${this.state.get().guild?.name} # ${this.state.get().channel?.name}`;
         }
         else if (this.state.get().guild) {
-            this.options.screen.title = `Discord Terminal @ ${this.state.get().guild.name}`;
+            this.options.screen.title = `Discord Terminal @ ${this.state.get().guild?.name}`;
         }
         else {
             this.options.screen.title = "Discord Terminal";
@@ -512,7 +532,7 @@ export default class App extends EventEmitter {
         }
         else if (this.state.get().token) {
             this.message.system(`Attempting to login using saved token; Use {bold}${this.options.commandPrefix}forget{/bold} to forget the token`);
-            this.login(this.state.get().token);
+            this.login(this.state.get().token as string);
         }
         else if (Pattern.token.test(clipboard)) {
             this.message.system("Attempting to login using token in clipboard");
@@ -535,15 +555,20 @@ export default class App extends EventEmitter {
             guild
         });
 
-        this.message.system(`Switched to guild '{bold}${this.state.get().guild.name}{/bold}'`);
+        if (!guild) {
+            this.message.system(`Warning: Guild undefined`);
+            return this;
+        }
 
-        const defaultChannel: TextChannel | null = Utils.findDefaultChannel(this.state.get().guild);
+        this.message.system(`Switched to guild '{bold}${guild.name}{/bold}'`);
+
+        const defaultChannel: TextChannel | null = Utils.findDefaultChannel(guild);
 
         if (defaultChannel !== null) {
             this.setActiveChannel(defaultChannel);
         }
         else {
-            this.message.system(`Warning: Guild '${this.state.get().guild.name}' doesn't have any text channels`);
+            this.message.system(`Warning: Guild '${guild.name}' doesn't have any text channels`);
         }
 
         this.updateTitle();
@@ -657,10 +682,16 @@ export default class App extends EventEmitter {
 
     // Deletes specified channel
     // TODO: ADD SAFEGAURDS TO THIS
-    public async deleteChannel(channel: TextChannel): Promise<void> {
-        await channel.delete().then(() => {
+    public deleteChannel(channel: TextChannel) {
+        channel.delete().then(() => {
           this.updateChannels();
           this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
         }).catch(err => this.message.system(err));
+    }
+
+    // Delete message
+    public deleteMessage(message: Message) {
+        message.delete().catch(err => this.message.system(err));
+        this.message.system("Message deleted");
     }
 }

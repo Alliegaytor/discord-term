@@ -15,6 +15,7 @@ export default class MessageFactory {
         if (messageColor.startsWith("#")) {
             messageString = chalk.hex(messageColor)(messageString);
         }
+        // @ts-ignore
         else if (chalk[messageColor] === undefined || typeof chalk[messageColor] !== "function") {
             this.system("Refusing to append message: An invalid color was provided");
 
@@ -26,6 +27,7 @@ export default class MessageFactory {
 
         let line: string = this.app.state.get().messageFormat
             // TODO: Catch error if sender color doesn't exist.
+            // @ts-ignore
             .replace("{sender}", chalk[senderColor](sender))
             .replace("{message}", messageString);
 

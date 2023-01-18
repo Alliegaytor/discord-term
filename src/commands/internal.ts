@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import App from "../app";
-import {Snowflake, Message, User, TextChannel, Guild} from "discord.js";
+import {Snowflake, Message, TextChannel, Guild} from "discord.js";
 import {tips} from "../constant";
 import Utils from "../utils";
 
@@ -65,29 +65,54 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
+    // Edit messages
+    // (And delete if the edit is "")
     app.commands.set("edit", async (args: string[]) => {
+        const state = app.state.get();
+
         // TODO: Display message.
-        if (!args[0] || !app.state.get().channel) {
+        if (!args[0] || !state.channel) {
             return;
         }
 
-        try {
-            const message: Message = await app.state.get().lastMessage.channel.messages.fetch(args[0]);
+        // See if message exists
+        const message: Message | void | undefined = await state.lastMessage?.channel.messages.fetch(args[0]).catch(() => {
+            app.message.system("That message doesn't exist or it is not editable");
+        });
+
+        // If message is defined continue
+        if (message ?? false) {
+            let msg: Message = message as Message;
             // Delete if the edit is ""
             if (!args[1]) {
-                await message.delete();
-                app.message.system("Message deleted");
+                app.deleteMessage(message as Message);
             }
             else {
                 const editedMessage = args.slice(1).join(" ");
-                await message.edit(editedMessage);
+                msg.edit(editedMessage);
                 app.message.system(`Message edited to "${editedMessage}"`);
             }
         }
-        catch {
-            app.message.system("That message doesn't exist or it is not editable");
-        }
     });
+
+    // Delete messages
+    app.commands.set("delete", async (args: string[]) => {
+        const state = app.state.get();
+
+        if (!args || !state.channel) {
+            return;
+        }
+
+        // See if message exists
+        const message: Message | void | undefined = await state.lastMessage?.channel.messages.fetch(args[0]).catch(() => {
+            app.message.system("That message doesn't exist or it is not editable");
+        });
+
+        // If message is defined continue
+        if (message ?? false) {
+            app.deleteMessage(message as Message);
+        }
+    })
 
     app.commands.set("save", () => {
         app.state.saveSync();
@@ -346,21 +371,23 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("c", (args: string[]) => {
-        if (!app.state.get().guild) {
+        const state = app.state.get();
+
+        if (!state.guild) {
             app.message.system("No active guild");
         }
-        else if (app.state.get().guild.channels.cache.has(args[0])) {
+        else if (state.guild.channels.cache.has(args[0])) {
             // TODO: Verify that it's a text channel.
-            app.setActiveChannel(app.state.get().guild.channels.cache.get(args[0]) as TextChannel);
+            app.setActiveChannel(state.guild.channels.cache.get(args[0]) as TextChannel);
         }
         else {
-            const channel = app.state.get().guild.channels.cache.find((channel) => channel.type === "GUILD_TEXT" && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
+            const channel = state.guild.channels.cache.find((channel) => channel.type === "GUILD_TEXT" && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
 
             if (channel) {
                 app.setActiveChannel(channel as TextChannel);
             }
             else {
-                app.message.system(`Such channel does not exist in guild '${app.state.get().guild.name}'`);
+                app.message.system(`Such channel does not exist in guild '${state.guild.name}'`);
             }
         }
     });
@@ -398,6 +425,8 @@ export default function setupInternalCommands(app: App): void {
         app.setActiveGuild(guild as Guild);
         // Delete the channel specified
         app.deleteChannel(channel as TextChannel);
+        // Let user know where they are now
+        app.whereAmI(channel as TextChannel, guild as Guild);
 
     });
 }

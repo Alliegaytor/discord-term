@@ -16,7 +16,7 @@ export default class PluginManager {
             const pluginFolders: Set<string> = new Set();
 
             await new Promise<void>((resolve) => {
-                fs.readdir(this.app.options.pluginsPath, (error: Error, folders: string[]) => {
+                fs.readdir(this.app.options.pluginsPath, (error: Error | null, folders: string[]) => {
                     for (const folder in folders) {
                         pluginFolders.add(folder);
                     }

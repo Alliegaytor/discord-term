@@ -4,7 +4,7 @@ import Encryption from "./encryption";
 export default function setupEvents(app: App): void {
     // Screen.
     app.options.screen.key("C-c", async () => {
-        await app.shutdown();
+        app.shutdown();
     });
 
     app.options.screen.key("C-x", () => {
@@ -55,7 +55,7 @@ export default function setupEvents(app: App): void {
 
 
 
-    app.options.nodes.input.key("enter", () => {
+    app.options.nodes.input.key("enter", (t: any) => {
         let input: string = app.getInput(true);
 
         const splitInput: string[] = input.split(" ");
@@ -63,7 +63,7 @@ export default function setupEvents(app: App): void {
 
         for (let i: number = 0; i < tags.length; i++) {
             while (splitInput.includes(`$${tags[i]}`)) {
-                splitInput[splitInput.indexOf(`$${tags[i]}`)] = app.tags.get(tags[i]);
+                splitInput[splitInput.indexOf(`$${tags[i]}`)] = app.tags.get(tags[i]) as string;
             }
         }
 
@@ -78,7 +78,7 @@ export default function setupEvents(app: App): void {
 
             if (app.commands.has(base)) {
                 args.splice(0, 1);
-                app.commands.get(base)!(args, this);
+                app.commands.get(base)!(args, t);
             }
             else {
                 app.message.system(`Unknown command: ${base}`);
@@ -95,7 +95,7 @@ export default function setupEvents(app: App): void {
                     msg = "$dt_" + Encryption.encrypt(msg, app.state.get().decriptionKey);
                 }
 
-                app.state.get().channel.send({ content: msg }).catch((error: Error) => {
+                app.state.get().channel?.send({ content: msg }).catch((error: Error) => {
                     app.message.system(`Unable to send message: ${error.message}`);
                 });
             }
@@ -116,9 +116,11 @@ export default function setupEvents(app: App): void {
         }
     });
 
+    // Edit last message
+    // TODO: Check to see if last message has been deleted
     app.options.nodes.input.key("up", () => {
-        if (app.state.get().lastMessage) {
-            app.clearInput(`${app.options.commandPrefix}edit ${app.state.get().lastMessage.id} ${app.state.get().lastMessage.content}`);
+        if (app.state.get().lastMessage ?? false) {
+            app.clearInput(`${app.options.commandPrefix}edit ${app.state.get().lastMessage?.id} ${app.state.get().lastMessage?.content}`);
         }
     });
 
@@ -126,10 +128,11 @@ export default function setupEvents(app: App): void {
       //  if (app.client.user && app.client.user.lastMessage && app.client.user.lastMessage.deletable) {
       //      app.client.user.lastMessage.delete();
       //  }
+        app.clearInput();
     });
 
-    app.options.nodes.input.key("C-c", async () => {
-        await app.shutdown();
+    app.options.nodes.input.key("C-c", () => {
+        app.shutdown();
     });
 
     app.options.nodes.input.key("C-x", () => {

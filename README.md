@@ -63,6 +63,8 @@ Discord Terminal will show you the first channel in the first server that the Di
 
 - [X] Editable DMs
 
+- [ ] Use [accursed](https://github.com/cancerberoSgx/accursed) instead of blessed
+
 - [ ] Documentation
 
 - [ ] Support threads
