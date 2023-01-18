@@ -298,16 +298,19 @@ export default function setupInternalCommands(app: App): void {
     // TODO: format /help better
     // TODO: have a dictonary in constants and use that if there is an argument for a specific help cmd
     app.commands.set("help", () => {
-        let helpString: string = "";
+        // Generate /help only if needed
+        if (app.helpString === "") {
+            let helpList: Array<string> = [];
 
-        for (let [name] of app.commands) {
-            helpString += `${name}, `;
+            for (let [name] of app.commands) {
+                helpList.push(name);
+            }
+
+            // Join Array
+            app.helpString = helpList.join(", ");
         }
 
-        // Remove last ', ' from string
-        helpString = helpString.slice(0, -2);
-
-        app.message.system(`Commands available: \n${helpString}`);
+        app.message.system(`Commands available: \n${app.helpString}`);
     });
 
     app.commands.set("global", () => {

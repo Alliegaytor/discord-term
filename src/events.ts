@@ -19,20 +19,38 @@ export default function setupEvents(app: App): void {
     app.options.nodes.input.on("keypress", () => {
         // TODO: If logged in.
         app.startTyping();
+
+    });
+
+    // Tab completion
+    app.options.nodes.input.key("tab", () => {
         const rawInput: string = app.getInput();
         const input: string = rawInput.substr(app.options.commandPrefix.length);
 
-        app.options.nodes.input.key("tab", () => {
-            if (rawInput.startsWith(app.options.commandPrefix) && input.length >= 2 && input.indexOf(" ") === -1) {
-                for (let [name] of app.commands) {
-                    if (name.startsWith(input)) {
-                        app.clearInput(`${app.options.commandPrefix}${name} `);
+        if (rawInput.startsWith(app.options.commandPrefix) && input.indexOf(" ") === -1) {
+            let autocomplete: Array<string> = [];
+            // Prevent tab from moving cursor
+            app.clearInput(`${rawInput}`);
 
-                        break;
-                    }
+            // Search help commands
+            for (let [name] of app.commands) {
+                if (name.startsWith(input)) {
+                    autocomplete.push(name);
                 }
             }
-        });
+            // Auto complete if there is one match
+            if (autocomplete.length === 1) {
+                app.clearInput(`${app.options.commandPrefix}${autocomplete[0]} `);
+            }
+            // Show all available completions
+            else if (autocomplete.length > 1) {
+                app.message.system(autocomplete.join(", "));
+            }
+            // Let user know there is no command
+            else {
+                app.message.system(`No autocompletions for ${input}`);
+            }
+        }
     });
 
 

@@ -84,6 +84,8 @@ export default class App extends EventEmitter {
 
     public readonly tags: Tags;
 
+    public helpString : string = "";
+
     public constructor(options?: Partial<IAppOptions>, commands: Map<string, ICommandHandler> = new Map()) {
         super();
 
