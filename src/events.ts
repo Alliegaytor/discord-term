@@ -24,7 +24,7 @@ export default function setupEvents(app: App): void {
 
         app.options.nodes.input.key("tab", () => {
             if (rawInput.startsWith(app.options.commandPrefix) && input.length >= 2 && input.indexOf(" ") === -1) {
-                for (let [name, handler] of app.commands) {
+                for (let [name] of app.commands) {
                     if (name.startsWith(input)) {
                         app.clearInput(`${app.options.commandPrefix}${name} `);
 

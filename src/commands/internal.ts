@@ -11,7 +11,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("logout", async () => {
-        await app.shutdown();
+        app.shutdown();
     });
 
     // Display where client is
@@ -77,7 +77,7 @@ export default function setupInternalCommands(app: App): void {
             if (!args[1]) {
                 await message.delete();
                 app.message.system("Message deleted");
-            } 
+            }
             else {
                 const editedMessage = args.slice(1).join(" ");
                 await message.edit(editedMessage);
@@ -218,10 +218,13 @@ export default function setupInternalCommands(app: App): void {
         });
     });
 
+    // Toggles channels visibility
     app.commands.set("fullscreen", () => {
         app.toggleChannels();
     });
 
+    // Displays name#1234 and ping. Example output:
+    // <System> Logged in as Test#5782 | 216ms
     app.commands.set("me", () => {
         // TODO: Add valid method to check if logged in.
         if (app.client.user) {
@@ -292,14 +295,19 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
+    // TODO: format /help better
+    // TODO: have a dictonary in constants and use that if there is an argument for a specific help cmd
     app.commands.set("help", () => {
         let helpString: string = "";
 
-        for (let [name, handler] of app.commands) {
-            helpString += `\n\t${name}`;
+        for (let [name] of app.commands) {
+            helpString += `${name}, `;
         }
 
-        app.message.system(`Commands available: \n${helpString}\n`);
+        // Remove last ', ' from string
+        helpString = helpString.slice(0, -2);
+
+        app.message.system(`Commands available: \n${helpString}`);
     });
 
     app.commands.set("global", () => {
@@ -315,18 +323,19 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
-    app.commands.set("bots", () => {
-        app.state.update({
-            ignoreBots: !app.state.get().ignoreBots
-        });
-
-        if (app.state.get().ignoreBots) {
-            app.message.system("No longer displaying bot messages");
-        }
-        else {
-            app.message.system("Displaying bot messages");
-        }
-    });
+    // TODO: Fix command
+    // app.commands.set("bots", () => {
+    //     app.state.update({
+    //         ignoreBots: !app.state.get().ignoreBots
+    //     });
+    //
+    //     if (app.state.get().ignoreBots) {
+    //         app.message.system("No longer displaying bot messages");
+    //     }
+    //     else {
+    //         app.message.system("Displaying bot messages");
+    //     }
+    // });
 
     app.commands.set("clear", () => {
         app.options.nodes.messages.setContent("");

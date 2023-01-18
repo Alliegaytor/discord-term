@@ -44,9 +44,9 @@ export interface IAppOptions extends IStateOptions {
     readonly clientOptions: ClientOptions;
 
     readonly pluginsPath: string;
-    
+
     readonly leftWidth: string;
-    
+
     readonly rightWidth: string;
 }
 
@@ -230,7 +230,7 @@ export default class App extends EventEmitter {
             // Header.
             this.options.nodes.header.width = this.options.rightWidth;
             this.options.nodes.header.left = this.options.leftWidth;
-            
+
             // Channels
             this.options.nodes.channels.width = this.options.leftWidth;
 
@@ -319,8 +319,8 @@ export default class App extends EventEmitter {
      * Destroy the client, save the state and exit
      * the application.
      */
-    public async shutdown(exitCode: number = 0): Promise<void> {
-        await this.client.destroy();
+    public shutdown(exitCode: number = 0): this {
+        this.client.destroy();
         this.state.saveSync();
         process.exit(exitCode);
     }
@@ -581,7 +581,6 @@ export default class App extends EventEmitter {
     }
 
     public setActiveChannel(channel: TextChannel): this {
-        const previousMessages = channel.messages.fetch();
 
         this.state.update({
             channel
