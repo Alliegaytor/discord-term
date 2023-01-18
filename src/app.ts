@@ -611,4 +611,18 @@ export default class App extends EventEmitter {
 
         return this;
     }
+
+    // Displays where the client is
+    public whereAmI(channel: TextChannel, guild: Guild): this {
+        if (guild && channel) {
+            this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`)
+        }
+        else if (guild) {
+          this.message.system(`Currently on guild '{bold}${guild.name}{/bold}`);
+        }
+        else {
+            this.message.system("No active guild");
+        }
+        return this;
+    }
 }

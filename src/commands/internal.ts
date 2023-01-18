@@ -14,16 +14,12 @@ export default function setupInternalCommands(app: App): void {
         await app.shutdown();
     });
 
-    app.commands.set("now", () => {
-        if (app.state.get().guild && app.state.get().channel) {
-            app.message.system(`Currently on guild '{bold}${app.state.get().guild.name}{/bold}' # '{bold}${app.state.get().channel.name}{/bold}'`)
-        }
-        else if (app.state.get().guild) {
-            app.message.system(`Currently on guild '{bold}${app.state.get().guild.name}{/bold}`);
-        }
-        else {
-            app.message.system("No active guild");
-        }
+    // Display where client is
+    app.commands.set("where", () => {
+        const channel = app.state.get().channel as TextChannel;
+        const guild = app.state.get().guild as Guild;
+
+        app.whereAmI(channel as TextChannel, guild as Guild);
     })
 
     app.commands.set("mute", () => {
