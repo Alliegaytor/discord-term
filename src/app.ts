@@ -262,8 +262,9 @@ export default class App extends EventEmitter {
         return this;
     }
 
+    // Toggle channel visibility
     public toggleChannels(): this {
-        this.options.nodes.channels.visible ? this.hideChannels() : this.showChannels();
+        this.options.nodes.channels.visible ? this.hideChannels() : this.updateChannels() && this.showChannels();
 
         return this;
     }
@@ -589,6 +590,14 @@ export default class App extends EventEmitter {
         this.updateTitle();
         this.message.system(`Switched to channel '{bold}${this.state.get().channel.name}{/bold}'`);
 
+        this.loadPreviousMessages(channel);
+
+        return this;
+    }
+
+    // Load previous messages in a channel
+    public loadPreviousMessages(channel: TextChannel): this {
+        const previousMessages = channel.messages.fetch();
         previousMessages.then(messages => {
           this.message.system(`Loading ${messages.size} most recent messages`);
           messages.reverse().forEach(msg => this.handleMessage(msg))

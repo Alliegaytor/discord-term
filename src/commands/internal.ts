@@ -362,7 +362,18 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
+    // Resets and refreshes everything
     app.commands.set("reset", () => {
+        const channel = app.state.get().channel as TextChannel;
+        const guild = app.state.get().guild as Guild;
+
+        // Reset
+        app.options.nodes.messages.setContent("");
         app.render(true);
+        app.updateChannels(true);
+
+        // Show previous messages and where the client is
+        app.loadPreviousMessages(channel as TextChannel);
+        app.whereAmI(channel as TextChannel, guild as Guild);
     });
 }
