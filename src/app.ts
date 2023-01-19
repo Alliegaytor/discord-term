@@ -16,6 +16,7 @@ import { defaultState } from "./state/stateConstants.js";
 import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
 import stringWidth from "string-width";
+import {UserId} from "./types.js";
 
 
 export type IAppNodes = {
@@ -646,14 +647,21 @@ export default class App extends EventEmitter {
     }
 
     // Load previous messages in a channel
-    public loadPreviousMessages(channel: TextChannel): this {
-        const previousMessages = channel.messages.fetch();
-        previousMessages.then(messages => {
-          this.message.system(`Loading ${messages.size} most recent messages`);
-          messages.reverse().forEach(msg => this.handleMessage(msg))
-        })
+    public loadPreviousMessages(channel: TextChannel): void {
+        const permsNeeded: Array<bigint> = [Permissions.FLAGS.READ_MESSAGE_HISTORY, Permissions.FLAGS.VIEW_CHANNEL];
+        const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.client.user?.id as UserId, permsNeeded);
+        // Return if no perms
+        if (hasPerms.indexOf(false) !== -1) {
+            this.message.system(`Warning: Cannot load messages in ${channel.name} due to insufficient permissions ${permsNeeded[hasPerms.indexOf(false)]}`);
+            return;
+        }
 
-        return this;
+        channel.messages.fetch().then(messages => {
+            this.message.system(`Loading ${messages.size} most recent messages`);
+            messages.reverse().forEach(msg => this.handleMessage(msg));
+        }).catch(() => {
+          this.message.system("Warning: Could not fetch recent messages");
+        })
     }
 
     public render(hard: boolean = false, updateChannels: boolean = false): this {
