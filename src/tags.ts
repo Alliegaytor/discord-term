@@ -1,4 +1,4 @@
-import State from "./state/state";
+import State from "./state/state.js";
 
 export default class Tags {
     protected readonly state: State;

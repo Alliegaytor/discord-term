@@ -1,8 +1,8 @@
-import {Guild, TextChannel, Channel, GuildChannel} from "discord.js";
+import { Guild, TextChannel, Channel, GuildChannel, Permissions } from "discord.js";
 
 export default abstract class Utils {
     public static findDefaultChannel(guild: Guild): TextChannel {
-        const result: TextChannel | undefined | null = guild.channels.cache.find((channel: Channel) => channel.type === "GUILD_TEXT"&& (channel as TextChannel).name.toLowerCase() === "general") as TextChannel;
+        const result: TextChannel | undefined | null = guild.channels.cache.find((channel: Channel) => channel.type === "GUILD_TEXT" && (channel as TextChannel).name.toLowerCase() === "general") as TextChannel;
 
         if (result) {
             return result;

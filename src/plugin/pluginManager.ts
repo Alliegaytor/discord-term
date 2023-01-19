@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import App from "../app";
+import App from "../app.js";
 
 export default class PluginManager {
     protected readonly app: App;

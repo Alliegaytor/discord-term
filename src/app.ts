@@ -1,20 +1,21 @@
-import {TextChannel, Guild, Client, Message, DMChannel, ClientOptions} from "discord.js";
-import Utils from "./utils";
-import blessed, {Widgets} from "blessed";
+import { TextChannel, Guild, Client, Message, DMChannel, ClientOptions, PermissionFlags, Permissions } from "discord.js";
+import Utils from "./utils.js";
+import blessed, { Widgets } from "blessed";
 import chalk from "chalk";
 import fs from "fs";
 import clipboardy from "clipboardy";
 import path from "path";
-import Encryption from "./encryption";
-import {defaultAppOptions} from "./constant";
-import Pattern from "./pattern";
-import setupEvents from "./events";
-import setupInternalCommands from "./commands/internal";
-import {EventEmitter} from "events";
-import State, {IState, IStateOptions} from "./state/state";
-import {defaultState} from "./state/stateConstants";
-import MessageFactory from "./core/messageFactory";
-import Tags from "./tags";
+import Encryption from "./encryption.js";
+import { defaultAppOptions } from "./constant.js";
+import Pattern from "./pattern.js";
+import setupEvents from "./events.js";
+import setupInternalCommands from "./commands/internal.js";
+import { EventEmitter } from "events";
+import State, { IState, IStateOptions } from "./state/state.js";
+import { defaultState } from "./state/stateConstants.js";
+import MessageFactory from "./core/messageFactory.js";
+import Tags from "./tags.js";
+import stringWidth from "string-width";
 
 
 export type IAppNodes = {
@@ -77,13 +78,15 @@ export default class App extends EventEmitter {
 
     public readonly tags: Tags;
 
-    public helpString : string = "";
+    public helpString: string = "";
 
     // Stops log spam caused by the bot typing in a delted channel
     // Also stops the bot from spamming discord every keystroke
     // See startTyping() for more info
-    public __TYPING_LAST_STARTED__ : number = 0;
-    public __TYPING_LAST_CHANNEL__ : TextChannel | null = null;
+    public __TYPING_LAST_STARTED__: number = 0;
+    public __TYPING_LAST_CHANNEL__: TextChannel | null = null;
+
+    public __dirname: string = "";
 
     public constructor(options?: Partial<IAppOptions>, commands: Map<string, ICommandHandler> = new Map()) {
         super();
@@ -109,7 +112,7 @@ export default class App extends EventEmitter {
                 token: this.client.token as string
             });
 
-            // Return if this.clien.user is null just in case
+            // Return if this.client.user is null just in case
             if (this.client.user === null) {
                 this.message.system(`Error: this.client.user is null`);
                 return;
@@ -164,7 +167,7 @@ export default class App extends EventEmitter {
         // Client should not be able to get here if this.client.user is null
         if (this.client.user === null) {
             this.message.system(`Error: this.client.user is null`);
-            throw("Error: this.client.user is null");
+            throw ("Error: this.client.user is null");
         }
 
         const state: IState = this.state.get();
@@ -209,7 +212,7 @@ export default class App extends EventEmitter {
                 this.message.self(this.client.user.tag, content);
             }
             else if (msg.channel.type === "DM") {
-                this.message.special(`${chalk.green("=>")} DM`, (msg.channel as DMChannel).recipient.tag, content, "blue");
+                this.message.special(`${/*chalk.green*/("=>")} DM to`, (msg.channel as DMChannel).recipient.tag, content/*, "blue"*/);
             }
         }
 
@@ -219,21 +222,21 @@ export default class App extends EventEmitter {
 
             if (msg.guild && msg.member) {
                 if (msg.member.permissions.has("MANAGE_MESSAGES")) {
-                    modifiers.push(chalk.red("+"));
+                    //modifiers.push(chalk.red("+"));
                 }
 
                 if (msg.author.bot) {
-                    modifiers.push(chalk.blue("&"));
+                    //modifiers.push(chalk.blue("&"));
                 }
                 if (msg.member.permissions.has("MANAGE_GUILD")) {
-                    modifiers.push(chalk.green("$"));
+                    //modifiers.push(chalk.green("$"));
                 }
             }
 
             this.message.user(msg.author.tag, content, modifiers);
         }
         else if (msg.channel.type === "DM") {
-            this.message.special(`${chalk.green("<=")} DM`, msg.author.tag, content, "blue");
+            this.message.special(`${/*chalk.green*/("<=")} DM from`, msg.author.tag, content/*, "blue"*/);
         }
         else if (this.state.get().globalMessages) {
             this.message.special("Global", msg.author.tag, content);
@@ -304,7 +307,7 @@ export default class App extends EventEmitter {
      */
     // TODO: Cleanup startTyping()
     public async startTyping(): Promise<void> {
-        let state = this.state.get() as IState;
+        let state: IState = this.state.get();
 
         // If it can type
         if (!state.muted && state.guild && state.channel) {
@@ -388,6 +391,8 @@ export default class App extends EventEmitter {
                 channelName = channelName.replace(/[^a-z0-9-_]+/gm, "?");
             }
 
+            // TODO: change this based on channel width
+            // TODO: account for emojis having different widths
             if (channelName.length > 25) {
                 channelName = channelName.substring(0, 21) + " ...";
             }
@@ -417,6 +422,7 @@ export default class App extends EventEmitter {
             channelNode.on("click", () => {
                 if (this.state.get().guild && channel && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
                     this.setActiveChannel(channels[i]);
+                    this.updateChannels(true);
                 }
             });
 
@@ -446,7 +452,7 @@ export default class App extends EventEmitter {
         }*/
 
         // TODO: Allow to change themes folder path (by option).
-        const themePath: string = path.join(__dirname, "../", "themes", `${name}.json`);
+        const themePath: string = path.join(this.__dirname, "../", "themes", `${name}.json`);
 
         if (name === defaultState.theme) {
             this.setTheme(defaultState.theme, defaultState.themeData, 0);
@@ -672,7 +678,7 @@ export default class App extends EventEmitter {
             this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`)
         }
         else if (guild) {
-          this.message.system(`Currently on guild '{bold}${guild.name}{/bold}`);
+            this.message.system(`Currently on guild '{bold}${guild.name}{/bold}`);
         }
         else {
             this.message.system("No active guild");
@@ -684,8 +690,8 @@ export default class App extends EventEmitter {
     // TODO: ADD SAFEGAURDS TO THIS
     public deleteChannel(channel: TextChannel) {
         channel.delete().then(() => {
-          this.updateChannels();
-          this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
+            this.updateChannels();
+            this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
         }).catch(err => this.message.system(err));
     }
 

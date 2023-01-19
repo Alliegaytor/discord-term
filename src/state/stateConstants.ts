@@ -1,4 +1,4 @@
-import {IState} from "./state";
+import {IState} from "./state.js";
 
 export const defaultState: IState = {
     globalMessages: false,

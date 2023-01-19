@@ -1,4 +1,4 @@
-import AtomHandle from "./atomHandle";
+import AtomHandle from "./atomHandle.js";
 
 export default abstract class Atom {
     protected readonly handle: AtomHandle;

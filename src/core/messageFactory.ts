@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import App, {SpecialSenders} from "../app";
+import App, { SpecialSenders } from "../app.js";
 
 export default class MessageFactory {
     protected readonly app: App;
@@ -13,7 +13,7 @@ export default class MessageFactory {
         let messageString: string = message.toString();
 
         if (messageColor.startsWith("#")) {
-            messageString = chalk.hex(messageColor)(messageString);
+            //messageString = chalk.hex(messageColor)(messageString);
         }
         // @ts-ignore
         else if (chalk[messageColor] === undefined || typeof chalk[messageColor] !== "function") {
@@ -36,7 +36,7 @@ export default class MessageFactory {
 
             for (let i: number = 0; i < this.app.state.get().wordPins.length; i++) {
                 while (splitLine.includes(this.app.state.get().wordPins[i])) {
-                    splitLine[splitLine.indexOf(this.app.state.get().wordPins[i])] = chalk.bgCyan.white(this.app.state.get().wordPins[i]);
+                    //splitLine[splitLine.indexOf(this.app.state.get().wordPins[i])] = chalk.bgCyan.white(this.app.state.get().wordPins[i]);
                 }
             }
 

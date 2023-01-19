@@ -1,4 +1,4 @@
-import crypto, {Decipher, Cipher} from "crypto";
+import crypto, { Decipher, Cipher } from "crypto";
 
 export default abstract class Encryption {
     public static encrypt(message: string, password: string): string {

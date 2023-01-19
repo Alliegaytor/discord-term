@@ -1,5 +1,5 @@
-import App from "./app";
-import Encryption from "./encryption";
+import App from "./app.js";
+import Encryption from "./encryption.js";
 
 export default function setupEvents(app: App): void {
     // Screen.
@@ -125,9 +125,9 @@ export default function setupEvents(app: App): void {
     });
 
     app.options.nodes.input.key("down", () => {
-      //  if (app.client.user && app.client.user.lastMessage && app.client.user.lastMessage.deletable) {
-      //      app.client.user.lastMessage.delete();
-      //  }
+        //  if (app.client.user && app.client.user.lastMessage && app.client.user.lastMessage.deletable) {
+        //      app.client.user.lastMessage.delete();
+        //  }
         app.clearInput();
     });
 
@@ -140,6 +140,6 @@ export default function setupEvents(app: App): void {
     });
 
     app.options.nodes.input.key("p", () => {
-      return;
+        return;
     });
 }

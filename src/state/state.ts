@@ -1,8 +1,8 @@
-import {Snowflake, TextChannel, Guild, Message} from "discord.js";
-import {EventEmitter} from "events";
+import { Snowflake, TextChannel, Guild, Message } from "discord.js";
+import { EventEmitter } from "events";
 import fs from "fs";
-import {defaultState} from "./stateConstants";
-import App from "../app";
+import { defaultState } from "./stateConstants.js";
+import App from "../app.js";
 
 export interface IStateOptions {
     readonly stateFilePath: string;
@@ -127,22 +127,22 @@ export default class State extends EventEmitter {
         return false;
     }
 
-    public save(): void {
-        this.app.message.system("Saving application state ...");
-
-        const data: string = JSON.stringify({
-            ...this.state,
-            guild: undefined,
-            channel: undefined,
-            lastMessage: undefined,
-            typingTimeout: undefined,
-            autoHideHeaderTimeout: undefined,
-            themeData: undefined
-        });
-
-        fs.writeFileSync(this.options.stateFilePath, data);
-        this.app.message.system(`Application state saved @ '${this.options.stateFilePath}' (${data.length} bytes)`);
-    }
+    // public save(): void {
+    //     this.app.message.system("Saving application state ...");
+    //
+    //     const data: string = JSON.stringify({
+    //         ...this.state,
+    //         guild: undefined,
+    //         channel: undefined,
+    //         lastMessage: undefined,
+    //         typingTimeout: undefined,
+    //         autoHideHeaderTimeout: undefined,
+    //         themeData: undefined
+    //     });
+    //
+    //     fs.writeFileSync(this.options.stateFilePath, data);
+    //     this.app.message.system(`Application state saved @ '${this.options.stateFilePath}' (${data.length} bytes)`);
+    // }
 
     public saveSync(): this {
         this.app.message.system("Saving application state ...");

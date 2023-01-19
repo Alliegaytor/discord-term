@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
-import App from "../app";
-import {Snowflake, Message, TextChannel, Guild} from "discord.js";
-import {tips} from "../constant";
-import Utils from "../utils";
+import App from "../app.js";
+import { Snowflake, Message, TextChannel, Guild } from "discord.js";
+import { tips } from "../constant.js";
+import Utils from "../utils.js";
 
 export default function setupInternalCommands(app: App): void {
     app.commands.set("login", (args: string[]) => {
