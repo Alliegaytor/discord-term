@@ -29,15 +29,13 @@ export default abstract class Utils {
         const userperms = channel.permissionsFor(userid);
         const results: Array<boolean> = new Array(permissions.length);
 
-        let i: number = 0;
-        permissions.forEach(permission => {
+        permissions.forEach((permission, i) => {
             if (userperms?.has(permission, true)) {
                 results[i] = true;
             }
             else {
                 results[i] = false;
             }
-            i+=1
         })
 
         return results;

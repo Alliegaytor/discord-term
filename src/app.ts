@@ -1,4 +1,4 @@
-import { TextChannel, Guild, Client, Message, DMChannel, ClientOptions, PermissionFlags, Permissions } from "discord.js";
+import { TextChannel, Guild, Client, Message, DMChannel, ClientOptions, Permissions } from "discord.js";
 import Utils from "./utils.js";
 import blessed, { Widgets } from "blessed";
 import chalk from "chalk";
@@ -32,7 +32,7 @@ export type IAppNodes = {
 export interface IAppOptions extends IStateOptions {
     readonly maxMessages: number;
 
-    readonly screen: Widgets.Screen
+    readonly screen: Widgets.Screen;
 
     readonly nodes: IAppNodes;
 
@@ -650,7 +650,13 @@ export default class App extends EventEmitter {
             return;
         }
 
-        channel.messages.fetch().then(messages => {
+        // Find out how many messages to fetch
+        let fetchlimit: number = this.options.nodes.messages.height as number - 3;
+        if (this.options.nodes.messages.height > this.options.maxMessages) {
+            fetchlimit = this.options.maxMessages;
+        }
+
+        channel.messages.fetch({limit: fetchlimit}).then(messages => {
             this.message.system(`Loading ${messages.size} most recent messages`);
             messages.reverse().forEach(msg => this.handleMessage(msg));
         }).catch(() => {
