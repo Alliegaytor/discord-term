@@ -29,19 +29,8 @@ export default class MessageFactory {
             // TODO: Catch error if sender color doesn't exist.
             // @ts-ignore
             .replace("{sender}", chalk[senderColor](sender))
-            .replace("{message}", messageString);
-
-        if (sender !== `{bold}${SpecialSenders.System}{/bold}`) {
-            const splitLine: string[] = line.split(" ");
-
-            for (let i: number = 0; i < this.app.state.get().wordPins.length; i++) {
-                while (splitLine.includes(this.app.state.get().wordPins[i])) {
-                    //splitLine[splitLine.indexOf(this.app.state.get().wordPins[i])] = chalk.bgCyan.white(this.app.state.get().wordPins[i]);
-                }
-            }
-
-            line = splitLine.join(" ");
-        }
+            .replace("{message}", messageString)
+            .replace(/\n/g, " \n"); // Fix for empty new lines
 
         this.app.options.nodes.messages.pushLine(line);
         this.app.options.nodes.messages.setScrollPerc(100);

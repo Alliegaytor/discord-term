@@ -43,7 +43,9 @@ export const defaultAppOptions: IAppOptions = {
 
     screen: blessed.screen({
         smartCSR: true,
-        fullUnicode: true
+        // fastCSR: true,
+        // fullUnicode: true,
+        // forceUnicode: true,
     }),
 
     nodes: {
@@ -60,7 +62,13 @@ export const defaultAppOptions: IAppOptions = {
 
             scrollable: true,
             tags: true,
-            padding: 1
+            padding: 1,
+            mouse: true,
+            // scrollbar: {
+            //   style: {
+            //     bg: 'yellow'
+            //   }
+            // }
         }),
 
         channels: blessed.box({
@@ -75,7 +83,8 @@ export const defaultAppOptions: IAppOptions = {
 
             scrollable: true,
             padding: 1,
-            hidden: true
+            hidden: true,
+            mouse: true,
         }),
 
         input: blessed.textbox({

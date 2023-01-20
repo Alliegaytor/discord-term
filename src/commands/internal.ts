@@ -174,7 +174,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("themes", () => {
-        const themesPath: string = path.join(__dirname, "../../", "themes");
+        const themesPath: string = path.join(app.__dirname, "themes");
 
         if (fs.existsSync(themesPath)) {
             let files: string[] = fs.readdirSync(themesPath);
@@ -183,7 +183,7 @@ export default function setupInternalCommands(app: App): void {
                 files[i] = files[i].replace(".json", "");
             }
 
-            const themesString: string = files.join("\n");
+            const themesString: string = files.join("\n") + "\ndefault";
 
             app.message.system(themesString);
         }
@@ -408,7 +408,7 @@ export default function setupInternalCommands(app: App): void {
 
         // Reset
         app.options.nodes.messages.setContent("");
-        app.render(true);
+        app.render(true, true);
         app.updateChannels(true);
 
         // Show previous messages and where the client is

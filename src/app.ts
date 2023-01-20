@@ -383,19 +383,13 @@ export default class App extends EventEmitter {
         const channels: TextChannel[] = Array.from(guild.channels.cache.filter(channel => channel.type === "GUILD_TEXT").values()) as TextChannel[];
 
         for (let i: number = 0; i < channels.length; i++) {
-            let channelName: string = channels[i].name;
+            let channelName: string = channels[i].name
+                // This fixes UI being messed up due to channel names containing unicode emojis.
+                .replace(Pattern.channels, "?");
 
-            // TODO: Use a constant for the pattern.
-            // This fixes UI being messed up due to channel names containing unicode emojis.
-
-            while (/[^a-z0-9-_?]+/gm.test(channelName)) {
-                channelName = channelName.replace(/[^a-z0-9-_]+/gm, "?");
-            }
-
-            // TODO: change this based on channel width
-            // TODO: account for emojis having different widths
-            if (channelName.length > 25) {
-                channelName = channelName.substring(0, 21) + " ...";
+            // Shrink channels to the right width
+            while (stringWidth(channelName) + 2 >= this.options.nodes.channels.width) {
+                channelName = channelName.slice(0, -1);
             }
 
             const channelNode: Widgets.BoxElement = blessed.box({
@@ -453,7 +447,7 @@ export default class App extends EventEmitter {
         }*/
 
         // TODO: Allow to change themes folder path (by option).
-        const themePath: string = path.join(this.__dirname, "../", "themes", `${name}.json`);
+        const themePath: string = path.join(this.__dirname, "themes", `${name}.json`);
 
         if (name === defaultState.theme) {
             this.setTheme(defaultState.theme, defaultState.themeData, 0);
