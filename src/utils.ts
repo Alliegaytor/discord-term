@@ -1,23 +1,17 @@
-import { Guild, TextChannel, Channel, GuildChannel, Permissions } from "discord.js";
+import { Guild, TextChannel, Channel, GuildChannel, GuildBasedChannel, GuildManager, Permissions } from "discord.js";
 import { UserId } from "./types.js";
 
 export default abstract class Utils {
-    public static findDefaultChannel(guild: Guild): TextChannel {
-        const result: TextChannel | undefined | null = guild.channels.cache.find((channel: Channel) => channel.type === "GUILD_TEXT" && (channel as TextChannel).name.toLowerCase() === "general") as TextChannel;
+    public static findDefaultChannel(guild: Guild): TextChannel | null {
+        const channels: TextChannel[] = Utils.getChannels(guild, "GUILD_TEXT") as TextChannel[];
 
-        if (result) {
-            return result;
+        // Return null if there are no text channels
+        if (channels.length === 0) {
+            return null;
         }
 
-        const channels: GuildChannel[] = Array.from(guild.channels.cache.values()) as GuildChannel[];
-
-        for (let i: number = 0; i < channels.length; i++) {
-            if (channels[i].type === "GUILD_TEXT") {
-                return channels[i] as TextChannel;
-            }
-        }
-
-        throw new Error(`[Utils.findDefaultChannel] Guild '${guild.name}' does not contain any text channels`);
+        // Return the "general" chat ?? the first channel
+        return channels.find((channel: TextChannel) => channel.name.toLowerCase() === "general") ?? channels[0]
     }
 
     public static getRandomInt(min: number, max: number): number {
@@ -39,5 +33,18 @@ export default abstract class Utils {
         })
 
         return results;
+    }
+
+    // Returns guilds client is in as Guild[]
+    public static getGuilds(guilds: GuildManager): Guild[] {
+        return Array.from(guilds.cache.values());
+    }
+
+    // Returns text channels in a server as GuildBasedChannel[]
+    // TODO: Handle different kinds of channls
+    public static getChannels(guild: Guild, channeltype: string): GuildBasedChannel[] {
+        // Channel types:
+        // GUILD_TEXT GUILD_NEWS ThreadChannelTypes GUILD_CATEGORY GUILD_STAGE_VOICE GUILD_STORE GUILD_VOICE
+        return Array.from(guild.channels.cache.filter(channel => channel.type === channeltype).values());
     }
 }
