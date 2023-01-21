@@ -1,5 +1,5 @@
 # ⚠️ In active development!
-Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree.
+**Discord Term** Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree on github.
 
 The project needs active maintainers. Any help would be greatly appreciated!
 
@@ -14,7 +14,7 @@ A cross platform extensible Discord terminal client. Can currently be only used 
 ### Screenshots
 
 ## Linux preview
-![Linux preview](https://i.imgur.com/CBbhXTP.gif)
+![Linux preview](https://i.imgur.com/56eoNyA.gif)
 
 ## Windows 10 preview
 ![Windows 10 preview](https://i.ibb.co/JK3SGdJ/e.png)
@@ -37,14 +37,14 @@ sudo npm install -g
 
 That's it! Although keep in mind that since the project is unfinished, you might encounter some bugs here and there. Please report them if you do find them!
 
-**This project has been tested and verified as working on native Ubuntu terminal and Windows command prompt + PowerShell using Node.js 10**
+**This project has been tested and is developed on Linux, using Alacritty with Node.js 16 and typescript 4.9.4**
 
 Pst. Consider **starring** the repository if you like it! <3
 
 
 ### Usage
 
-Once you've started the program, use `/login <token>` to connect to Discord. Alternatively you can use the environmental variable `DTERM_TOKEN` to login.
+Once you've started the program, use `/login <token>` to connect to Discord. Alternatively you can use the environmental variable `DTERM_TOKEN` or have your token in the clipboard to login.
 
 See the links below for information on retrieving login tokens:
 
@@ -53,7 +53,15 @@ See the links below for information on retrieving login tokens:
 
 You can issue the `/help` command to display all available commands.
 
-Discord Terminal will show you the first channel in the first server that the Discord API is set to find. The channels are on the left hand side and you can click on them to navigate through them. The previous  
+Discord Terminal will show you the first channel in the first server that the Discord API is set to find. The channels are on the left hand side and you can click on them to navigate through them.
+
+The command `/tc` toggles the visibility of the channel picker, and `/tg` toggles the server (guild) picker. By default only the channel picker is visible.
+
+You can use `/tip` to give you some tips in the headerbar (the top bar on the screen). These are currently being worked on and are incomplete.
+
+The headerbar can be disabled with `/toggleheader` and Discord Term will remember your preference.
+
+If anything bugs out use `/reset`. It *should* fix almost all visual problems.
 
 ### Planned Features
 
@@ -71,7 +79,9 @@ Discord Terminal will show you the first channel in the first server that the Di
 
 - [ ] Userbot
 
-- [ ] Status bar (current channel, guild, etc.)
+- [X] Status bar (current channel, guild, etc.)
+
+- [X] Scrolling
 
 - [ ] Message logging (with file-based or database support)
 
