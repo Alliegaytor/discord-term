@@ -96,7 +96,7 @@ export default function setupEvents(app: App): void {
                 }
 
                 app.state.get().channel?.send({ content: msg }).catch((error: Error) => {
-                    app.message.system(`Unable to send message: ${error.message}`);
+                    app.message.error(`Unable to send message: ${error.message}`);
                 });
             }
             else {

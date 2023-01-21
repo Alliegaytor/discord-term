@@ -70,4 +70,16 @@ export default class MessageFactory {
 
         return this;
     }
+
+    public warn(message: string): this {
+        this.create(`{bold}${SpecialSenders.Warning}{/bold}`, message, "yellowBright");
+
+        return this;
+    }
+
+    public error(message: string): this {
+        this.create(`{bold}${SpecialSenders.Error}{/bold}`, message, "redBright");
+
+        return this;
+    }
 }

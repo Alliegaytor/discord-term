@@ -52,7 +52,9 @@ export interface IAppOptions extends IStateOptions {
 }
 
 export enum SpecialSenders {
-    System = "System"
+    System = "System",
+    Warning = "Warning",
+    Error = "Error"
 }
 
 export type ICommandHandler = (args: string[], app: App) => void;
@@ -115,7 +117,7 @@ export default class App extends EventEmitter {
 
             // Return if this.client.user is null just in case
             if (this.client.user === null) {
-                this.message.system(`Error: this.client.user is null`);
+                this.message.error(`Error: this.client.user is null`);
                 return;
             }
 
@@ -134,7 +136,7 @@ export default class App extends EventEmitter {
         this.client.on("messageCreate", this.handleMessage.bind(this));
 
         this.client.on("error", (error: Error) => {
-            this.message.system(`An error occurred within the client: ${error.message}`);
+            this.message.error(`An error occurred within the client: ${error.message}`);
         });
 
         this.client.on("guildCreate", (guild: Guild) => {
@@ -143,6 +145,10 @@ export default class App extends EventEmitter {
 
         this.client.on("guildDelete", (guild: Guild) => {
             this.message.system(`Left guild '{bold}${guild.name}{/bold}' (${guild.memberCount} members)`);
+            if (guild === this.state.get().guild) {
+                this.message.warn("Client was viewing this guild!");
+                this.setActiveGuild(this.client.guilds.cache.first() as Guild);
+            }
         });
 
         // Append nodes.
@@ -167,7 +173,6 @@ export default class App extends EventEmitter {
     private handleMessage(msg: Message): void {
         // Client should not be able to get here if this.client.user is null
         if (this.client.user === null) {
-            this.message.system(`Error: this.client.user is null`);
             throw ("Error: this.client.user is null");
         }
 
@@ -320,7 +325,7 @@ export default class App extends EventEmitter {
 
                 // Start typing and catch errors
                 await state.channel.sendTyping().catch((error: Error) => {
-                    this.message.system(`startTyping() failed: ${error.message}`);
+                    this.message.error(`startTyping() failed: ${error.message}`);
                 })
             }
         }
@@ -463,7 +468,7 @@ export default class App extends EventEmitter {
             this.setTheme(name, JSON.parse(theme), theme.length);
         }
         else {
-            this.message.system("Such theme file could not be found (Are you sure thats under the {bold}themes{/bold} folder?)");
+            this.message.warn(`The theme {bold}"${name}"{/bold} could not be found (Are you sure thats under the {bold}themes{/bold} folder?)`);
         }
 
         return this;
@@ -471,7 +476,7 @@ export default class App extends EventEmitter {
 
     public setTheme(name: string, data: any, length: number): this {
         if (!data) {
-            this.message.system("Error while setting theme: No data was provided for the theme");
+            this.message.error("Error while setting theme: No data was provided for the theme");
 
             return this;
         }
@@ -519,7 +524,7 @@ export default class App extends EventEmitter {
 
     public login(token: string): this {
         this.client.login(token).catch((error: Error) => {
-            this.message.system(`Login failed: ${error.message}`);
+            this.message.error(`Login failed: ${error.message}`);
         });
 
         return this;
@@ -558,7 +563,7 @@ export default class App extends EventEmitter {
         });
 
         if (!guild) {
-            this.message.system(`Warning: Guild undefined`);
+            this.message.warn(`Guild undefined`);
             return this;
         }
 
@@ -570,7 +575,7 @@ export default class App extends EventEmitter {
             this.setActiveChannel(defaultChannel);
         }
         else {
-            this.message.system(`Warning: Guild '${guild.name}' doesn't have any text channels`);
+            this.message.warn(`Guild '${guild.name}' doesn't have any text channels`);
             // Sets current channel to undefined
             // This is very important as it makes sure the client can't delete channels from other servers
             this.state.update({
@@ -652,7 +657,7 @@ export default class App extends EventEmitter {
         const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.client.user?.id as UserId, permsNeeded);
         // Return if no perms
         if (hasPerms.indexOf(false) !== -1) {
-            this.message.system(`Warning: Cannot load messages in ${channel.name} due to insufficient permissions ${permsNeeded[hasPerms.indexOf(false)]}`);
+            this.message.error(`Cannot load messages in ${channel.name} due to insufficient permissions "${permsNeeded[hasPerms.indexOf(false)]}"`);
             return;
         }
 
@@ -665,8 +670,9 @@ export default class App extends EventEmitter {
         channel.messages.fetch({limit: fetchlimit}).then(messages => {
             this.message.system(`Loading ${messages.size} most recent messages`);
             messages.reverse().forEach(msg => this.handleMessage(msg));
-        }).catch(() => {
-          this.message.system("Warning: Could not fetch recent messages");
+        }).catch(err => {
+          this.message.error(err);
+          this.message.warn("Could not fetch recent messages");
         })
     }
 
@@ -714,8 +720,8 @@ export default class App extends EventEmitter {
                 return true;
             })
             .catch((err) => {
-                this.message.system(`${err}`);
-                this.message.system(`Warning: Could not delete channel ${channel.name}`);
+                this.message.error(`${err}`);
+                this.message.warn(`Could not delete channel ${channel.name}`);
             });
         return false;
     }
@@ -727,8 +733,8 @@ export default class App extends EventEmitter {
                 this.message.system("Message deleted");
             })
             .catch(err => {
-                this.message.system(`${err}`);
-                this.message.system(`Warning: Could not delete message '${message.id}'`);
+                this.message.error(`${err}`);
+                this.message.warn(`Could not delete message '${message.id}'`);
             });
     }
 
@@ -739,8 +745,8 @@ export default class App extends EventEmitter {
                 this.message.system(`Message edited from "${message.content}" -> "${editedMessage}"`);
             })
             .catch((err) => {
-                this.message.system(`${err}`);
-                this.message.system(`Warning: Could not edit message '${message.id}'`)
+                this.message.error(`${err}`);
+                this.message.warn(`Could not edit message '${message.id}'`)
             });
     }
 }

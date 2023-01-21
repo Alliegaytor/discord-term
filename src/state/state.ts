@@ -103,7 +103,7 @@ export default class State extends EventEmitter {
             return new Promise<boolean>((resolve) => {
                 fs.readFile(this.options.stateFilePath, (error: Error | null, data: Buffer) => {
                     if (error) {
-                        this.app.message.system(`There was an error while reading the state file: ${error.message}`);
+                        this.app.message.error(`There was an error while reading the state file: ${error.message}`);
 
                         resolve(false);
 

@@ -10,5 +10,5 @@ try {
     app.setup();
 }
 catch (error: any) {
-    app.message.system(error);
+    console.log(error);
 }

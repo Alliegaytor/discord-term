@@ -77,7 +77,7 @@ export default function setupInternalCommands(app: App): void {
 
         // See if message exists
         const message: Message | void | undefined = await state.lastMessage?.channel.messages.fetch(args[0]).catch(() => {
-            app.message.system("That message doesn't exist or it is not editable");
+            app.message.warn("That message doesn't exist or it is not editable");
         });
 
         // If message is defined continue
@@ -104,7 +104,7 @@ export default function setupInternalCommands(app: App): void {
 
         // See if message exists
         const message: Message | void | undefined = await state.lastMessage?.channel.messages.fetch(args[0]).catch(() => {
-            app.message.system("That message doesn't exist or it is not editable");
+            app.message.warn("That message doesn't exist or it is not editable");
         });
 
         // If message is defined continue
@@ -187,7 +187,7 @@ export default function setupInternalCommands(app: App): void {
             app.message.system(themesString);
         }
         else {
-            app.message.system("Themes directory does not exist");
+            app.message.error("Themes directory does not exist");
         }
     });
 
@@ -228,7 +228,7 @@ export default function setupInternalCommands(app: App): void {
 
     app.commands.set("dm", async (args: string[]) => {
         if (!args[0] || !args[1]) {
-            app.message.system("Expecting both recipient and message arguments");
+            app.message.warn("Expecting both recipient and message arguments");
 
             return;
         }
@@ -237,7 +237,7 @@ export default function setupInternalCommands(app: App): void {
 
         await app.client.users.fetch(args[0]).then(user => {
             user.send(args.slice(1).join(" ")).catch((error: Error) => {
-                app.message.system(`Unable to send message: ${error.message}`);
+                app.message.error(`Unable to send message: ${error.message}`);
             });
         });
     });
@@ -386,7 +386,7 @@ export default function setupInternalCommands(app: App): void {
                 app.setActiveChannel(channel as TextChannel);
             }
             else {
-                app.message.system(`Such channel does not exist in guild '${state.guild.name}'`);
+                app.message.warn(`Channel does not exist`);
             }
         }
     });
@@ -396,7 +396,7 @@ export default function setupInternalCommands(app: App): void {
             app.setActiveGuild(app.client.guilds.cache.get(args[0]) as Guild);
         }
         else {
-            app.message.system("Such guild does not exist");
+            app.message.warn(`Guild ${args[0]} does not exist`);
         }
     });
 
@@ -427,7 +427,7 @@ export default function setupInternalCommands(app: App): void {
 
         // Do not delete channel if there is none
         if (!channel) {
-            let message: string = "Warning: You are not on a channel!";
+            let message: string = "Could not delete: You are not on a channel!";
             if (guild) {
                 message = message + ` This is because ${guild.name} has 0 text channels`;
             }
@@ -443,7 +443,7 @@ export default function setupInternalCommands(app: App): void {
               app.setActiveChannel(newchannel);
             }
             else {
-              app.message.system(`Info: The last text channel in ${guild.name} has been deleted`);
+              app.message.system(`The last text channel in ${guild.name} has been deleted`);
             }
         };
 
