@@ -12,7 +12,9 @@ export const tips: string[] = [
     "Press {bold}ESC{/bold} anytime to clear the current input",
     "Press {bold}UP{/bold} to edit your last message",
     "Exiting with {bold}CTRL + C{/bold} is recommended since it will automatically save state",
-    "Press {bold}CTRL + X{/bold} to force exit without saving state"
+    "Press {bold}CTRL + X{/bold} to force exit without saving state",
+    "Use {bold}{prefix}/tg{/bold} to toggle on/off the guild menu",
+    "Use {bold}{prefix}/tc{/bold} to toggle on/off the channels menu",
 ];
 
 export const defaultAppOptions: IAppOptions = {
@@ -41,6 +43,7 @@ export const defaultAppOptions: IAppOptions = {
     rightWidth: "92%-11",
     leftWidth: "8%+11",
     headerPrefix: "[!] ",
+    helpString: "",
 
     screen: blessed.screen({
         smartCSR: true,
@@ -75,12 +78,13 @@ export const defaultAppOptions: IAppOptions = {
         channels: blessed.box({
             top: "0%",
             left: "0%",
+            width: "0%+15",
             height: "100%",
 
             style: {
                 fg: defaultState.themeData.channels.foregroundColor,
                 bg: defaultState.themeData.channels.backgroundColor
-            } as any,
+            },
 
             scrollable: true,
             padding: 1,
@@ -117,6 +121,23 @@ export const defaultAppOptions: IAppOptions = {
             padding: 1,
             hidden: true,
             tags: true
+        }),
+
+        servers: blessed.box({
+            top: "0%",
+            left: "0%",
+            width: "0%+15",
+            height: "100%",
+
+            style: {
+                fg: defaultState.themeData.channels.foregroundColor,
+                bg: defaultState.themeData.channels.backgroundColor
+            },
+
+            scrollable: true,
+            padding: 1,
+            hidden: true,
+            mouse: true,
         })
     }
 };

@@ -243,9 +243,14 @@ export default function setupInternalCommands(app: App): void {
     });
 
     // Toggles channels visibility
-    app.commands.set("fullscreen", () => {
+    app.commands.set("tc", () => {
         app.toggleChannels();
     });
+
+    // Toggles servers visibility
+    app.commands.set("tg", () => {
+        app.toggleGuilds();
+    })
 
     // Displays name#1234 and ping. Example output:
     // <System> Logged in as Test#5782 | 216ms
@@ -323,7 +328,7 @@ export default function setupInternalCommands(app: App): void {
     // TODO: have a dictonary in constants and use that if there is an argument for a specific help cmd
     app.commands.set("help", () => {
         // Generate /help only if needed
-        if (app.helpString === "") {
+        if (app.options.helpString === "") {
             let helpList: Array<string> = [];
 
             for (let [name] of app.commands) {
@@ -331,10 +336,10 @@ export default function setupInternalCommands(app: App): void {
             }
 
             // Join Array
-            app.helpString = helpList.join(", ");
+            app.options.helpString = helpList.join(", ");
         }
 
-        app.message.system(`Commands available: \n${app.helpString}`);
+        app.message.system(`Commands available: \n${app.options.helpString}`);
     });
 
     app.commands.set("global", () => {
@@ -407,8 +412,10 @@ export default function setupInternalCommands(app: App): void {
 
         // Reset
         app.options.nodes.messages.setContent("");
+        app.blessedNodeWidths(0);
         app.render(true, true);
         app.updateChannels(true);
+        app.showChannels();
 
         if (channel) {
             // Show previous messages and where the client is

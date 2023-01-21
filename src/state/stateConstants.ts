@@ -13,7 +13,7 @@ export const defaultState: IState = {
     theme: "default",
     decriptionKey: "discord-term",
     encrypt: false,
-    header: false,
+    header: true,
     typingLastStarted: 0,
     typingLastChannel: null,
 
@@ -38,6 +38,13 @@ export const defaultState: IState = {
         header: {
             foregroundColor: "black",
             backgroundColor: "white"
+        },
+
+        servers: {
+            foregroundColor: "white",
+            backgroundColor: "black",
+            foregroundColorHover: "white",
+            backgroundColorHover: "gray"
         }
     }
 };

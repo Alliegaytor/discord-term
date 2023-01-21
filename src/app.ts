@@ -27,6 +27,8 @@ export type IAppNodes = {
     readonly input: Widgets.TextboxElement;
 
     readonly header: Widgets.BoxElement;
+
+    readonly servers: Widgets.BoxElement;
 }
 
 export interface IAppOptions extends IStateOptions {
@@ -51,6 +53,8 @@ export interface IAppOptions extends IStateOptions {
     readonly rightWidth: string;
 
     readonly headerPrefix: string;
+
+    helpString: string;
 }
 
 export enum SpecialSenders {
@@ -82,14 +86,6 @@ export default class App extends EventEmitter {
     public readonly message: MessageFactory;
 
     public readonly tags: Tags;
-
-    public helpString: string = "";
-
-    // Stops log spam caused by the bot typing in a delted channel
-    // Also stops the bot from spamming discord every keystroke
-    // See startTyping() for more info
-    public __TYPING_LAST_STARTED__: number = 0;
-    public __TYPING_LAST_CHANNEL__: TextChannel | null = null;
 
     public __dirname: string = "";
 
@@ -131,7 +127,9 @@ export default class App extends EventEmitter {
                 this.setActiveGuild(firstGuild);
             }
 
-            this.showChannels();
+            this.toggleChannels();
+            // this.toggleGuilds();
+            this.showHeader(`Type ${this.options.commandPrefix}tg to show the guild switch menu`, true);
             this.state.saveSync();
         });
 
@@ -157,6 +155,7 @@ export default class App extends EventEmitter {
         this.options.screen.append(this.options.nodes.input);
         this.options.screen.append(this.options.nodes.messages);
         this.options.screen.append(this.options.nodes.channels);
+        this.options.screen.append(this.options.nodes.servers);
         this.options.screen.append(this.options.nodes.header);
 
         // Sync state.
@@ -251,42 +250,43 @@ export default class App extends EventEmitter {
         }
     }
 
-    public showChannels() {
-        this.message.system("Showing channels");
-
+    // Handles resizing blessed boxes
+    public blessedNodeWidths(width: number) {
+        // Resets widths
+        if (width === 0) {
+            this.options.nodes.messages.width = "100%";
+            this.options.nodes.messages.left = "0%";
+            // Input.
+            this.options.nodes.input.width = "100%";
+            this.options.nodes.input.left = "0%"
+            // Header.
+            this.options.nodes.header.width = "100%";
+            this.options.nodes.header.left = "0%";
+            // Channels.
+            this.options.nodes.channels.left = "0";
+            this.options.nodes.channels.hide();
+            // Servers.
+            this.options.nodes.servers.hide();
+        }
         // Messages.
-        this.options.nodes.messages.width = this.options.rightWidth;
-        this.options.nodes.messages.left = this.options.leftWidth;
-
+        this.options.nodes.messages.width = this.options.nodes.messages.width as number - width;
+        this.options.nodes.messages.left = this.options.nodes.messages.left as number + width;
         // Input.
-        this.options.nodes.input.width = this.options.rightWidth;
-        this.options.nodes.input.left = this.options.leftWidth;
-
+        this.options.nodes.input.width = this.options.nodes.input.width as number - width;
+        this.options.nodes.input.left = this.options.nodes.input.left as number + width;
         // Header.
-        this.options.nodes.header.width = this.options.rightWidth;
-        this.options.nodes.header.left = this.options.leftWidth;
+        this.options.nodes.header.width = this.options.nodes.header.width as number -width;
+        this.options.nodes.header.left = this.options.nodes.header.left as number + width;
+    }
 
-        // Channels
-        this.options.nodes.channels.width = this.options.leftWidth;
-
+    public showChannels() {
+        this.blessedNodeWidths(18);
         this.options.nodes.channels.show();
         this.render();
     }
 
     public hideChannels() {
-        this.message.system("Hiding channels");
-        // Messages.
-        this.options.nodes.messages.width = "100%";
-        this.options.nodes.messages.left = "0%";
-
-        // Input.
-        this.options.nodes.input.width = "100%";
-        this.options.nodes.input.left = "0%";
-
-        // Header.
-        this.options.nodes.header.width = "100%";
-        this.options.nodes.header.left = "0%";
-
+        this.blessedNodeWidths(-18);
         this.options.nodes.channels.hide();
         this.render();
     }
@@ -294,6 +294,29 @@ export default class App extends EventEmitter {
     // Toggle channel visibility
     public toggleChannels() {
         this.options.nodes.channels.visible ? this.hideChannels() : this.updateChannels() && this.showChannels();
+    }
+
+    public showGuilds() {
+        this.blessedNodeWidths(18);
+
+        if (this.options.nodes.channels.visible) {
+            this.options.nodes.channels.left = "18";
+        }
+
+        this.options.nodes.servers.show();
+        this.render();
+    }
+
+    public hideGuilds() {
+        this.blessedNodeWidths(-18);
+        this.options.nodes.channels.left = "0";
+        this.options.nodes.servers.hide();
+        this.render();
+    }
+
+    // Toggle server visibility
+    public toggleGuilds() {
+        this.options.nodes.servers.visible ? this.hideGuilds() : this.updateGuilds() && this.showGuilds();
     }
 
     private setupEvents(): this {
@@ -372,9 +395,6 @@ export default class App extends EventEmitter {
         if (!guild) {
             return this;
         }
-
-        const channel = this.state.get().channel as TextChannel;
-
         // Fixes "ghost" children bug.
         while (this.options.nodes.channels.children.length > 0) {
             this.options.nodes.channels.remove(this.options.nodes.channels.children[0]);
@@ -399,7 +419,6 @@ export default class App extends EventEmitter {
                     bg: this.state.get().themeData.channels.backgroundColor,
                     fg: this.state.get().themeData.channels.foregroundColor,
 
-                    // TODO: Not working
                     bold: this.state.get().channel !== undefined && this.state.get().channel?.id === channels[i].id,
 
                     hover: {
@@ -417,6 +436,7 @@ export default class App extends EventEmitter {
             });
 
             channelNode.on("click", () => {
+                const channel = this.state.get().channel as TextChannel;
                 if (this.state.get().guild && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
                     this.setActiveChannel(channels[i]);
                     this.updateChannels(true);
@@ -424,6 +444,66 @@ export default class App extends EventEmitter {
             });
 
             this.options.nodes.channels.append(channelNode);
+        }
+
+        if (render) {
+            this.render(false, false);
+        }
+
+        return this;
+    }
+
+    public updateGuilds(render: boolean = false): this {
+        // Grab all available guilds
+        const guilds: Guild[] = Utils.getGuilds(this.client.guilds);
+
+        // Fixes "ghost" children bug.
+        while (this.options.nodes.servers.children.length > 0) {
+            this.options.nodes.servers.remove(this.options.nodes.servers.children[0]);
+        }
+
+
+        for (let i: number = 0; i < guilds.length; i++) {
+            let guildName: string = guilds[i].name
+                // This fixes UI being messed up due to channel names containing unicode emojis.
+                .replace(Pattern.channels, "?");
+
+            // Shrink channels to the right width
+            while (stringWidth(guildName) + 2 >= this.options.nodes.servers.width) {
+                guildName = guildName.slice(0, -1);
+            }
+
+            const guildNode: Widgets.BoxElement = blessed.box({
+                style: {
+                    bg: this.state.get().themeData.servers.backgroundColor,
+                    fg: this.state.get().themeData.servers.foregroundColor,
+
+                    // TODO: Not working
+                    // bold: this.state.get().guild !== undefined && this.state.get().guild?.id === guilds[i].id,
+
+                    hover: {
+                        bg: this.state.get().themeData.servers.backgroundColorHover,
+                        fg: this.state.get().themeData.servers.foregroundColorHover
+                    }
+                },
+
+                content: `#${guildName}`,
+                width: "100%-2",
+                height: "shrink",
+                top: i,
+                left: "0%",
+                clickable: true
+            });
+
+            guildNode.on("click", () => {
+                const guild: Guild = this.state.get().guild as Guild;
+                if (this.state.get().guild && guilds[i].id !== guild.id) {
+                    this.setActiveGuild(guilds[i]);
+                    this.updateChannels(true);
+                }
+            });
+
+            this.options.nodes.servers.append(guildNode);
         }
 
         if (render) {
@@ -680,13 +760,15 @@ export default class App extends EventEmitter {
             fetchlimit = this.options.maxMessages;
         }
 
-        channel.messages.fetch({limit: fetchlimit}).then(messages => {
-            this.message.system(`Loading ${messages.size} most recent messages`);
-            messages.reverse().forEach(msg => this.handleMessage(msg));
-        }).catch(err => {
-          this.message.error(err);
-          this.message.warn("Could not fetch recent messages");
-        })
+        channel.messages.fetch({limit: fetchlimit})
+            .then(messages => {
+                this.message.system(`Loading ${messages.size} most recent messages`);
+                messages.reverse().forEach(msg => this.handleMessage(msg));
+            })
+            .catch(err => {
+                this.message.error(err);
+                this.message.warn("Could not fetch recent messages");
+            });
     }
 
     public render(hard: boolean = false, updateChannels: boolean = false): this {
