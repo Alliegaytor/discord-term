@@ -40,6 +40,7 @@ export const defaultAppOptions: IAppOptions = {
     headerAutoHideTimeoutPerChar: 100,
     rightWidth: "92%-11",
     leftWidth: "8%+11",
+    headerPrefix: "[!] ",
 
     screen: blessed.screen({
         smartCSR: true,

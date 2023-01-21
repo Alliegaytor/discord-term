@@ -49,6 +49,8 @@ export interface IAppOptions extends IStateOptions {
     readonly leftWidth: string;
 
     readonly rightWidth: string;
+
+    readonly headerPrefix: string;
 }
 
 export enum SpecialSenders {
@@ -568,6 +570,9 @@ export default class App extends EventEmitter {
         }
 
         this.message.system(`Switched to guild '{bold}${guild.name}{/bold}'`);
+        if (this.state.get().header) {
+            this.showHeader(`Guild: ${guild.name}`);
+        }
 
         const defaultChannel: TextChannel | null = Utils.findDefaultChannel(guild);
 
@@ -589,12 +594,15 @@ export default class App extends EventEmitter {
         return this;
     }
 
-    public showHeader(text: string, autoHide: boolean = false): boolean {
+    public showHeader(text: string, autoHide: boolean = false) {
         if (!text) {
             throw new Error("[App.showHeader] Expecting header text");
         }
+        // Remember intial text
+        const headerIntialText: string = this.options.nodes.header.content;
+        const headerEnabled: boolean = this.state.get().header;
 
-        this.options.nodes.header.content = `[!] ${text}`;
+        this.options.nodes.header.content = `${this.options.headerPrefix + text}`;
 
         if (!this.options.nodes.header.visible) {
             // Messages.
@@ -605,19 +613,30 @@ export default class App extends EventEmitter {
             this.options.nodes.header.hidden = false;
         }
 
+        // Autohides. Dependent on headerAutoHideTimeoutPerChar
         if (autoHide) {
             if (this.state.get().autoHideHeaderTimeout) {
                 clearTimeout(this.state.get().autoHideHeaderTimeout);
             }
-
-            this.state.update({
-                autoHideHeaderTimeout: setTimeout(this.hideHeader.bind(this), text.length * this.options.headerAutoHideTimeoutPerChar)
-            });
+            // Reset text if header enabled
+            if (headerEnabled) {
+                setTimeout(() => {
+                    // If unchanged
+                    if (this.options.nodes.header.content === this.options.headerPrefix + text) {
+                        this.options.nodes.header.content = headerIntialText;
+                        this.render();
+                    }
+                }, text.length * this.options.headerAutoHideTimeoutPerChar);
+            }
+            // Otherwise hide the header
+            else {
+                this.state.update({
+                  autoHideHeaderTimeout: setTimeout(this.hideHeader.bind(this), text.length * this.options.headerAutoHideTimeoutPerChar)
+                });
+            }
         }
 
         this.render();
-
-        return true;
     }
 
     public hideHeader(): boolean {

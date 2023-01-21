@@ -446,6 +446,16 @@ export default function setupInternalCommands(app: App): void {
               app.message.system(`The last text channel in ${guild.name} has been deleted`);
             }
         };
-
     });
+
+    // Toggle header
+    app.commands.set("toggleheader", () => {
+          app.options.nodes.header.visible ? app.hideHeader() : app.showHeader("Header activated!");
+          // Toggle
+          const header: boolean = !(app.state.get().header === true);
+          app.state.update({
+              header: header
+          });
+          app.message.system(`Header has been: ${header}`);
+    })
 }

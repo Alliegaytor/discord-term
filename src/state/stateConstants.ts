@@ -13,6 +13,7 @@ export const defaultState: IState = {
     theme: "default",
     decriptionKey: "discord-term",
     encrypt: false,
+    header: false,
 
     themeData: {
         messages: {

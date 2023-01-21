@@ -43,6 +43,8 @@ export interface IState {
 
     readonly decriptionKey: string;
 
+    readonly header: boolean;
+
     readonly encrypt: boolean;
 
     readonly token?: string;
