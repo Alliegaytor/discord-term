@@ -251,56 +251,49 @@ export default class App extends EventEmitter {
         }
     }
 
-    public showChannels(): this {
-        if (this.options.nodes.channels.hidden) {
-            // Messages.
-            this.options.nodes.messages.width = this.options.rightWidth;
-            this.options.nodes.messages.left = this.options.leftWidth;
+    public showChannels() {
+        this.message.system("Showing channels");
 
-            // Input.
-            this.options.nodes.input.width = this.options.rightWidth;
-            this.options.nodes.input.left = this.options.leftWidth;
+        // Messages.
+        this.options.nodes.messages.width = this.options.rightWidth;
+        this.options.nodes.messages.left = this.options.leftWidth;
 
-            // Header.
-            this.options.nodes.header.width = this.options.rightWidth;
-            this.options.nodes.header.left = this.options.leftWidth;
+        // Input.
+        this.options.nodes.input.width = this.options.rightWidth;
+        this.options.nodes.input.left = this.options.leftWidth;
 
-            // Channels
-            this.options.nodes.channels.width = this.options.leftWidth;
+        // Header.
+        this.options.nodes.header.width = this.options.rightWidth;
+        this.options.nodes.header.left = this.options.leftWidth;
 
-            this.options.nodes.channels.show();
-            this.render();
-        }
+        // Channels
+        this.options.nodes.channels.width = this.options.leftWidth;
 
-        return this;
+        this.options.nodes.channels.show();
+        this.render();
     }
 
-    public hideChannels(): this {
-        if (!this.options.nodes.channels.hidden) {
-            // Messages.
-            this.options.nodes.messages.width = "100%";
-            this.options.nodes.messages.left = "0%";
+    public hideChannels() {
+        this.message.system("Hiding channels");
+        // Messages.
+        this.options.nodes.messages.width = "100%";
+        this.options.nodes.messages.left = "0%";
 
-            // Input.
-            this.options.nodes.input.width = "100%";
-            this.options.nodes.input.left = "0%";
+        // Input.
+        this.options.nodes.input.width = "100%";
+        this.options.nodes.input.left = "0%";
 
-            // Header.
-            this.options.nodes.header.width = "100%";
-            this.options.nodes.header.left = "0%";
+        // Header.
+        this.options.nodes.header.width = "100%";
+        this.options.nodes.header.left = "0%";
 
-            this.options.nodes.channels.hide();
-            this.render();
-        }
-
-        return this;
+        this.options.nodes.channels.hide();
+        this.render();
     }
 
     // Toggle channel visibility
-    public toggleChannels(): this {
+    public toggleChannels() {
         this.options.nodes.channels.visible ? this.hideChannels() : this.updateChannels() && this.showChannels();
-
-        return this;
     }
 
     private setupEvents(): this {
@@ -316,14 +309,15 @@ export default class App extends EventEmitter {
     // TODO: Cleanup startTyping()
     public async startTyping(): Promise<void> {
         let state: IState = this.state.get();
-
         // If it can type
         if (!state.muted && state.guild && state.channel) {
             // If it has never typed or it has been more than 10 seconds since the last time
-            if (this.__TYPING_LAST_CHANNEL__ !== state.channel || new Date().getTime() - this.__TYPING_LAST_STARTED__ > 10000) {
-                // Update global variables
-                this.__TYPING_LAST_STARTED__ = new Date().getTime();
-                this.__TYPING_LAST_CHANNEL__ = state.channel;
+            if (state.typingLastChannel !== state.channel || new Date().getTime() - state.typingLastStarted > 10000) {
+                // Update state
+                this.state.update({
+                    typingLastStarted: new Date().getTime(),
+                    typingLastChannel: state.channel
+                });
 
                 // Start typing and catch errors
                 await state.channel.sendTyping().catch((error: Error) => {
@@ -727,22 +721,32 @@ export default class App extends EventEmitter {
 
     // Deletes specified channel
     // TODO: ADD SAFEGAURDS TO THIS
-    public async deleteChannel(channel: TextChannel): Promise<boolean> {
+    public async deleteChannel(channel: TextChannel) {
         if (!channel) {
-            return false;
+            return;
         }
 
-        channel.delete()
+        await channel.delete()
             .then(() => {
                 this.updateChannels();
                 this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
-                return true;
             })
+            // Move to another channel if there is one
+            .then(() => {
+                const guild: Guild = this.state.get().guild as Guild;
+                const newchannel: TextChannel | null = Utils.findDefaultChannel(guild);
+                if (newchannel) {
+                  this.setActiveChannel(newchannel);
+                }
+                else {
+                  this.message.system(`The last text channel in ${guild.name} has been deleted`);
+                }
+            })
+            // Catch errors
             .catch((err) => {
                 this.message.error(`${err}`);
                 this.message.warn(`Could not delete channel ${channel.name}`);
             });
-        return false;
     }
 
     // Delete message

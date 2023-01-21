@@ -48,6 +48,10 @@ export interface IState {
     readonly encrypt: boolean;
 
     readonly token?: string;
+
+    readonly typingLastStarted: number;
+
+    readonly typingLastChannel: TextChannel | null;
 }
 
 export default class State extends EventEmitter {

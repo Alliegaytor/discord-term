@@ -436,16 +436,7 @@ export default function setupInternalCommands(app: App): void {
         }
 
         // Delete the channel specified
-        if ( await app.deleteChannel(channel as TextChannel)) {
-            // Move to another channel if there is one
-            const newchannel: TextChannel | null = Utils.findDefaultChannel(guild);
-            if (newchannel) {
-              app.setActiveChannel(newchannel);
-            }
-            else {
-              app.message.system(`The last text channel in ${guild.name} has been deleted`);
-            }
-        };
+        await app.deleteChannel(channel as TextChannel)
     });
 
     // Toggle header
@@ -456,6 +447,6 @@ export default function setupInternalCommands(app: App): void {
           app.state.update({
               header: header
           });
-          app.message.system(`Header has been: ${header}`);
+          app.message.system(`Header has been set to: ${header}`);
     })
 }

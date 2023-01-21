@@ -14,6 +14,8 @@ export const defaultState: IState = {
     decriptionKey: "discord-term",
     encrypt: false,
     header: false,
+    typingLastStarted: 0,
+    typingLastChannel: null,
 
     themeData: {
         messages: {
