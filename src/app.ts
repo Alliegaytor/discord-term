@@ -380,7 +380,8 @@ export default class App extends EventEmitter {
         }
 
         // Grab all available text channels
-        const channels: TextChannel[] = Array.from(guild.channels.cache.filter(channel => channel.type === "GUILD_TEXT").values()) as TextChannel[];
+        const channels: TextChannel[] = Utils.getChannels(guild, "GUILD_TEXT") as TextChannel[];
+
 
         for (let i: number = 0; i < channels.length; i++) {
             let channelName: string = channels[i].name
@@ -415,7 +416,7 @@ export default class App extends EventEmitter {
             });
 
             channelNode.on("click", () => {
-                if (this.state.get().guild && channel && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
+                if (this.state.get().guild && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
                     this.setActiveChannel(channels[i]);
                     this.updateChannels(true);
                 }
@@ -721,7 +722,25 @@ export default class App extends EventEmitter {
 
     // Delete message
     public deleteMessage(message: Message) {
-        message.delete().catch(err => this.message.system(err));
-        this.message.system("Message deleted");
+        message.delete()
+            .then(() => {
+                this.message.system("Message deleted");
+            })
+            .catch(err => {
+                this.message.system(`${err}`);
+                this.message.system(`Warning: Could not delete message '${message.id}'`);
+            });
+    }
+
+    // Edit message
+    public editMessage(message: Message, editedMessage:string) {
+        message.edit(editedMessage)
+            .then(() => {
+                this.message.system(`Message edited from "${message.content}" -> "${editedMessage}"`);
+            })
+            .catch((err) => {
+                this.message.system(`${err}`);
+                this.message.system(`Warning: Could not edit message '${message.id}'`)
+            });
     }
 }

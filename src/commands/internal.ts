@@ -88,9 +88,8 @@ export default function setupInternalCommands(app: App): void {
                 app.deleteMessage(message as Message);
             }
             else {
-                const editedMessage = args.slice(1).join(" ");
-                msg.edit(editedMessage);
-                app.message.system(`Message edited to "${editedMessage}"`);
+                const editedMessage: string = args.slice(1).join(" ");
+                app.editMessage(message as Message, editedMessage);
             }
         }
     });
@@ -99,7 +98,7 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("delete", async (args: string[]) => {
         const state = app.state.get();
 
-        if (!args || !state.channel) {
+        if (!args[0] || !state.channel) {
             return;
         }
 
