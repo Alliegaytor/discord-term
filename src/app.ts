@@ -845,9 +845,10 @@ export default class App extends EventEmitter {
 
     // Edit message
     public editMessage(message: Message, editedMessage:string) {
+        const msg: string = message.content;
         message.edit(editedMessage)
             .then(() => {
-                this.message.system(`Message edited from "${message.content}" -> "${editedMessage}"`);
+                this.message.system(`Message edited from "${msg}" -> "${editedMessage}"`);
             })
             .catch((err) => {
                 this.message.error(`${err}`);
