@@ -570,6 +570,11 @@ export default class App extends EventEmitter {
         }
         else {
             this.message.system(`Warning: Guild '${guild.name}' doesn't have any text channels`);
+            // Sets current channel to undefined
+            // This is very important as it makes sure the client can't delete channels from other servers
+            this.state.update({
+                channel: undefined
+            })
         }
 
         this.updateTitle();
@@ -696,11 +701,22 @@ export default class App extends EventEmitter {
 
     // Deletes specified channel
     // TODO: ADD SAFEGAURDS TO THIS
-    public deleteChannel(channel: TextChannel) {
-        channel.delete().then(() => {
-            this.updateChannels();
-            this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
-        }).catch(err => this.message.system(err));
+    public async deleteChannel(channel: TextChannel): Promise<boolean> {
+        if (!channel) {
+            return false;
+        }
+
+        channel.delete()
+            .then(() => {
+                this.updateChannels();
+                this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
+                return true;
+            })
+            .catch((err) => {
+                this.message.system(`${err}`);
+                this.message.system(`Warning: Could not delete channel ${channel.name}`);
+            });
+        return false;
     }
 
     // Delete message

@@ -411,22 +411,42 @@ export default function setupInternalCommands(app: App): void {
         app.render(true, true);
         app.updateChannels(true);
 
-        // Show previous messages and where the client is
-        app.loadPreviousMessages(channel as TextChannel);
-        app.whereAmI(channel as TextChannel, guild as Guild);
+        if (channel) {
+            // Show previous messages and where the client is
+            app.loadPreviousMessages(channel as TextChannel);
+            app.whereAmI(channel as TextChannel, guild as Guild);
+        }
+        else {
+            app.setActiveGuild(guild);
+        }
     });
 
     // Deletes channels
-    app.commands.set("deletechannel", () => {
+    app.commands.set("deletechannel", async () => {
         const channel = app.state.get().channel as TextChannel;
         const guild = app.state.get().guild as Guild;
 
-        // Move to another channel
-        app.setActiveGuild(guild as Guild);
+        // Do not delete channel if there is none
+        if (!channel) {
+            let message: string = "Warning: You are not on a channel!";
+            if (guild) {
+                message = message + ` This is because ${guild.name} has 0 text channels`;
+            }
+            app.message.system(message);
+            return;
+        }
+
         // Delete the channel specified
-        app.deleteChannel(channel as TextChannel);
-        // Let user know where they are now
-        app.whereAmI(channel as TextChannel, guild as Guild);
+        if ( await app.deleteChannel(channel as TextChannel)) {
+            // Move to another channel if there is one
+            const newchannel: TextChannel | null = Utils.findDefaultChannel(guild);
+            if (newchannel) {
+              app.setActiveChannel(newchannel);
+            }
+            else {
+              app.message.system(`Info: The last text channel in ${guild.name} has been deleted`);
+            }
+        };
 
     });
 }
