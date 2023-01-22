@@ -38,7 +38,7 @@ export const defaultAppOptions: IAppOptions = {
         allowedMentions: { parse: ['users', 'roles'] }
     },
     initialState: {},
-    maxMessages: 50,
+    maxFetchMessages: 50,
     commandPrefix: "/",
     stateFilePath: "state.json",
     pluginsPath: "plugins",
@@ -47,12 +47,13 @@ export const defaultAppOptions: IAppOptions = {
     leftWidth: "8%+11",
     headerPrefix: "[!] ",
     helpString: "",
+    maxScreenLines: 200,
 
     screen: blessed.screen({
         smartCSR: true,
         // fastCSR: true,
-        // fullUnicode: true,
-        // forceUnicode: true,
+        fullUnicode: true,
+        forceUnicode: true,
     }),
 
     nodes: {
@@ -81,7 +82,7 @@ export const defaultAppOptions: IAppOptions = {
         channels: blessed.box({
             top: "0%",
             left: "0%",
-            width: "0%+15",
+            width: "0%+17",
             height: "100%",
 
             style: {
@@ -129,7 +130,7 @@ export const defaultAppOptions: IAppOptions = {
         servers: blessed.box({
             top: "0%",
             left: "0%",
-            width: "0%+15",
+            width: "0%+17",
             height: "100%",
 
             style: {
