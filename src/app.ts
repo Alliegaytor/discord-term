@@ -410,7 +410,7 @@ export default class App extends EventEmitter {
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            while (stringWidth(channelName) + 2 >= this.options.nodes.channels.width) {
+            while (stringWidth(channelName) + 2 >= (this.options.nodes.channels.width as number)) {
                 channelName = channelName.slice(0, -1);
             }
 
@@ -469,7 +469,7 @@ export default class App extends EventEmitter {
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            while (stringWidth(guildName) + 2 >= this.options.nodes.servers.width) {
+            while (stringWidth(guildName) + 2 >= (this.options.nodes.servers.width as number)) {
                 guildName = guildName.slice(0, -1);
             }
 
@@ -585,11 +585,12 @@ export default class App extends EventEmitter {
     }
 
     private updateTitle(): this {
-        if (this.state.get().guild && this.state.get().channel) {
-            this.options.screen.title = `Discord Terminal @ ${this.state.get().guild?.name} # ${this.state.get().channel?.name}`;
+        const state: IState = this.state.get();
+        if (state.guild && state.channel) {
+            this.options.screen.title = `Discord Terminal @ ${state.guild.name} # ${state.channel.name}`;
         }
-        else if (this.state.get().guild) {
-            this.options.screen.title = `Discord Terminal @ ${this.state.get().guild?.name}`;
+        else if (state.guild) {
+            this.options.screen.title = `Discord Terminal @ ${state.guild.name}`;
         }
         else {
             this.options.screen.title = "Discord Terminal";
@@ -756,7 +757,7 @@ export default class App extends EventEmitter {
 
         // Find out how many messages to fetch
         let fetchlimit: number = this.options.nodes.messages.height as number - 3;
-        if (this.options.nodes.messages.height > this.options.maxMessages) {
+        if ((this.options.nodes.messages.height as number) > this.options.maxMessages) {
             fetchlimit = this.options.maxMessages;
         }
 

@@ -1,5 +1,6 @@
 import App from "./app.js";
 import Encryption from "./encryption.js";
+import { IState } from "./state/state.js";
 
 export default function setupEvents(app: App): void {
     // Screen.
@@ -85,17 +86,18 @@ export default function setupEvents(app: App): void {
             }
         }
         else {
-            if (app.state.get().muted) {
+            const state: IState = app.state.get();
+            if (state.muted) {
                 app.message.system(`Message not sent; Muted mode is active. Please use {bold}${app.options.commandPrefix}mute{/bold} to toggle`);
             }
-            else if (app.state.get().guild && app.state.get().channel) {
+            else if (state.guild && state.channel) {
                 let msg: string = input;
 
-                if (app.state.get().encrypt) {
-                    msg = "$dt_" + Encryption.encrypt(msg, app.state.get().decriptionKey);
+                if (state.encrypt) {
+                    msg = "$dt_" + Encryption.encrypt(msg, state.decriptionKey);
                 }
 
-                app.state.get().channel?.send({ content: msg }).catch((error: Error) => {
+                state.channel.send({ content: msg }).catch((error: Error) => {
                     app.message.error(`Unable to send message: ${error.message}`);
                 });
             }
