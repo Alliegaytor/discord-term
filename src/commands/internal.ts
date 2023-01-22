@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import App from "../app.js";
-import { Snowflake, Message, TextChannel, Guild } from "discord.js";
+import { ChannelType, Snowflake, Message, TextChannel, Guild } from "discord.js";
 import { tips } from "../constant.js";
 import Utils from "../utils.js";
 
@@ -82,7 +82,7 @@ export default function setupInternalCommands(app: App): void {
 
         // If message is defined continue
         if (message ?? false) {
-            let msg: Message = message as Message;
+            // let msg: Message = message as Message;
             // Delete if the edit is ""
             if (!args[1]) {
                 app.deleteMessage(message as Message);
@@ -385,7 +385,7 @@ export default function setupInternalCommands(app: App): void {
             app.setActiveChannel(state.guild.channels.cache.get(args[0]) as TextChannel);
         }
         else {
-            const channel = state.guild.channels.cache.find((channel) => channel.type === "GUILD_TEXT" && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
+            const channel = state.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
 
             if (channel) {
                 app.setActiveChannel(channel as TextChannel);

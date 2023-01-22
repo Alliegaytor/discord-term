@@ -1,9 +1,9 @@
-import { Guild, TextChannel, Channel, GuildChannel, GuildBasedChannel, GuildManager, Permissions } from "discord.js";
+import { Guild, TextChannel, Channel, ChannelType, GuildChannel, GuildBasedChannel, GuildManager, PermissionsBitField } from "discord.js";
 import { UserId } from "./types.js";
 
 export default abstract class Utils {
     public static findDefaultChannel(guild: Guild): TextChannel | null {
-        const channels: TextChannel[] = Utils.getChannels(guild, "GUILD_TEXT") as TextChannel[];
+        const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
 
         // Return null if there are no text channels
         if (channels.length === 0) {
@@ -20,7 +20,7 @@ export default abstract class Utils {
 
     // Checks to see if client has permissions on a channel in an array
     public static permissionCheck(channel: TextChannel, userid: UserId, permissions: Array<bigint> ): Array<boolean> {
-        const userperms = channel.permissionsFor(userid) as Readonly<Permissions>;
+        const userperms = channel.permissionsFor(userid) as Readonly<PermissionsBitField>;
         const results: Array<boolean> = new Array(permissions.length);
 
         permissions.forEach((permission, i) => {
@@ -42,7 +42,7 @@ export default abstract class Utils {
 
     // Returns text channels in a server as GuildBasedChannel[]
     // TODO: Handle different kinds of channls
-    public static getChannels(guild: Guild, channeltype: string): GuildBasedChannel[] {
+    public static getChannels(guild: Guild, channeltype: ChannelType): GuildBasedChannel[] {
         // Channel types:
         // GUILD_TEXT GUILD_NEWS ThreadChannelTypes GUILD_CATEGORY GUILD_STAGE_VOICE GUILD_STORE GUILD_VOICE
         return Array.from(guild.channels.cache.filter(channel => channel.type === channeltype).values());

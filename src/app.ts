@@ -1,4 +1,4 @@
-import { TextChannel, Guild, Client, Message, DMChannel, ClientOptions, Permissions } from "discord.js";
+import { TextChannel, Guild, Client, ChannelType, Message, DMChannel, ClientOptions, User, PermissionsBitField} from "discord.js";
 import Utils from "./utils.js";
 import blessed, { Widgets } from "blessed";
 import chalk from "chalk";
@@ -215,11 +215,12 @@ export default class App extends EventEmitter {
         }
 
         if (msg.author.id === this.client.user.id) {
-            if (msg.channel.type === "GUILD_TEXT") {
+            if (msg.channel.type === ChannelType.GuildText) {
                 this.message.self(this.client.user.tag, content);
             }
-            else if (msg.channel.type === "DM") {
-                this.message.special(`${chalk.magentaBright("=>")} DM to`, (msg.channel as DMChannel).recipient.tag, content, "blue");
+            else if (msg.channel.type === ChannelType.DM) {
+                let recipient: User = this.client.users.cache.get(msg.channel.recipientId) as User;
+                this.message.special(`${chalk.magentaBright("=>")} DM to`, recipient.tag, content, "blue");
             }
         }
 
@@ -228,21 +229,21 @@ export default class App extends EventEmitter {
             const modifiers: string[] = [];
 
             if (msg.guild && msg.member) {
-                if (msg.member.permissions.has("MANAGE_MESSAGES")) {
+                if (msg.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
                     modifiers.push(chalk.red("+"));
                 }
 
                 if (msg.author.bot) {
                     modifiers.push(chalk.blue("&"));
                 }
-                if (msg.member.permissions.has("MANAGE_GUILD")) {
+                if (msg.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
                     modifiers.push(chalk.green("$"));
                 }
             }
 
             this.message.user(msg.author.tag, content, modifiers);
         }
-        else if (msg.channel.type === "DM") {
+        else if (msg.channel.type === ChannelType.DM) {
             this.message.special(`${chalk.greenBright("<=")} DM from`, msg.author.tag, content, "blue");
         }
         else if (this.state.get().globalMessages) {
@@ -401,7 +402,7 @@ export default class App extends EventEmitter {
         }
 
         // Grab all available text channels
-        const channels: TextChannel[] = Utils.getChannels(guild, "GUILD_TEXT") as TextChannel[];
+        const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
 
 
         for (let i: number = 0; i < channels.length; i++) {
@@ -747,7 +748,7 @@ export default class App extends EventEmitter {
 
     // Load previous messages in a channel
     public loadPreviousMessages(channel: TextChannel): void {
-        const permsNeeded: Array<bigint> = [Permissions.FLAGS.READ_MESSAGE_HISTORY, Permissions.FLAGS.VIEW_CHANNEL];
+        const permsNeeded: Array<bigint> = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
         const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.client.user?.id as UserId, permsNeeded);
         // Return if no perms
         if (hasPerms.indexOf(false) !== -1) {
