@@ -219,7 +219,7 @@ export default class App extends EventEmitter {
                 this.message.self(this.client.user.tag, content);
             }
             else if (msg.channel.type === "DM") {
-                this.message.special(`${/*chalk.green*/("=>")} DM to`, (msg.channel as DMChannel).recipient.tag, content/*, "blue"*/);
+                this.message.special(`${chalk.magentaBright("=>")} DM to`, (msg.channel as DMChannel).recipient.tag, content, "blue");
             }
         }
 
@@ -229,21 +229,21 @@ export default class App extends EventEmitter {
 
             if (msg.guild && msg.member) {
                 if (msg.member.permissions.has("MANAGE_MESSAGES")) {
-                    //modifiers.push(chalk.red("+"));
+                    modifiers.push(chalk.red("+"));
                 }
 
                 if (msg.author.bot) {
-                    //modifiers.push(chalk.blue("&"));
+                    modifiers.push(chalk.blue("&"));
                 }
                 if (msg.member.permissions.has("MANAGE_GUILD")) {
-                    //modifiers.push(chalk.green("$"));
+                    modifiers.push(chalk.green("$"));
                 }
             }
 
             this.message.user(msg.author.tag, content, modifiers);
         }
         else if (msg.channel.type === "DM") {
-            this.message.special(`${/*chalk.green*/("<=")} DM from`, msg.author.tag, content/*, "blue"*/);
+            this.message.special(`${chalk.greenBright("<=")} DM from`, msg.author.tag, content, "blue");
         }
         else if (this.state.get().globalMessages) {
             this.message.special("Global", msg.author.tag, content);

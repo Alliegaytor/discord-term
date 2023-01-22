@@ -13,7 +13,7 @@ export default class MessageFactory {
         let messageString: string = message.toString();
 
         if (messageColor.startsWith("#")) {
-            //messageString = chalk.hex(messageColor)(messageString);
+            messageString = chalk.hex(messageColor)(messageString);
         }
         // @ts-ignore
         else if (chalk[messageColor] === undefined || typeof chalk[messageColor] !== "function") {

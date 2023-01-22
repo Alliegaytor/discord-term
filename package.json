@@ -19,7 +19,7 @@
     "license": "Unlicense",
     "dependencies": {
         "blessed": "^0.1.81",
-        "chalk": "^2.4.2",
+        "chalk": "^5.2.0",
         "clipboardy": "^3.0.0",
         "discord.js": "^13.6.0 := >=13.6.0 <13.7.0",
         "string-width": "^5.1.2"
