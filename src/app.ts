@@ -15,7 +15,6 @@ import State, { IState, IStateOptions } from "./state/state.js";
 import { defaultState } from "./state/stateConstants.js";
 import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
-import stringWidth from "string-width";
 import {UserId} from "./types.js";
 
 
@@ -32,7 +31,7 @@ export type IAppNodes = {
 }
 
 export interface IAppOptions extends IStateOptions {
-    readonly maxMessages: number;
+    readonly maxFetchMessages: number;
 
     readonly screen: Widgets.Screen;
 
@@ -53,6 +52,8 @@ export interface IAppOptions extends IStateOptions {
     readonly rightWidth: string;
 
     readonly headerPrefix: string;
+
+    readonly maxScreenLines: number;
 
     helpString: string;
 }
@@ -266,8 +267,10 @@ export default class App extends EventEmitter {
             // Channels.
             this.options.nodes.channels.left = "0";
             this.options.nodes.channels.hide();
+            this.options.nodes.channels.free();
             // Servers.
             this.options.nodes.servers.hide();
+            this.options.nodes.channels.free();
         }
         // Messages.
         this.options.nodes.messages.width = this.options.nodes.messages.width as number - width;
@@ -289,6 +292,7 @@ export default class App extends EventEmitter {
     public hideChannels() {
         this.blessedNodeWidths(-18);
         this.options.nodes.channels.hide();
+        this.options.nodes.channels.free();
         this.render();
     }
 
@@ -312,6 +316,7 @@ export default class App extends EventEmitter {
         this.blessedNodeWidths(-18);
         this.options.nodes.channels.left = "0";
         this.options.nodes.servers.hide();
+        this.options.nodes.servers.free();
         this.render();
     }
 
@@ -411,7 +416,7 @@ export default class App extends EventEmitter {
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            while (stringWidth(channelName) + 2 >= (this.options.nodes.channels.width as number)) {
+            while (Utils.visibleLength(channelName) + 2 >= (this.options.nodes.channels.width as number)) {
                 channelName = channelName.slice(0, -1);
             }
 
@@ -470,21 +475,21 @@ export default class App extends EventEmitter {
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            while (stringWidth(guildName) + 2 >= (this.options.nodes.servers.width as number)) {
+            while (Utils.visibleLength(guildName) + 2 >= (this.options.nodes.servers.width as number)) {
                 guildName = guildName.slice(0, -1);
             }
 
             const guildNode: Widgets.BoxElement = blessed.box({
                 style: {
-                    bg: this.state.get().themeData.servers.backgroundColor,
-                    fg: this.state.get().themeData.servers.foregroundColor,
+                    bg: this.state.get().themeData.channels.backgroundColor,
+                    fg: this.state.get().themeData.channels.foregroundColor,
 
                     // TODO: Not working
                     // bold: this.state.get().guild !== undefined && this.state.get().guild?.id === guilds[i].id,
 
                     hover: {
-                        bg: this.state.get().themeData.servers.backgroundColorHover,
-                        fg: this.state.get().themeData.servers.foregroundColorHover
+                        bg: this.state.get().themeData.channels.backgroundColorHover,
+                        fg: this.state.get().themeData.channels.foregroundColorHover
                     }
                 },
 
@@ -758,8 +763,8 @@ export default class App extends EventEmitter {
 
         // Find out how many messages to fetch
         let fetchlimit: number = this.options.nodes.messages.height as number - 3;
-        if ((this.options.nodes.messages.height as number) > this.options.maxMessages) {
-            fetchlimit = this.options.maxMessages;
+        if ((this.options.nodes.messages.height as number) > this.options.maxFetchMessages) {
+            fetchlimit = this.options.maxFetchMessages;
         }
 
         channel.messages.fetch({limit: fetchlimit})

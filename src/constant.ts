@@ -50,8 +50,8 @@ export const defaultAppOptions: IAppOptions = {
     maxScreenLines: 200,
 
     screen: blessed.screen({
-        smartCSR: true,
-        // fastCSR: true,
+        // smartCSR: true, // Breaks emojis
+        fastCSR: true,
         fullUnicode: true,
         forceUnicode: true,
     }),

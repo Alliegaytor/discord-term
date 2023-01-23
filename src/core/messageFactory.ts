@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import App, { SpecialSenders } from "../app.js";
+import Utils from "../utils.js"
 
 export default class MessageFactory {
     protected readonly app: App;
@@ -32,7 +33,23 @@ export default class MessageFactory {
             .replace("{message}", messageString)
             .replace(/\n/g, " \n"); // Fix for empty new lines
 
-        this.app.options.nodes.messages.pushLine(line);
+        // Fix blessed box hell
+        let maximumWidth: number = this.app.options.nodes.messages.width as number;
+        let lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
+
+        // Remove old lines
+        let screenLines: number = this.app.options.nodes.messages.getScreenLines().length ?? 0;
+        while (screenLines > this.app.options.maxScreenLines) {
+            this.app.options.nodes.messages.deleteLine(0);
+            screenLines--;
+        }
+
+        // Push lines
+        lines.forEach(element => {
+            this.app.options.nodes.messages.pushLine(element);
+
+        });
+
         this.app.options.nodes.messages.setScrollPerc(100);
         this.app.render();
 
