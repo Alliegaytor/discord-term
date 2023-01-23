@@ -52,7 +52,7 @@ export const defaultAppOptions: IAppOptions = {
     screen: blessed.screen({
         // smartCSR: true, // Breaks emojis
         fastCSR: true,
-        fullUnicode: true,
+        fullUnicode: defaultState.emojisEnabled,
         forceUnicode: true,
     }),
 

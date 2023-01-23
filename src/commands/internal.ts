@@ -462,5 +462,18 @@ export default function setupInternalCommands(app: App): void {
         const messageLines: number = app.options.nodes.messages.getLines().length;
         app.message.system("Debug info:");
         app.message.system(`Lines: ${messageLines}`);
-    })
+        app.message.system(`emojisEnabled: ${app.state.get().emojisEnabled}`);
+    });
+
+    // Toggle emoji support
+    app.commands.set("emoji", () => {
+        const emojisEnabled: boolean = !(app.state.get().emojisEnabled === true);
+        app.state.update({
+            emojisEnabled: emojisEnabled
+        });
+        app.options.screen.fullUnicode = emojisEnabled;
+        app.options.nodes.messages.setContent("");
+        app.render(true);
+        app.message.system(`Emoji support have been set to: ${emojisEnabled}`);
+    });
 }

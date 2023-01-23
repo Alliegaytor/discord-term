@@ -165,6 +165,9 @@ export default class App extends EventEmitter {
         // Load & apply saved theme.
         this.loadTheme(this.state.get().theme);
 
+        // Detect emoji preference
+        this.options.screen.fullUnicode = this.state.get().emojisEnabled;
+
         if (init) {
             this.init();
         }
@@ -336,7 +339,7 @@ export default class App extends EventEmitter {
      * active channel.
      */
     // TODO: Cleanup startTyping()
-    public async startTyping(): Promise<void> {
+    public async startTyping() {
         let state: IState = this.state.get();
         // If it can type
         if (!state.muted && state.guild && state.channel) {

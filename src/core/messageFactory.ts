@@ -33,10 +33,6 @@ export default class MessageFactory {
             .replace("{message}", messageString)
             .replace(/\n/g, " \n"); // Fix for empty new lines
 
-        // Fix blessed box hell
-        let maximumWidth: number = this.app.options.nodes.messages.width as number;
-        let lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
-
         // Remove old lines
         let screenLines: number = this.app.options.nodes.messages.getScreenLines().length ?? 0;
         while (screenLines > this.app.options.maxScreenLines) {
@@ -44,11 +40,22 @@ export default class MessageFactory {
             screenLines--;
         }
 
-        // Push lines
-        lines.forEach(element => {
-            this.app.options.nodes.messages.pushLine(element);
+        // Fix blessed box hell
+        // Calculate where to wrap lines because emojis are thicc
+        if (this.app.state.get().emojisEnabled) {
+            let maximumWidth: number = this.app.options.nodes.messages.width as number;
+            let lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
 
-        });
+            // Push lines
+            lines.forEach(element => {
+                this.app.options.nodes.messages.pushLine(element);
+
+            });
+        }
+        // Or do it the normal way without emojis
+        else {
+            this.app.options.nodes.messages.pushLine(line);
+        }
 
         this.app.options.nodes.messages.setScrollPerc(100);
         this.app.render();
