@@ -29,6 +29,13 @@ npm install
 npm run start
 ```
 
+#### Note
+If you are having issues with the colors or fonts try running with these env vars
+
+```shell
+LANG=en_US.utf8 TERM=xterm-256color npm run start
+```
+
 To install on your system:
 
 ```shell
@@ -61,17 +68,13 @@ You can use `/tip` to give you some tips in the headerbar (the top bar on the sc
 
 The headerbar can be disabled with `/toggleheader` and Discord Term will remember your preference.
 
-If anything bugs out use `/reset`. It *should* fix almost all visual problems.
+If anything bugs out use `/reset`. It *should* fix almost all visual problems. Resizing the window and `/clear` have shown to sometimes fix ui issues as well.
 
 ### Planned Features
 
-- [X] Re-write & expand codebase
+- [ ] Re-write & expand codebase
 
-- [X] Discord.js v13
-
-- [X] Editable DMs
-
-- [ ] Use [accursed](https://github.com/cancerberoSgx/accursed) instead of blessed
+- [ ] Use [blessed-contrib](https://github.com/yaronn/blessed-contrib) with blessed (or a maintained blessed fork)
 
 - [ ] Documentation
 
@@ -79,15 +82,11 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems.
 
 - [ ] Userbot
 
-- [X] Status bar (current channel, guild, etc.)
-
-- [X] Scrolling
-
 - [ ] Message logging (with file-based or database support)
 
 - [ ] Better, powerful plugin API
 
-- [ ] Visual plugin manager
+- [ ] Visual settings editor
 
 - [ ] Tested codebase (unit testing)
 
@@ -165,8 +164,8 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems.
     1. Just have your token in your clipboard before starting the application, it will automatically detect it and login.
     2. Alternatively, you can set the **DTERM_TOKEN** environment variable and it will use it to automatically login.
     3. If you ever need to force a re-render because the UI might be buggy or so, use the **/reset** command.
-    4. Pressing the **UP** arrow key after sending a message will allow you to edit it (similar functionality to Discord).
-    5. Pressing the **DOWN** arrow key will delete your last message (if there was any).
+    4. Pressing the **UP** arrow key after sending a message will allow you to edit it (similar functionality to Discord) or delete it if the edit is an empty string "".
+    5. Pressing the **DOWN** arrow key will clear your input (if there was any). **ESCAPE** does the same.
 
 6. **Super-secret mode** Discord Terminal has this cool security feature that allows you to send + receive encrypted messages, and all you need to do is set a password.
 
@@ -180,6 +179,8 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems.
     **Note**: Your friend(s) must have set the same password in order to view your messages!
 
     Keep in mind that your password cannot contain spaces.
+
+    This feature has not been properly tested since code refractor. Do not rely on it (or anything in this project) for anything important.
 
 Thanks to all these wonderful people for contributing to the project:
 
