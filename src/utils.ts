@@ -97,12 +97,12 @@ export default abstract class Utils {
                   length += stringWidth(word) + 1;
                   line.push(word);
               }
-          });
+          })
 
           if (line.length > 0) {
               result.push(line.join(" "));
           }
 
           return result;
-    };
+    }
 }

@@ -47,7 +47,7 @@ export default function setupInternalCommands(app: App): void {
 
             app.message.system(`Currently ignoring messages from: ${usersString}`);
         }
-        else if (app.client.user && app.client.user.id === args[0]) {
+        else if (app.client.user && app.state.get().userId === args[0]) {
             app.message.system("You can't ignore yourself, silly");
         }
         else if (app.state.get().ignoredUsers.includes(args[0])) {
@@ -302,7 +302,7 @@ export default function setupInternalCommands(app: App): void {
 
             app.message.system(`Tracking users: ${usersString}`);
         }
-        else if (app.client.user && app.client.user.id === args[0]) {
+        else if (app.client.user && app.state.get().userId === args[0]) {
             app.message.system("You can't track yourself, silly");
         }
         else if (app.state.get().trackList.includes(args[0])) {
@@ -472,7 +472,7 @@ export default function setupInternalCommands(app: App): void {
             emojisEnabled: emojisEnabled
         });
         app.options.screen.fullUnicode = emojisEnabled;
-        app.options.nodes.messages.setContent("");
+        // app.options.nodes.messages.setContent("");
         app.render(true);
         app.message.system(`Emoji support have been set to: ${emojisEnabled}`);
     });

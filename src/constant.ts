@@ -15,6 +15,7 @@ export const tips: string[] = [
     "Press {bold}CTRL + X{/bold} to force exit without saving state",
     "Use {bold}{prefix}/tg{/bold} to toggle on/off the guild menu",
     "Use {bold}{prefix}/tc{/bold} to toggle on/off the channels menu",
+    "You can toggle emoji support on/off with {bold}{prefix}emoji{/bold}"
 ];
 
 export const defaultAppOptions: IAppOptions = {

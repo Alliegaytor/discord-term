@@ -54,6 +54,8 @@ export interface IState {
     readonly typingLastChannel: TextChannel | null;
 
     readonly emojisEnabled: boolean;
+
+    readonly userId: string;
 }
 
 export default class State extends EventEmitter {

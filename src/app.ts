@@ -120,6 +120,10 @@ export default class App extends EventEmitter {
                 return;
             }
 
+            this.state.update({
+                userId: this.client.user.id
+            });
+
             this.message.system(`Successfully connected as {bold}${this.client.user.tag}{/bold}`);
 
             const firstGuild: Guild | undefined = this.client.guilds.cache.first();
@@ -185,7 +189,7 @@ export default class App extends EventEmitter {
         const channel: TextChannel | undefined = state.channel;
 
 
-        if (msg.author.id === this.client.user.id) {
+        if (msg.author.id === state.userId) {
             this.state.update({
                 lastMessage: msg
             });
@@ -199,7 +203,7 @@ export default class App extends EventEmitter {
 
             return;
         }
-        else if (state.ignoreBots && msg.author.bot && msg.author.id !== this.client.user.id) {
+        else if (state.ignoreBots && msg.author.bot && msg.author.id !== state.userId) {
             return;
         }
         else if (state.ignoreEmptyMessages && !msg.content) {
@@ -218,7 +222,7 @@ export default class App extends EventEmitter {
             }
         }
 
-        if (msg.author.id === this.client.user.id) {
+        if (msg.author.id === state.userId) {
             if (msg.channel.type === ChannelType.GuildText) {
                 this.message.self(this.client.user.tag, content);
             }
@@ -340,19 +344,21 @@ export default class App extends EventEmitter {
      */
     // TODO: Cleanup startTyping()
     public async startTyping() {
-        let state: IState = this.state.get();
+        // Get context
+        const { muted, guild, channel, typingLastChannel, typingLastStarted } = this.state.get() as { muted: boolean, guild: Guild, channel: TextChannel, typingLastChannel: TextChannel, typingLastStarted: number };
         // If it can type
-        if (!state.muted && state.guild && state.channel) {
+        if (!muted && guild && channel) {
+            const timeNow: number = new Date().getTime()
             // If it has never typed or it has been more than 10 seconds since the last time
-            if (state.typingLastChannel !== state.channel || new Date().getTime() - state.typingLastStarted > 10000) {
+            if (typingLastChannel !== channel || timeNow - typingLastStarted > 10000) {
                 // Update state
                 this.state.update({
-                    typingLastStarted: new Date().getTime(),
-                    typingLastChannel: state.channel
+                    typingLastStarted: timeNow,
+                    typingLastChannel: channel
                 });
 
                 // Start typing and catch errors
-                await state.channel.sendTyping().catch((error: Error) => {
+                await channel.sendTyping().catch((error: Error) => {
                     this.message.error(`startTyping() failed: ${error.message}`);
                 })
             }
@@ -411,7 +417,7 @@ export default class App extends EventEmitter {
 
         // Grab all available text channels
         const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
-
+        const { themeData, channel } = this.state.get() as { themeData: any, channel: TextChannel };
 
         for (let i: number = 0; i < channels.length; i++) {
             let channelName: string = channels[i].name
@@ -419,20 +425,21 @@ export default class App extends EventEmitter {
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            while (Utils.visibleLength(channelName) + 2 >= (this.options.nodes.channels.width as number)) {
+            let channelsWidth: number = this.options.nodes.channels.width as number
+            while (Utils.visibleLength(channelName) + 2 >= channelsWidth) {
                 channelName = channelName.slice(0, -1);
             }
 
             const channelNode: Widgets.BoxElement = blessed.box({
                 style: {
-                    bg: this.state.get().themeData.channels.backgroundColor,
-                    fg: this.state.get().themeData.channels.foregroundColor,
+                    bg: themeData.channels.backgroundColor,
+                    fg: themeData.channels.foregroundColor,
 
-                    bold: this.state.get().channel !== undefined && this.state.get().channel?.id === channels[i].id,
+                    bold: channel !== undefined && channel.id === channels[i].id,
 
                     hover: {
-                        bg: this.state.get().themeData.channels.backgroundColorHover,
-                        fg: this.state.get().themeData.channels.foregroundColorHover
+                        bg: themeData.channels.backgroundColorHover,
+                        fg: themeData.channels.foregroundColorHover
                     }
                 },
 
@@ -445,8 +452,8 @@ export default class App extends EventEmitter {
             });
 
             channelNode.on("click", () => {
-                const channel = this.state.get().channel as TextChannel;
-                if (this.state.get().guild && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
+                const { channel, guild } = this.state.get() as { channel: TextChannel, guild: Guild };
+                if (guild && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
                     this.setActiveChannel(channels[i]);
                     this.updateChannels(true);
                 }
@@ -471,6 +478,7 @@ export default class App extends EventEmitter {
             this.options.nodes.servers.remove(this.options.nodes.servers.children[0]);
         }
 
+        const { themeData, channel } = this.state.get() as { themeData: any, channel: TextChannel };
 
         for (let i: number = 0; i < guilds.length; i++) {
             let guildName: string = guilds[i].name
@@ -484,15 +492,15 @@ export default class App extends EventEmitter {
 
             const guildNode: Widgets.BoxElement = blessed.box({
                 style: {
-                    bg: this.state.get().themeData.channels.backgroundColor,
-                    fg: this.state.get().themeData.channels.foregroundColor,
+                    bg: themeData.channels.backgroundColor,
+                    fg: themeData.channels.foregroundColor,
 
                     // TODO: Not working
                     // bold: this.state.get().guild !== undefined && this.state.get().guild?.id === guilds[i].id,
 
                     hover: {
-                        bg: this.state.get().themeData.channels.backgroundColorHover,
-                        fg: this.state.get().themeData.channels.foregroundColorHover
+                        bg: themeData.channels.backgroundColorHover,
+                        fg: themeData.channels.foregroundColorHover
                     }
                 },
 
@@ -506,7 +514,7 @@ export default class App extends EventEmitter {
 
             guildNode.on("click", () => {
                 const guild: Guild = this.state.get().guild as Guild;
-                if (this.state.get().guild && guilds[i].id !== guild.id) {
+                if (guild && guilds[i].id !== guild.id) {
                     this.setActiveGuild(guilds[i]);
                     this.updateChannels(true);
                 }
@@ -571,21 +579,24 @@ export default class App extends EventEmitter {
             themeData: data
         });
 
+        // Get theme data
+        const themeData: any = this.state.get().themeData;
+
         // Messages.
-        this.options.nodes.messages.style.fg = this.state.get().themeData.messages.foregroundColor;
-        this.options.nodes.messages.style.bg = this.state.get().themeData.messages.backgroundColor;
+        this.options.nodes.messages.style.fg = themeData.messages.foregroundColor;
+        this.options.nodes.messages.style.bg = themeData.messages.backgroundColor;
 
         // Input.
-        this.options.nodes.input.style.fg = this.state.get().themeData.input.foregroundColor;
-        this.options.nodes.input.style.bg = this.state.get().themeData.input.backgroundColor;
+        this.options.nodes.input.style.fg = themeData.input.foregroundColor;
+        this.options.nodes.input.style.bg = themeData.input.backgroundColor;
 
         // Channels.
-        this.options.nodes.channels.style.fg = this.state.get().themeData.channels.foregroundColor;
-        this.options.nodes.channels.style.bg = this.state.get().themeData.channels.backgroundColor;
+        this.options.nodes.channels.style.fg = themeData.channels.foregroundColor;
+        this.options.nodes.channels.style.bg = themeData.channels.backgroundColor;
 
         // Header.
-        this.options.nodes.header.style.fg = this.state.get().themeData.header.foregroundColor;
-        this.options.nodes.header.style.bg = this.state.get().themeData.header.backgroundColor;
+        this.options.nodes.header.style.fg = themeData.header.foregroundColor;
+        this.options.nodes.header.style.bg = themeData.header.backgroundColor;
 
         this.updateChannels();
         this.message.system(`Applied theme '${name}' (${length} bytes)`);
@@ -594,12 +605,13 @@ export default class App extends EventEmitter {
     }
 
     private updateTitle(): this {
-        const state: IState = this.state.get();
-        if (state.guild && state.channel) {
-            this.options.screen.title = `Discord Terminal @ ${state.guild.name} # ${state.channel.name}`;
+        // Destructure
+        const { guild, channel } = this.state.get() as { guild: Guild, channel: TextChannel};
+        if (guild && channel) {
+            this.options.screen.title = `Discord Terminal @ ${guild.name} # ${channel.name}`;
         }
-        else if (state.guild) {
-            this.options.screen.title = `Discord Terminal @ ${state.guild.name}`;
+        else if (guild) {
+            this.options.screen.title = `Discord Terminal @ ${guild.name}`;
         }
         else {
             this.options.screen.title = "Discord Terminal";
@@ -684,7 +696,7 @@ export default class App extends EventEmitter {
         }
         // Remember intial text
         const headerIntialText: string = this.options.nodes.header.content;
-        const headerEnabled: boolean = this.state.get().header;
+        const { header, autoHideHeaderTimeout } = this.state.get() as {header: boolean, autoHideHeaderTimeout: NodeJS.Timer};
 
         this.options.nodes.header.content = `${this.options.headerPrefix + text}`;
 
@@ -699,11 +711,11 @@ export default class App extends EventEmitter {
 
         // Autohides. Dependent on headerAutoHideTimeoutPerChar
         if (autoHide) {
-            if (this.state.get().autoHideHeaderTimeout) {
-                clearTimeout(this.state.get().autoHideHeaderTimeout);
+            if (autoHideHeaderTimeout) {
+                clearTimeout(autoHideHeaderTimeout);
             }
             // Reset text if header enabled
-            if (headerEnabled) {
+            if (header) {
                 setTimeout(() => {
                     // If unchanged
                     if (this.options.nodes.header.content === this.options.headerPrefix + text) {
@@ -825,7 +837,7 @@ export default class App extends EventEmitter {
             })
             // Move to another channel if there is one
             .then(() => {
-                const guild: Guild = this.state.get().guild as Guild;
+                const { guild } = this.state.get() as { guild: Guild };
                 const newchannel: TextChannel | null = Utils.findDefaultChannel(guild);
                 if (newchannel) {
                   this.setActiveChannel(newchannel);

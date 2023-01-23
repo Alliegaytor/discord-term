@@ -17,6 +17,7 @@ export const defaultState: IState = {
     typingLastStarted: 0,
     typingLastChannel: null,
     emojisEnabled: true,
+    userId: "",
 
     themeData: {
         messages: {
