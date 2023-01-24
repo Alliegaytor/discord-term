@@ -199,7 +199,13 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
     ⚠ **This feature has not been properly tested since code refractor. Do not rely on it (or anything in this project) for anything important.**
 
 
-Thanks to all these wonderful people for contributing to the project:
+# License
+
+The project is licensed under the [GPL v3.0](./LICENSE) license. The code was, at one point in time, released into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license by the original owner of the repo (see project@361b603d). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit project@2a36c2c7. Either way, this software comes with no warranty of any kind and we cannot be held liable for any damages caused by it.
+
+# Contributors
+
+Here are all the lovely people who have contributed to the project. It wouldn't be where it is at without you!
 
 * [@AL1L](https://github.com/AL1L)
 * [@anirudhbs](https://github.com/anirudhbs)
