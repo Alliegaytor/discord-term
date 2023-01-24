@@ -1,27 +1,26 @@
 # ⚠️ In active development!
+
 **Discord Term** Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree on github.
 
 The project needs active maintainers. Any help would be greatly appreciated!
 
-<br/>
+[[_TOC_]]
 
-### ✨ Discord Terminal
+# ✨ Discord Terminal
 
 A cross platform extensible Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed). It can currently **only** be used with **bot tokens**. **User tokens don't work at all** as [discord.js](https://github.com/discordjs/discord.js) blocks them from being used. This is unwanted behaviour, however. We are trying to patch user tokens back in, and any help in this endeavour would be much appreciated.
 
 **Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore discouraged to use. We am not responsible for any bans whatsoever caused by this software as described in the project's license. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
 
-[[_TOC_]]
+## Screenshots
 
-### Screenshots
-
-#### Linux preview
+### Linux preview
 ![Linux preview](https://i.imgur.com/56eoNyA.gif){width=100%}
 
-#### Windows 10 preview
+### Windows 10 preview
 ![Windows 10 preview](https://i.ibb.co/JK3SGdJ/e.png){width=100%}
 
-### Get Started
+## Get Started
 
 Setting up is extremely easy. Just issue the following commands to install and run **Discord Term** locally:
 
@@ -32,7 +31,7 @@ npm install
 npm run start
 ```
 
-#### Help! My colors look weird!
+### Help! My colors look weird!
 If you are having issues with the colors or fonts try running with these env vars
 
 ```shell
@@ -42,7 +41,7 @@ LANG=en_US.utf8 TERM=xterm-256color npm run start
 Windows users should try the [Windows Terminal](https://github.com/microsoft/terminal) first before reporting any issues.
 
 
-### Installation
+## Installation
 
 To install on your system globally:
 
@@ -57,7 +56,7 @@ That's it! Although keep in mind that since the project is unfinished and WIP, y
 Pst. Consider **starring** the repository if you like it! <3
 
 
-### Usage
+## Usage
 
 Once you've started the program, use `/login <token>` to connect to Discord. Alternatively you can use the environmental variable `DTERM_TOKEN` or have your token in the clipboard to login.
 
@@ -81,11 +80,9 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
 <details>
 <summary>
 
-### Planned Features
+# Planned Features
 
 </summary>
-
-These details _remain_ **hidden** until expanded.
 
 - [ ] Re-write & expand codebase
 
@@ -109,7 +106,9 @@ These details _remain_ **hidden** until expanded.
 
 </details>
 
-### Tricks & Tips
+<hr>
+
+# Tricks & Tips
 
 1. **Get moving quickly!**
     You can easily switch between servers and channels using the **/tag** command.
@@ -197,7 +196,7 @@ These details _remain_ **hidden** until expanded.
 
     Keep in mind that your password cannot contain spaces.
 
-    This feature has not been properly tested since code refractor. Do not rely on it (or anything in this project) for anything important.
+    ⚠ **This feature has not been properly tested since code refractor. Do not rely on it (or anything in this project) for anything important.**
 
 
 Thanks to all these wonderful people for contributing to the project:
