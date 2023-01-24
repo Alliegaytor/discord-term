@@ -345,7 +345,7 @@ export default class App extends EventEmitter {
     // TODO: Cleanup startTyping()
     public async startTyping() {
         // Get context
-        const { muted, guild, channel, typingLastChannel, typingLastStarted } = this.state.get() as { muted: boolean, guild: Guild, channel: TextChannel, typingLastChannel: TextChannel, typingLastStarted: number };
+        const { muted, guild, channel, typingLastChannel, typingLastStarted }: IState = this.state.get();
         // If it can type
         if (!muted && guild && channel) {
             const timeNow: number = new Date().getTime()
@@ -417,7 +417,7 @@ export default class App extends EventEmitter {
 
         // Grab all available text channels
         const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
-        const { themeData, channel } = this.state.get() as { themeData: any, channel: TextChannel };
+        const { themeData, channel }: IState = this.state.get();
 
         for (let i: number = 0; i < channels.length; i++) {
             let channelName: string = channels[i].name
@@ -452,8 +452,8 @@ export default class App extends EventEmitter {
             });
 
             channelNode.on("click", () => {
-                const { channel, guild } = this.state.get() as { channel: TextChannel, guild: Guild };
-                if (guild && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
+                const { channel, guild }: IState = this.state.get();
+                if (channel && guild && channels[i].id !== channel.id && guild.channels.cache.has(channels[i].id)) {
                     this.setActiveChannel(channels[i]);
                     this.updateChannels(true);
                 }
@@ -478,7 +478,7 @@ export default class App extends EventEmitter {
             this.options.nodes.servers.remove(this.options.nodes.servers.children[0]);
         }
 
-        const { themeData, channel } = this.state.get() as { themeData: any, channel: TextChannel };
+        const { themeData }: IState = this.state.get();
 
         for (let i: number = 0; i < guilds.length; i++) {
             let guildName: string = guilds[i].name
@@ -513,7 +513,7 @@ export default class App extends EventEmitter {
             });
 
             guildNode.on("click", () => {
-                const guild: Guild = this.state.get().guild as Guild;
+                const { guild }: IState = this.state.get();
                 if (guild && guilds[i].id !== guild.id) {
                     this.setActiveGuild(guilds[i]);
                     this.updateChannels(true);
@@ -606,7 +606,7 @@ export default class App extends EventEmitter {
 
     private updateTitle(): this {
         // Destructure
-        const { guild, channel } = this.state.get() as { guild: Guild, channel: TextChannel};
+        const { guild, channel }: IState = this.state.get();
         if (guild && channel) {
             this.options.screen.title = `Discord Terminal @ ${guild.name} # ${channel.name}`;
         }
@@ -696,7 +696,7 @@ export default class App extends EventEmitter {
         }
         // Remember intial text
         const headerIntialText: string = this.options.nodes.header.content;
-        const { header, autoHideHeaderTimeout } = this.state.get() as {header: boolean, autoHideHeaderTimeout: NodeJS.Timer};
+        const { header, autoHideHeaderTimeout }: IState = this.state.get();
 
         this.options.nodes.header.content = `${this.options.headerPrefix + text}`;
 
