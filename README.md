@@ -201,7 +201,7 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
 
 # License
 
-The project is licensed under the [GPL v3.0](./LICENSE) license. The code was, at one point in time, released into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license by the original owner of the repo (see project@361b603d). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit project@2a36c2c7. Either way, this software comes with no warranty of any kind and we cannot be held liable for any damages caused by it.
+The project is licensed under the [GPL v3.0](./LICENSE) license. The code was, at one point in time, released into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license by the original owner of the repo ([see 361b603d](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/361b603d2f53b541d2fcce3c80b66d13ea2b02f8)). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit [2a36c2c7](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/2a36c2c73d9be23f3713c8b1b6d47ac8435798f1). Either way, this software comes with no warranty of any kind and we cannot be held liable for any damages caused by it.
 
 # Contributors
 
