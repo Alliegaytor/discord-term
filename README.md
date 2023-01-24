@@ -7,44 +7,52 @@ The project needs active maintainers. Any help would be greatly appreciated!
 
 ### ✨ Discord Terminal
 
-A cross platform extensible Discord terminal client. Can currently be only used with bot tokens. User tokens don't work properly as [discord.js](https://github.com/discordjs/discord.js) blocks them from being used. This is unwanted behaviour, however. We are trying to patch user tokens back in.
+A cross platform extensible Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed). It can currently **only** be used with **bot tokens**. **User tokens don't work at all** as [discord.js](https://github.com/discordjs/discord.js) blocks them from being used. This is unwanted behaviour, however. We are trying to patch user tokens back in, and any help in this endeavour would be much appreciated.
 
-**Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore heavily discouraged. We am not responsible for any bans whatsoever caused by this software. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
+**Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore discouraged to use. We am not responsible for any bans whatsoever caused by this software as described in the project's license. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
+
+[[_TOC_]]
 
 ### Screenshots
 
-## Linux preview
-![Linux preview](https://i.imgur.com/56eoNyA.gif)
+#### Linux preview
+![Linux preview](https://i.imgur.com/56eoNyA.gif){width=100%}
 
-## Windows 10 preview
-![Windows 10 preview](https://i.ibb.co/JK3SGdJ/e.png)
+#### Windows 10 preview
+![Windows 10 preview](https://i.ibb.co/JK3SGdJ/e.png){width=100%}
 
 ### Get Started
 
-Setting up is extremely easy. Just issue the following commands:
+Setting up is extremely easy. Just issue the following commands to install and run **Discord Term** locally:
 
 ```shell
 git clone https://gitlab.com/P-90-For-Retail/discord-term.git
+cd discord-term
 npm install
 npm run start
 ```
 
-#### Note
+#### Help! My colors look weird!
 If you are having issues with the colors or fonts try running with these env vars
 
 ```shell
 LANG=en_US.utf8 TERM=xterm-256color npm run start
 ```
 
-To install on your system:
+Windows users should try the [Windows Terminal](https://github.com/microsoft/terminal) first before reporting any issues.
+
+
+### Installation
+
+To install on your system globally:
 
 ```shell
 sudo npm install -g
 ```
 
-That's it! Although keep in mind that since the project is unfinished, you might encounter some bugs here and there. Please report them if you do find them!
+That's it! Although keep in mind that since the project is unfinished and WIP, you might encounter some bugs here and there. Please report them if you do find them!
 
-**This project has been tested and is developed on Linux, using Alacritty with Node.js 16 and typescript 4.9.4**
+**This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 4.9.4**
 
 Pst. Consider **starring** the repository if you like it! <3
 
@@ -70,7 +78,14 @@ The headerbar can be disabled with `/toggleheader` and Discord Term will remembe
 
 If anything bugs out use `/reset`. It *should* fix almost all visual problems. Resizing the window and `/clear` have shown to sometimes fix ui issues as well.
 
+<details>
+<summary>
+
 ### Planned Features
+
+</summary>
+
+These details _remain_ **hidden** until expanded.
 
 - [ ] Re-write & expand codebase
 
@@ -91,6 +106,8 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
 - [ ] Tested codebase (unit testing)
 
 - [ ] SSH support
+
+</details>
 
 ### Tricks & Tips
 
@@ -181,6 +198,7 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
     Keep in mind that your password cannot contain spaces.
 
     This feature has not been properly tested since code refractor. Do not rely on it (or anything in this project) for anything important.
+
 
 Thanks to all these wonderful people for contributing to the project:
 
