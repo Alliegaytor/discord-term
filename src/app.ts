@@ -133,23 +133,27 @@ export default class App extends EventEmitter {
             }
 
             this.toggleChannels();
-            // this.toggleGuilds();
+            // this.toggleGuilds(); // TODO: Set guild menu to toggle
             this.showHeader(`Type ${this.options.commandPrefix}tg to show the guild switch menu`, true);
             this.state.saveSync();
         });
 
         this.client.on("messageCreate", this.handleMessage.bind(this));
 
+        // On error
         this.client.on("error", (error: Error) => {
             this.message.error(`An error occurred within the client: ${error.message}`);
         });
 
+        // On guild creation
         this.client.on("guildCreate", (guild: Guild) => {
             this.message.system(`Joined guild '{bold}${guild.name}{/bold}' (${guild.memberCount} members)`);
         });
 
+        // On guild deletion
         this.client.on("guildDelete", (guild: Guild) => {
             this.message.system(`Left guild '{bold}${guild.name}{/bold}' (${guild.memberCount} members)`);
+            // Change active guild if client was on it
             if (guild === this.state.get().guild) {
                 this.message.warn("Client was viewing this guild!");
                 this.setActiveGuild(this.client.guilds.cache.first() as Guild);
