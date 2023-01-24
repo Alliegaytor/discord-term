@@ -1,6 +1,7 @@
-import chalk from "chalk";
+import chalk, { ForegroundColorName } from "chalk";
 import App, { SpecialSenders } from "../app.js";
-import Utils from "../utils.js"
+import Utils from "../utils.js";
+import { IState } from "../state/state.js";
 
 export default class MessageFactory {
     protected readonly app: App;
@@ -10,13 +11,21 @@ export default class MessageFactory {
     }
 
     // TODO: Also include time.
-    public create(sender: string, message: string, senderColor: string = "white", messageColor: string = this.app.state.get().themeData.messages.foregroundColor): this {
+    public create(sender: string, message: string, senderColor: string = "white", messageColor?: ForegroundColorName): this {
+        // Get current state
+        let { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
+
+        // Set message color if not specified
+        if (!messageColor) {
+            messageColor = themeData.messages.foregroundColor;
+        }
+
         let messageString: string = message.toString();
 
         if (messageColor.startsWith("#")) {
             messageString = chalk.hex(messageColor)(messageString);
         }
-        // @ts-ignore
+        //
         else if (chalk[messageColor] === undefined || typeof chalk[messageColor] !== "function") {
             this.system("Refusing to append message: An invalid color was provided");
 
@@ -26,7 +35,7 @@ export default class MessageFactory {
             messageString = ((chalk as any)[messageColor] as any)(message);
         }
 
-        let line: string = this.app.state.get().messageFormat
+        let line: string = messageFormat
             // TODO: Catch error if sender color doesn't exist.
             // @ts-ignore
             .replace("{sender}", chalk[senderColor](sender))
@@ -34,15 +43,18 @@ export default class MessageFactory {
             .replace(/\n/g, " \n"); // Fix for empty new lines
 
         // Remove old lines
-        let screenLines: number = this.app.options.nodes.messages.getScreenLines().length ?? 0;
-        while (screenLines > this.app.options.maxScreenLines) {
-            this.app.options.nodes.messages.deleteLine(0);
-            screenLines--;
+        const maxScreenLines: number = this.app.options.maxScreenLines;
+        if (maxScreenLines != 0) {
+            let screenLines: number = this.app.options.nodes.messages.getScreenLines().length ?? 0;
+            while (screenLines > maxScreenLines) {
+                this.app.options.nodes.messages.deleteLine(0);
+                screenLines--;
+            }
         }
 
         // Fix blessed box hell
         // Calculate where to wrap lines because emojis are thicc
-        if (this.app.state.get().emojisEnabled) {
+        if (emojisEnabled) {
             let maximumWidth: number = this.app.options.nodes.messages.width as number;
             let lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
 

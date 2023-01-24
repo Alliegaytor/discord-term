@@ -1,5 +1,6 @@
 import { Snowflake, TextChannel, Guild, Message } from "discord.js";
 import { EventEmitter } from "events";
+import { ForegroundColorName } from "chalk";
 import fs from "fs";
 import { defaultState } from "./stateConstants.js";
 import App from "../app.js";
@@ -39,7 +40,7 @@ export interface IState {
 
     readonly theme: string;
 
-    readonly themeData: any;
+    readonly themeData: Theme;
 
     readonly decriptionKey: string;
 
@@ -56,6 +57,28 @@ export interface IState {
     readonly emojisEnabled: boolean;
 
     readonly userId: string;
+}
+
+export interface Theme {
+    readonly messages: Colors;
+
+    readonly channels: Colors;
+
+    readonly input: Colors;
+
+    readonly header: Colors;
+
+    readonly servers: Colors;
+}
+
+export interface Colors {
+    readonly foregroundColor: ForegroundColorName;
+
+    readonly backgroundColor: string;
+
+    readonly backgroundColorHover?: string;
+    
+    readonly foregroundColorHover?: string;
 }
 
 export default class State extends EventEmitter {

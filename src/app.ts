@@ -594,11 +594,17 @@ export default class App extends EventEmitter {
         this.options.nodes.channels.style.fg = themeData.channels.foregroundColor;
         this.options.nodes.channels.style.bg = themeData.channels.backgroundColor;
 
+        // Servers.
+        // TODO: Give servers their own themes
+        this.options.nodes.servers.style.fg = themeData.channels.foregroundColor;
+        this.options.nodes.servers.style.bg = themeData.channels.backgroundColor;
+
         // Header.
         this.options.nodes.header.style.fg = themeData.header.foregroundColor;
         this.options.nodes.header.style.bg = themeData.header.backgroundColor;
 
         this.updateChannels();
+        this.updateGuilds();
         this.message.system(`Applied theme '${name}' (${length} bytes)`);
 
         return this;
