@@ -1,6 +1,6 @@
 {
     "name": "discord-term-ng",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "Extensible Discord terminal client",
     "exports": "./dist/index.js",
     "scripts": {
@@ -20,7 +20,7 @@
     ],
     "homepage": "https://gitlab.com/P-90-For-Retail/discord-term",
     "author": "Allison <alyway@protonmail.com>",
-    "license": "GPL-3.0-only",
+    "license": "ISC",
     "repository": {
       "type" : "git",
       "url" : "https://gitlab.com/P-90-For-Retail/discord-term"
