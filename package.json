@@ -7,7 +7,7 @@
         "build": "tsc",
         "start": "npm run build && node dist/index.js",
         "prepublish": "npm run build",
-        "test": "npm run build"
+        "test": "npm pack && sudo npm install discord-term-ng-1.4.0.tgz -g"
     },
     "keywords": [
         "discord",
@@ -38,7 +38,8 @@
         "typescript": "^4.9.4"
     },
     "files": [
-        "dist",
+        "dist/*.js",
+        "dist/*/*.js",
         "themes",
         "plugins"
     ],
