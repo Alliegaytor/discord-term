@@ -534,6 +534,17 @@ export default class App extends EventEmitter {
         return this;
     }
 
+    // Get members in a server
+    public printUsers(guild: Guild, limit: number = 20) {
+        guild.members.fetch({ limit: limit }).then(fetchedMembers => {
+            const users: string[] = fetchedMembers.map(user => user.displayName);
+            if (users.length === 20) {
+                users.push("and more ...");
+            }
+            this.message.system(`Guild members: ${users.join(", ")}`);
+        });
+    }
+
     private setupInternalCommands(): this {
         setupInternalCommands(this);
 
@@ -676,6 +687,7 @@ export default class App extends EventEmitter {
         }
 
         this.message.system(`Switched to guild '{bold}${guild.name}{/bold}'`);
+        this.printUsers(guild);
         if (this.state.get().header) {
             this.showHeader(`Guild: ${guild.name}`);
         }
