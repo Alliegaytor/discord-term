@@ -4,10 +4,10 @@
     "description": "Extensible Discord terminal client",
     "exports": "./dist/index.js",
     "scripts": {
-        "build": "tsc",
+        "build": "tsc -skipLibCheck true",
         "start": "npm run build && node dist/index.js",
-        "prepublish": "npm run build",
-        "test": "npm pack && sudo npm install discord-term-ng-1.4.0.tgz -g"
+        "prepublish": "tsc",
+        "test": "npm pack && sudo npm install discord-term-ng*.tgz -g && rm discord-term-ng*.tgz"
     },
     "keywords": [
         "discord",
@@ -22,8 +22,8 @@
     "author": "Allison <alyway@protonmail.com>",
     "license": "ISC",
     "repository": {
-      "type" : "git",
-      "url" : "https://gitlab.com/P-90-For-Retail/discord-term"
+        "type": "git",
+        "url": "https://gitlab.com/P-90-For-Retail/discord-term"
     },
     "dependencies": {
         "blessed": "^0.1.81",
@@ -40,8 +40,7 @@
     "files": [
         "dist/*.js",
         "dist/*/*.js",
-        "themes",
-        "plugins"
+        "themes"
     ],
     "bin": {
         "dterm": "dist/index.js"
