@@ -120,10 +120,6 @@ export default class App extends EventEmitter {
                 return;
             }
 
-            this.state.update({
-                userId: this.client.user.id
-            });
-
             this.message.system(`Successfully connected as {bold}${this.client.user.tag}{/bold}`);
 
             const firstGuild: Guild | undefined = this.client.guilds.cache.first();
@@ -641,10 +637,23 @@ export default class App extends EventEmitter {
         return this;
     }
 
+    // Logs in client and remembers id (used to see if logged in)
     public login(token: string): this {
-        this.client.login(token).catch((error: Error) => {
-            this.message.error(`Login failed: ${error.message}`);
-        });
+        this.client.login(token)
+            .then(() => {
+                // Remember userid
+                if (this.client.user) {
+                    this.state.update({
+                        userId: this.client.user.id
+                    });
+                }
+                else {
+                    throw "Cannot log in"
+                }
+            })
+            .catch((error: Error) => {
+                this.message.error(`Login failed: ${error.message}`);
+            });
 
         return this;
     }
@@ -652,19 +661,23 @@ export default class App extends EventEmitter {
     public init(): this {
         const clipboard: string = clipboardy.readSync();
 
-        if (process.env.DTERM_TOKEN !== undefined) {
+        // Login with environment variable
+        if (process.env.DTERM_TOKEN) {
             this.message.system("Attempting to login using environment token");
             this.login(process.env.DTERM_TOKEN);
         }
+        // Login with saved token
         else if (this.state.get().token) {
             this.message.system(`Attempting to login using saved token; Use {bold}${this.options.commandPrefix}forget{/bold} to forget the token`);
             this.login(this.state.get().token as string);
         }
+        // Login with clipboard
         else if (Pattern.token.test(clipboard)) {
             this.message.system("Attempting to login using token in clipboard");
             this.login(clipboard);
         }
-        else {
+        // If not logged in
+        if (!this.state.get().userId) {
             this.options.nodes.input.setValue(`${this.options.commandPrefix}login `);
             this.showHeader("{bold}Pro Tip.{/bold} Set the environment variable {bold}DTERM_TOKEN{/bold} to automagically login!");
             this.message.system("Welcome! Please login using {bold}/login <token>{/bold} or {bold}/help{/bold} to view available commands");
@@ -856,6 +869,9 @@ export default class App extends EventEmitter {
             .then(() => {
                 this.updateChannels();
                 this.message.system(`Deleted channel '{bold}${channel.name}{/bold}'`);
+                this.state.update({
+                    channel: undefined
+                });
             })
             // Move to another channel if there is one
             .then(() => {

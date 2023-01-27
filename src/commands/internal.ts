@@ -128,7 +128,8 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("forget", () => {
         if (app.state.get().token) {
             app.state.update({
-                token: undefined
+                token: undefined,
+                userId: undefined
             });
 
             app.state.saveSync();
@@ -227,9 +228,13 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("dm", async (args: string[]) => {
+        if (!app.state.get().userId) {
+            app.message.warn("Cannot DM: Not logged in!");
+            return;
+        }
+
         if (!args[0] || !args[1]) {
             app.message.warn("Expecting both recipient and message arguments");
-
             return;
         }
 
@@ -260,7 +265,7 @@ export default function setupInternalCommands(app: App): void {
             app.message.system(`Logged in as {bold}${app.client.user.tag}{/bold} | {bold}${Math.round(app.client.ws.ping)}{/bold}ms`);
         }
         else {
-            app.message.system("Not logged in");
+            app.message.warn("Not logged in");
         }
     });
 
@@ -463,6 +468,7 @@ export default function setupInternalCommands(app: App): void {
         app.message.system("Debug info:");
         app.message.system(`Lines: ${messageLines}`);
         app.message.system(`emojisEnabled: ${app.state.get().emojisEnabled}`);
+        app.message.system(`userId: ${app.state.get().userId}`);
     });
 
     // Toggle emoji support
