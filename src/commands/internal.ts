@@ -393,7 +393,7 @@ export default function setupInternalCommands(app: App): void {
             const channel = state.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
 
             if (channel) {
-                app.setActiveChannel(channel as TextChannel);
+                app.setActiveChannel(channel);
             }
             else {
                 app.message.warn(`Channel does not exist`);
@@ -422,10 +422,10 @@ export default function setupInternalCommands(app: App): void {
         app.updateChannels(true);
         app.showChannels();
 
-        if (channel) {
+        if (channel && guild) {
             // Show previous messages and where the client is
-            app.loadPreviousMessages(channel as TextChannel);
-            app.whereAmI(channel as TextChannel, guild as Guild);
+            app.loadPreviousMessages(channel);
+            app.whereAmI(channel, guild);
         }
         else {
             app.setActiveGuild(guild);
@@ -448,7 +448,7 @@ export default function setupInternalCommands(app: App): void {
         }
 
         // Delete the channel specified
-        await app.deleteChannel(channel as TextChannel)
+        await app.deleteChannel(channel)
     });
 
     // Toggle header
@@ -469,6 +469,17 @@ export default function setupInternalCommands(app: App): void {
         app.message.system(`Lines: ${messageLines}`);
         app.message.system(`emojisEnabled: ${app.state.get().emojisEnabled}`);
         app.message.system(`userId: ${app.state.get().userId}`);
+        // Memory info
+        app.message.system("Memory info:");
+        const mem: NodeJS.MemoryUsage = process.memoryUsage();
+        // Type can't be declared in for loop https://github.com/microsoft/TypeScript/issues/3500
+        let key: keyof typeof mem;
+        for (key in mem) {
+          if (mem.hasOwnProperty(key)) {
+            const element: number = mem[key];
+            app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
+          }
+        }
     });
 
     // Toggle emoji support

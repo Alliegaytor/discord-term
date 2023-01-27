@@ -86,18 +86,18 @@ export default function setupEvents(app: App): void {
             }
         }
         else {
-            const state: IState = app.state.get();
-            if (state.muted) {
+            const { muted, guild, channel, encrypt, decriptionKey}: IState = app.state.get();
+            if (muted) {
                 app.message.system(`Message not sent; Muted mode is active. Please use {bold}${app.options.commandPrefix}mute{/bold} to toggle`);
             }
-            else if (state.guild && state.channel) {
+            else if (guild && channel) {
                 let msg: string = input;
 
-                if (state.encrypt) {
-                    msg = "$dt_" + Encryption.encrypt(msg, state.decriptionKey);
+                if (encrypt) {
+                    msg = "$dt_" + Encryption.encrypt(msg, decriptionKey);
                 }
 
-                state.channel.send({ content: msg }).catch((error: Error) => {
+                channel.send({ content: msg }).catch((error: Error) => {
                     app.message.error(`Unable to send message: ${error.message}`);
                 });
             }
@@ -119,10 +119,11 @@ export default function setupEvents(app: App): void {
     });
 
     // Edit last message
-    // TODO: Check to see if last message has been deleted
+    // TODO: Check to see if last message has been deleted. Find new last message. Decrement message each time up pressed
     app.options.nodes.input.key("up", () => {
-        if (app.state.get().lastMessage ?? false) {
-            app.clearInput(`${app.options.commandPrefix}edit ${app.state.get().lastMessage?.id} ${app.state.get().lastMessage?.content}`);
+        const { lastMessage }: IState = app.state.get()
+        if (lastMessage) {
+            app.clearInput(`${app.options.commandPrefix}edit ${lastMessage.id} ${lastMessage.content}`);
         }
     });
 

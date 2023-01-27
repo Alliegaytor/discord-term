@@ -105,7 +105,7 @@ export default class App extends EventEmitter {
         this.tags = new Tags(this.state);
     }
 
-    public async setup(init: boolean = true): Promise<this> {
+    public async setup(init: boolean = true) {
         // Discord events.
         this.client.on("ready", () => {
             this.hideHeader();
@@ -176,7 +176,6 @@ export default class App extends EventEmitter {
             this.init();
         }
 
-        return this;
     }
 
     private handleMessage(msg: Message): void {
@@ -332,7 +331,7 @@ export default class App extends EventEmitter {
         this.options.nodes.servers.visible ? this.hideGuilds() : this.updateGuilds() && this.showGuilds();
     }
 
-    private setupEvents(): this {
+    private setupEvents() {
         setupEvents(this);
 
         return this;
@@ -375,7 +374,7 @@ export default class App extends EventEmitter {
         return value.trim();
     }
 
-    public clearInput(newValue: string = ""): this {
+    public clearInput(newValue: string = "") {
         this.options.nodes.input.setValue(newValue);
 
         if (this.options.screen.focused !== this.options.nodes.input) {
@@ -384,31 +383,29 @@ export default class App extends EventEmitter {
 
         this.render();
 
-        return this;
     }
 
-    public appendInput(value: string): this {
+    public appendInput(value: string) {
         this.clearInput(this.getInput() + value);
 
-        return this;
     }
 
     /**
      * Destroy the client, save the state and exit
      * the application.
      */
-    public shutdown(exitCode: number = 0): this {
+    public shutdown(exitCode: number = 0) {
         this.client.destroy();
         this.state.saveSync();
         process.exit(exitCode);
     }
 
-    public updateChannels(render: boolean = false): this {
+    public updateChannels(render: boolean = false): boolean {
         const guild: Guild | undefined = this.state.get().guild;
 
         // Return if undefined
         if (!guild) {
-            return this;
+            return false;
         }
         // Fixes "ghost" children bug.
         while (this.options.nodes.channels.children.length > 0) {
@@ -466,10 +463,10 @@ export default class App extends EventEmitter {
             this.render(false, false);
         }
 
-        return this;
+        return true;
     }
 
-    public updateGuilds(render: boolean = false): this {
+    public updateGuilds(render: boolean = false): boolean {
         // Grab all available guilds
         const guilds: Guild[] = Utils.getGuilds(this.client.guilds);
 
@@ -527,7 +524,7 @@ export default class App extends EventEmitter {
             this.render(false, false);
         }
 
-        return this;
+        return true;
     }
 
     // Get members in a server
@@ -541,15 +538,13 @@ export default class App extends EventEmitter {
         });
     }
 
-    private setupInternalCommands(): this {
+    private setupInternalCommands() {
         setupInternalCommands(this);
-
-        return this;
     }
 
-    public loadTheme(name: string): this {
+    public loadTheme(name: string): boolean {
         if (!name) {
-            return this;
+            return false;
         }
         // TODO: Trivial expression.
         /*else if (this.state.theme === name) {
@@ -575,14 +570,14 @@ export default class App extends EventEmitter {
             this.message.warn(`The theme {bold}"${name}"{/bold} could not be found (Are you sure thats under the {bold}themes{/bold} folder?)`);
         }
 
-        return this;
+        return true;
     }
 
-    public setTheme(name: string, data: any, length: number): this {
+    public setTheme(name: string, data: any, length: number): boolean {
         if (!data) {
             this.message.error("Error while setting theme: No data was provided for the theme");
 
-            return this;
+            return false;
         }
 
         this.state.update({
@@ -618,10 +613,10 @@ export default class App extends EventEmitter {
         this.updateGuilds();
         this.message.system(`Applied theme '${name}' (${length} bytes)`);
 
-        return this;
+        return true;
     }
 
-    private updateTitle(): this {
+    private updateTitle() {
         // Destructure
         const { guild, channel }: IState = this.state.get();
         if (guild && channel) {
@@ -633,12 +628,10 @@ export default class App extends EventEmitter {
         else {
             this.options.screen.title = "Discord Terminal";
         }
-
-        return this;
     }
 
     // Logs in client and remembers id (used to see if logged in)
-    public login(token: string): this {
+    public login(token: string) {
         this.client.login(token)
             .then(() => {
                 // Remember userid
@@ -654,11 +647,9 @@ export default class App extends EventEmitter {
             .catch((error: Error) => {
                 this.message.error(`Login failed: ${error.message}`);
             });
-
-        return this;
     }
 
-    public init(): this {
+    public init() {
         const clipboard: string = clipboardy.readSync();
 
         // Login with environment variable
@@ -685,11 +676,9 @@ export default class App extends EventEmitter {
 
         this.setupEvents()
             .setupInternalCommands();
-
-        return this;
     }
 
-    public setActiveGuild(guild: Guild): this {
+    public setActiveGuild(guild: Guild) {
         this.state.update({
             guild
         });
@@ -721,8 +710,6 @@ export default class App extends EventEmitter {
 
         this.updateTitle();
         this.updateChannels(true);
-
-        return this;
     }
 
     public showHeader(text: string, autoHide: boolean = false) {
@@ -787,7 +774,7 @@ export default class App extends EventEmitter {
         return true;
     }
 
-    public setActiveChannel(channel: TextChannel): this {
+    public setActiveChannel(channel: TextChannel) {
 
         this.state.update({
             channel
@@ -797,12 +784,10 @@ export default class App extends EventEmitter {
         this.message.system(`Switched to channel '{bold}${channel.name}{/bold}'`);
 
         this.loadPreviousMessages(channel);
-
-        return this;
     }
 
     // Load previous messages in a channel
-    public loadPreviousMessages(channel: TextChannel): void {
+    public loadPreviousMessages(channel: TextChannel) {
         const permsNeeded: Array<bigint> = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
         const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.client.user?.id as UserId, permsNeeded);
         // Return if no perms
@@ -828,7 +813,7 @@ export default class App extends EventEmitter {
             });
     }
 
-    public render(hard: boolean = false, updateChannels: boolean = false): this {
+    public render(hard: boolean = false, updateChannels: boolean = false) {
         if (updateChannels) {
             this.updateChannels(false);
         }
@@ -839,13 +824,11 @@ export default class App extends EventEmitter {
         else {
             this.options.screen.realloc();
         }
-
-        return this;
     }
 
     // Displays where the client is
     // TODO: Display whereAmI at the top of the screen at all times
-    public whereAmI(channel: TextChannel, guild: Guild): this {
+    public whereAmI(channel: TextChannel, guild: Guild) {
         if (guild && channel) {
             this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`)
         }
@@ -855,7 +838,6 @@ export default class App extends EventEmitter {
         else {
             this.message.system("No active guild");
         }
-        return this;
     }
 
     // Deletes specified channel
