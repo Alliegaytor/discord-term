@@ -10,15 +10,18 @@ stages:
 - test
 
 build:
+  image: node:latest
   stage: build
   cache:
     paths:
       - node_modules
-  before_script:
-    - apt-get update -qy
-    - apt-get install --no-install-recommends -y npm
+      - dist
+  artifacts:
+    paths:
+      - node_modules
+      - dist
   script:
-    - npm i
+    - npm ci
     - npm run build
 
 sast:
