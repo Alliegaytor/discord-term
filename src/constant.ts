@@ -44,10 +44,7 @@ export const defaultAppOptions: IAppOptions = {
     stateFilePath: "state.json",
     pluginsPath: "plugins",
     headerAutoHideTimeoutPerChar: 100,
-    rightWidth: "92%-11",
-    leftWidth: "8%+11",
     headerPrefix: "[!] ",
-    helpString: "",
     maxScreenLines: 200,
 
     screen: blessed.screen({

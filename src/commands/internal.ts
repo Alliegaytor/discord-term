@@ -4,6 +4,7 @@ import App from "../app.js";
 import { AttachmentBuilder, ChannelType, Snowflake, Message, TextChannel, Guild } from "discord.js";
 import { tips } from "../constant.js";
 import Utils from "../utils.js";
+import { IState } from "../state/state.js";
 
 export default function setupInternalCommands(app: App): void {
     app.commands.set("login", (args: string[]) => {
@@ -36,31 +37,33 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("ignore", (args: string[]) => {
+        const { ignoredUsers, userId, trackList }: IState = app.state.get();
+
         if (!args[0]) {
-            if (app.state.get().ignoredUsers.length === 0) {
+            if (ignoredUsers.length === 0) {
                 app.message.system("Not ignoring anyone");
 
                 return;
             }
 
-            const usersString: string = app.state.get().ignoredUsers.map((userId: Snowflake) => `@{bold}${userId}{/bold}`).join(", ");
+            const usersString: string = ignoredUsers.map((userId: Snowflake) => `@{bold}${userId}{/bold}`).join(", ");
 
             app.message.system(`Currently ignoring messages from: ${usersString}`);
         }
-        else if (app.client.user && app.state.get().userId === args[0]) {
+        else if (app.client.user && userId === args[0]) {
             app.message.system("You can't ignore yourself, silly");
         }
-        else if (app.state.get().ignoredUsers.includes(args[0])) {
-            app.state.get().ignoredUsers.splice(app.state.get().ignoredUsers.indexOf(args[0]), 1);
+        else if (ignoredUsers.includes(args[0])) {
+            ignoredUsers.splice(ignoredUsers.indexOf(args[0]), 1);
             app.message.system(`Removed user @{bold}${args[0]}{/bold} from the ignore list`);
         }
         else {
-            if (app.state.get().trackList.includes(args[0])) {
-                app.state.get().trackList.splice(app.state.get().trackList.indexOf(args[0]), 1);
+            if (trackList.includes(args[0])) {
+                trackList.splice(trackList.indexOf(args[0]), 1);
                 app.message.system(`No longer tracking @{bold}${args[0]}{/bold}`);
             }
 
-            app.state.get().ignoredUsers.push(args[0]);
+            ignoredUsers.push(args[0]);
             app.message.system(`Added user @{bold}${args[0]}{/bold} to the ignore list`);
         }
     });
@@ -68,15 +71,15 @@ export default function setupInternalCommands(app: App): void {
     // Edit messages
     // (And delete if the edit is "")
     app.commands.set("edit", async (args: string[]) => {
-        const state = app.state.get();
+        const { channel, lastMessage }: IState = app.state.get();
 
         // TODO: Display message.
-        if (!args[0] || !state.channel) {
+        if (!args[0] || !channel || !lastMessage) {
             return;
         }
 
         // See if message exists
-        const message: Message | void | undefined = await state.lastMessage?.channel.messages.fetch(args[0]).catch(() => {
+        const message: Message | void | undefined = await lastMessage.channel.messages.fetch(args[0]).catch(() => {
             app.message.warn("That message doesn't exist or it is not editable");
         });
 
@@ -96,14 +99,14 @@ export default function setupInternalCommands(app: App): void {
 
     // Delete messages
     app.commands.set("delete", async (args: string[]) => {
-        const state = app.state.get();
+        const { channel, lastMessage } = app.state.get();
 
-        if (!args[0] || !state.channel) {
+        if (!args[0] || !channel || !lastMessage) {
             return;
         }
 
         // See if message exists
-        const message: Message | void | undefined = await state.lastMessage?.channel.messages.fetch(args[0]).catch(() => {
+        const message: Message | void | undefined = await lastMessage.channel.messages.fetch(args[0]).catch(() => {
             app.message.warn("That message doesn't exist or it is not editable");
         });
 
@@ -174,7 +177,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("themes", () => {
-        const themesPath: string = path.join(app.__dirname, "themes");
+        const themesPath: string = path.join("themes");
 
         if (fs.existsSync(themesPath)) {
             let files: string[] = fs.readdirSync(themesPath);
@@ -274,54 +277,58 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("pin", (args: string[]) => {
+        const wordPins: string[] = app.state.get().wordPins;
+
         if (!args[0]) {
-            if (app.state.get().wordPins.length === 0) {
+            if (wordPins.length === 0) {
                 app.message.system("No set word pins");
 
                 return;
             }
 
-            const wordPinsString: string = app.state.get().wordPins.map((pin: string) => `{bold}${pin}{/bold}`).join(", ");
+            const wordPinsString: string = wordPins.map((pin: string) => `{bold}${pin}{/bold}`).join(", ");
 
             app.message.system(`Word pins: ${wordPinsString}`);
         }
-        else if (app.state.get().wordPins.includes(args[0])) {
-            app.state.get().wordPins.splice(app.state.get().wordPins.indexOf(args[0]), 1);
+        else if (wordPins.includes(args[0])) {
+            wordPins.splice(wordPins.indexOf(args[0]), 1);
             app.message.system(`Removed word '{bold}${args[0]}{/bold}' from pins`);
         }
         else {
-            app.state.get().wordPins.push(args[0]);
+            wordPins.push(args[0]);
             app.message.system(`Added word '{bold}${args[0]}{/bold}' to pins`);
         }
     });
 
     app.commands.set("track", (args: string[]) => {
+        const { trackList, userId, ignoredUsers }: IState = app.state.get();
+
         if (!args[0]) {
-            if (app.state.get().trackList.length === 0) {
+            if (trackList.length === 0) {
                 app.message.system("Not tracking anyone");
 
                 return;
             }
 
-            const usersString: string = app.state.get().trackList.map((userId: Snowflake) => `@{bold}${userId}{/bold}`).join(", ");
+            const usersString: string = trackList.map((userId: Snowflake) => `@{bold}${userId}{/bold}`).join(", ");
 
             app.message.system(`Tracking users: ${usersString}`);
         }
-        else if (app.client.user && app.state.get().userId === args[0]) {
+        else if (app.client.user && userId === args[0]) {
             app.message.system("You can't track yourself, silly");
         }
-        else if (app.state.get().trackList.includes(args[0])) {
-            app.state.get().trackList.splice(app.state.get().trackList.indexOf(args[0]), 1);
+        else if (trackList.includes(args[0])) {
+            trackList.splice(trackList.indexOf(args[0]), 1);
             app.message.system(`No longer tracking @{bold}${args[0]}{/bold}`);
         }
         else if (app.client.users.cache.has(args[0])) {
-            if (app.state.get().ignoredUsers.includes(args[0])) {
+            if (ignoredUsers.includes(args[0])) {
                 app.message.system("You must first stop ignoring that user");
 
                 return;
             }
 
-            app.state.get().trackList.push(args[0]);
+            trackList.push(args[0]);
             app.message.system(`Now tracking @{bold}${args[0]}{/bold}`);
         }
         else {
@@ -332,19 +339,21 @@ export default function setupInternalCommands(app: App): void {
     // TODO: format /help better
     // TODO: have a dictonary in constants and use that if there is an argument for a specific help cmd
     app.commands.set("help", () => {
-        // Generate /help only if needed
-        if (app.options.helpString === "") {
+        // Generate /help only once and save it
+        if (!app.state.get().helpString) {
             let helpList: Array<string> = [];
 
             for (let [name] of app.commands) {
                 helpList.push(name);
             }
 
-            // Join Array
-            app.options.helpString = helpList.join(", ");
+            // Set help string
+            app.state.update({
+                helpString: helpList.join(", ")
+            })
         }
 
-        app.message.system(`Commands available: \n${app.options.helpString}`);
+        app.message.system(`Commands available: \n${app.state.get().helpString}`);
     });
 
     app.commands.set("global", () => {
@@ -379,18 +388,19 @@ export default function setupInternalCommands(app: App): void {
         app.render(true);
     });
 
+    // Change channel
     app.commands.set("c", (args: string[]) => {
-        const state = app.state.get();
+        const guild: Guild | undefined = app.state.get().guild;
 
-        if (!state.guild) {
+        if (!guild) {
             app.message.system("No active guild");
         }
-        else if (state.guild.channels.cache.has(args[0])) {
+        else if (guild.channels.cache.has(args[0])) {
             // TODO: Verify that it's a text channel.
-            app.setActiveChannel(state.guild.channels.cache.get(args[0]) as TextChannel);
+            app.setActiveChannel(guild.channels.cache.get(args[0]) as TextChannel);
         }
         else {
-            const channel = state.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
+            const channel = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && (channel.name === args[0] || "#" + channel.name === args[0])) as TextChannel;
 
             if (channel) {
                 app.setActiveChannel(channel);
@@ -401,6 +411,7 @@ export default function setupInternalCommands(app: App): void {
         }
     });
 
+    // Change guild
     app.commands.set("g", (args: string[]) => {
         if (app.client.guilds.cache.has(args[0])) {
             app.setActiveGuild(app.client.guilds.cache.get(args[0]) as Guild);
@@ -412,8 +423,7 @@ export default function setupInternalCommands(app: App): void {
 
     // Resets and refreshes everything
     app.commands.set("reset", () => {
-        const channel = app.state.get().channel as TextChannel;
-        const guild = app.state.get().guild as Guild;
+        const { channel, guild }: IState = app.state.get();
 
         // Reset
         app.options.nodes.messages.setContent("");
@@ -427,15 +437,14 @@ export default function setupInternalCommands(app: App): void {
             app.loadPreviousMessages(channel);
             app.whereAmI(channel, guild);
         }
-        else {
+        else if (guild) {
             app.setActiveGuild(guild);
         }
     });
 
     // Deletes channels
     app.commands.set("deletechannel", async () => {
-        const channel = app.state.get().channel as TextChannel;
-        const guild = app.state.get().guild as Guild;
+        const { channel, guild }: IState = app.state.get();
 
         // Do not delete channel if there is none
         if (!channel) {
