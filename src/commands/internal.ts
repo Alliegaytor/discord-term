@@ -519,6 +519,15 @@ export default function setupInternalCommands(app: App): void {
         else if (args[0]) {
             const path: string = `img/${args[0]}`;
             
+            if (path.split('').pop() === "/") {
+                app.message.error(`Img: Cannot upload a directory!`);
+                return;
+            }
+            else if (path.split('/').pop() === "state.json") {
+                app.message.error(`Img: Cannot upload state.json!`);
+                return;
+            }
+            
             if (fs.existsSync(path)) {
                 attachment = new AttachmentBuilder(path, { name: `${args[0]}` });
             }
