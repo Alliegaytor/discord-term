@@ -57,6 +57,8 @@ export interface IState {
     readonly emojisEnabled: boolean;
 
     readonly userId: string;
+
+    readonly helpString: string;
 }
 
 export interface Theme {
@@ -77,7 +79,7 @@ export interface Colors {
     readonly backgroundColor: string;
 
     readonly backgroundColorHover?: string;
-    
+
     readonly foregroundColorHover?: string;
 }
 
@@ -187,7 +189,8 @@ export default class State extends EventEmitter {
             lastMessage: undefined,
             typingTimeout: undefined,
             autoHideHeaderTimeout: undefined,
-            themeData: undefined
+            themeData: undefined,
+            helpString: undefined
         });
 
         fs.writeFileSync(this.options.stateFilePath, data);

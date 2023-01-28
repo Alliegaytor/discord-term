@@ -47,15 +47,9 @@ export interface IAppOptions extends IStateOptions {
 
     readonly pluginsPath: string;
 
-    readonly leftWidth: string;
-
-    readonly rightWidth: string;
-
     readonly headerPrefix: string;
 
     readonly maxScreenLines: number;
-
-    helpString: string;
 }
 
 export enum SpecialSenders {
