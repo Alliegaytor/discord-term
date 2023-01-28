@@ -14,6 +14,9 @@ build:
   cache:
     paths:
       - node_modules
+  before_script:
+    - apt-get update -qy
+    - apt-get install --no-install-recommends -y npm
   script:
     - npm i
     - npm run build
