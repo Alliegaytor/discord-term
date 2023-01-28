@@ -11,7 +11,7 @@ export default class MessageFactory {
     }
 
     // TODO: Also include time.
-    public create(sender: string, message: string, senderColor: string = "white", messageColor?: ForegroundColorName): this {
+    public create(sender: string, message: string, senderColor: string = "white", messageColor?: ForegroundColorName, attachments?: boolean, embeds?: boolean): this {
         // Get current state
         let { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
 
@@ -75,7 +75,7 @@ export default class MessageFactory {
         return this;
     }
 
-    public user(sender: string, message: string, modifiers: string[] = []): this {
+    public user(sender: string, message: string, modifiers: string[] = [], attachments: boolean = false, embeds: boolean = false): this {
         let name: string = `@${sender}`;
 
         if (modifiers.length > 0) {
@@ -89,14 +89,14 @@ export default class MessageFactory {
         return this;
     }
 
-    public self(name: string, message: string): this {
-        this.create(`@{bold}${name}{/bold}`, message, "cyan");
+    public self(name: string, message: string, attachments: boolean = false, embeds: boolean = false): this {
+        this.create(`@{bold}${name}{/bold}`, message, "cyan", undefined, attachments, embeds);
 
         return this;
     }
 
-    public special(prefix: string, sender: string, message: string, color: string = "yellow"): this {
-        this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color);
+    public special(prefix: string, sender: string, message: string, color: string = "yellow",  attachments: boolean = false, embeds: boolean = false): this {
+        this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color, undefined, attachments, embeds);
 
         return this;
     }
