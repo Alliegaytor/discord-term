@@ -6,8 +6,26 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
+- build
 - test
+
+build:
+  image: node:latest
+  stage: build
+  cache:
+    paths:
+      - node_modules
+      - dist
+  artifacts:
+    paths:
+      - node_modules
+      - dist
+  script:
+    - npm ci
+    - npm run build
+
 sast:
   stage: test
+
 include:
 - template: Security/SAST.gitlab-ci.yml
