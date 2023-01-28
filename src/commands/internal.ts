@@ -5,6 +5,7 @@ import { AttachmentBuilder, ChannelType, Snowflake, Message, TextChannel, Guild 
 import { tips } from "../constant.js";
 import Utils from "../utils.js";
 import { IState } from "../state/state.js";
+import uploadHandler from "./upload.js";
 
 export default function setupInternalCommands(app: App): void {
     app.commands.set("login", (args: string[]) => {
@@ -502,63 +503,24 @@ export default function setupInternalCommands(app: App): void {
         app.render(true);
         app.message.system(`Emoji support have been set to: ${emojisEnabled}`);
     });
-    
-    // Uploads images
-    app.commands.set("img", (args: string[]) => {
+
+    // Uploads files
+    app.commands.set("upload", (args: string[]) => {
         if (!app.state.get().userId) {
             app.message.warn("Img: Not logged in!");
             return;
         }
-        
-        let attachment = new AttachmentBuilder('img/miles.jpg', { name: 'miles.jpg' });
 
-        if (!args) {
-            app.message.system("Img: No arguments provided... Uploading default image...");
-        }
-        
-        else if (args[0]) {
-            const path: string = `img/${args[0]}`;
-            
-            if (path.split('').pop() === "/") {
-                app.message.error(`Img: Cannot upload a directory!`);
-                return;
-            }
-            else if (path.split('/').pop() === "state.json") {
-                app.message.error(`Img: Cannot upload state.json!`);
-                return;
-            }
-            
-            if (fs.existsSync(path)) {
-                attachment = new AttachmentBuilder(path, { name: `${args[0]}` });
-            }
-            else {
-                app.message.error(`Img: ${path} does not exist!`);
-                return;
-            }
-                
-            // DM message
-            if (args[1]) {
-                app.client.users.fetch(args[1])
-                    .then(user => {
-                        user.send({ files: [attachment] });
-                        app.message.system(`Sent ${user} ${args[0]}`);
-                    })
-                    .catch((error: Error) => {
-                        app.message.error(`Img: Unable to send image: ${error.message}`);
-                    });
-                return;
-            }
+        const recepient: string | TextChannel = (args[1]) ? args[1] : app.state.get().channel as TextChannel;
+        const userdm: boolean = (args[1]) ? true : false;
+        const file: string = (args[0]) ? `img/${args[0]}` : 'img/miles.jpg';
+
+        try {
+            uploadHandler(app, file, recepient, userdm);
         }
 
-        // Send on server
-        if (attachment) {
-            const channel: TextChannel | undefined = app.state.get().channel;
-            if (channel) {
-                channel.send({ files: [attachment] });
-            }
-            else {
-                app.message.error(`Img: Not on a channel!`);
-            }
-        }        
+        catch (error: any) {
+            app.message.error(error);
+        }
     });
 }
