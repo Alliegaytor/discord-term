@@ -84,6 +84,8 @@ export default class App extends EventEmitter {
 
     public __dirname: string = "";
 
+    public history: number = 0;
+
     public constructor(options?: Partial<IAppOptions>, commands: Map<string, ICommandHandler> = new Map()) {
         super();
 
@@ -181,10 +183,12 @@ export default class App extends EventEmitter {
         const state: IState = this.state.get();
         const channel: TextChannel | undefined = state.channel;
 
+        const { messageHistory }: IState = this.state.get();
+
 
         if (msg.author.id === state.userId) {
             this.state.update({
-                lastMessage: msg
+                messageHistory: (messageHistory) ? [msg, ... messageHistory] : [msg]
             });
         }
 
@@ -208,7 +212,7 @@ export default class App extends EventEmitter {
         let embeds = (msg.embeds.length > 0) ? true : false;
 
         let content: string = msg.cleanContent;
-        
+
         if (attachments) {
             content += " < IMAGE >";
         }
@@ -354,11 +358,11 @@ export default class App extends EventEmitter {
         if (!muted && guild && channel) {
             const timeNow: number = new Date().getTime()
             // If it has never typed or it has been more than 10 seconds since the last time
-            if (typingLastChannel !== channel || timeNow - typingLastStarted > 10000) {
+            if (typingLastChannel !== channel.id || timeNow - typingLastStarted > 10000) {
                 // Update state
                 this.state.update({
                     typingLastStarted: timeNow,
-                    typingLastChannel: channel
+                    typingLastChannel: channel.id
                 });
 
                 // Start typing and catch errors
@@ -685,8 +689,11 @@ export default class App extends EventEmitter {
 
     public setActiveGuild(guild: Guild) {
         this.state.update({
-            guild
+            guild: guild,
+            messageHistory: []
         });
+
+        this.history = 0;
 
         if (!guild) {
             this.message.warn(`Guild undefined`);
@@ -782,8 +789,11 @@ export default class App extends EventEmitter {
     public setActiveChannel(channel: TextChannel) {
 
         this.state.update({
-            channel
+            channel: channel,
+            messageHistory: []
         });
+
+        this.history = 0;
 
         this.updateTitle();
         this.message.system(`Switched to channel '{bold}${channel.name}{/bold}'`);

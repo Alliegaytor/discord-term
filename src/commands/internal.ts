@@ -72,15 +72,15 @@ export default function setupInternalCommands(app: App): void {
     // Edit messages
     // (And delete if the edit is "")
     app.commands.set("edit", async (args: string[]) => {
-        const { channel, lastMessage }: IState = app.state.get();
+        const { channel }: IState = app.state.get();
 
         // TODO: Display message.
-        if (!args[0] || !channel || !lastMessage) {
+        if (!args[0] || !channel ) {
             return;
         }
 
         // See if message exists
-        const message: Message | void | undefined = await lastMessage.channel.messages.fetch(args[0]).catch(() => {
+        const message: Message | void | undefined = await channel.messages.fetch(args[0]).catch(() => {
             app.message.warn("That message doesn't exist or it is not editable");
         });
 
@@ -100,14 +100,14 @@ export default function setupInternalCommands(app: App): void {
 
     // Delete messages
     app.commands.set("delete", async (args: string[]) => {
-        const { channel, lastMessage } = app.state.get();
+        const { channel } = app.state.get();
 
-        if (!args[0] || !channel || !lastMessage) {
+        if (!args[0] || !channel ) {
             return;
         }
 
         // See if message exists
-        const message: Message | void | undefined = await lastMessage.channel.messages.fetch(args[0]).catch(() => {
+        const message: Message | void | undefined = await channel.messages.fetch(args[0]).catch(() => {
             app.message.warn("That message doesn't exist or it is not editable");
         });
 

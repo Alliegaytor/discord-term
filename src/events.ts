@@ -59,6 +59,8 @@ export default function setupEvents(app: App): void {
     app.options.nodes.input.key("enter", (t: any) => {
         let input: string = app.getInput(true);
 
+        app.history = 0;
+
         const splitInput: string[] = input.split(" ");
         const tags: string[] = app.tags.getAll();
 
@@ -110,6 +112,7 @@ export default function setupEvents(app: App): void {
     });
 
     app.options.nodes.input.key("escape", () => {
+        app.history = 0;
         if (app.getInput().startsWith(app.options.commandPrefix)) {
             app.clearInput(app.options.commandPrefix);
         }
@@ -118,20 +121,24 @@ export default function setupEvents(app: App): void {
         }
     });
 
-    // Edit last message
-    // TODO: Check to see if last message has been deleted. Find new last message. Decrement message each time up pressed
+    // Edit message
     app.options.nodes.input.key("up", () => {
-        const { lastMessage }: IState = app.state.get()
-        if (lastMessage) {
-            app.clearInput(`${app.options.commandPrefix}edit ${lastMessage.id} ${lastMessage.content}`);
+        const { messageHistory }: IState = app.state.get();
+        if (messageHistory && app.history + 1 < messageHistory.length) {
+            const message = messageHistory[app.history];
+            app.clearInput(`${app.options.commandPrefix}edit ${message.id} ${message.content}`);
+            app.history++;
         }
     });
 
+    // Edit message
     app.options.nodes.input.key("down", () => {
-        //  if (app.client.user && app.client.user.lastMessage && app.client.user.lastMessage.deletable) {
-        //      app.client.user.lastMessage.delete();
-        //  }
-        app.clearInput();
+        const { messageHistory }: IState = app.state.get();
+        if (messageHistory && app.history > 0) {
+            app.history--;
+            const message = messageHistory[app.history];
+            app.clearInput(`${app.options.commandPrefix}edit ${message.id} ${message.content}`);
+        }
     });
 
     app.options.nodes.input.key("C-c", () => {

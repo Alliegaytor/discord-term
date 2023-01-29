@@ -24,7 +24,8 @@ export interface IState {
 
     readonly messageFormat: string;
 
-    readonly lastMessage?: Message;
+    // TODO: Only grab the needed bits of the message to save on memory
+    readonly messageHistory?: Message[];
 
     readonly typingTimeout?: NodeJS.Timeout;
 
@@ -52,7 +53,7 @@ export interface IState {
 
     readonly typingLastStarted: number;
 
-    readonly typingLastChannel: TextChannel | null;
+    readonly typingLastChannel: string;
 
     readonly emojisEnabled: boolean;
 
@@ -187,6 +188,8 @@ export default class State extends EventEmitter {
             guild: undefined,
             channel: undefined,
             lastMessage: undefined,
+            typingLastChannel: undefined,
+            messageHistory: undefined,
             typingTimeout: undefined,
             autoHideHeaderTimeout: undefined,
             themeData: undefined,

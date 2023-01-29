@@ -15,7 +15,7 @@ export const defaultState: IState = {
     encrypt: false,
     header: true,
     typingLastStarted: 0,
-    typingLastChannel: null,
+    typingLastChannel: "",
     emojisEnabled: true,
     userId: "",
     helpString: "",
