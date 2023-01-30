@@ -15,7 +15,7 @@ export default class Tags {
         return this.getAll().includes(name);
     }
 
-    public get(name: string): string | null {
+    public get(name: string): string {
         const keys: string[] = this.getAll();
 
         if (!keys.includes(name)) {

@@ -210,8 +210,13 @@ export default function setupInternalCommands(app: App): void {
             app.message.system(`Tags: ${tagsString}`);
         }
         else if (args.length === 2) {
-            app.tags.set(args[0], args[1]);
-            app.message.system(`Successfully saved tag '{bold}${args[0]}{/bold}'`);
+            if (/^-?\d+$/.test(args[1])) {
+                app.tags.set(args[0], args[1]);
+                app.message.system(`Successfully saved tag '{bold}${args[0]}{/bold}'`);
+            }
+            else {
+                app.message.warn(`Tag: Could not tag ${args[0]} to ${args[1]} as it is not a valid channel/user id`);
+            }
         }
         else if (args.length === 1 && app.tags.has(args[0])) {
             app.tags.delete(args[0]);
@@ -241,13 +246,23 @@ export default function setupInternalCommands(app: App): void {
             return;
         }
 
+        // Make sure the user id is a number
+        if (!/^-?\d+$/.test(args[0])) {
+            app.message.warn(`DM: ${args[0]} is not a valid user id!`)
+            return;
+        }
+
         args[0] = args[0].replace(/\D/g, "");
 
-        await app.client.users.fetch(args[0]).then(user => {
-            user.send(args.slice(1).join(" ")).catch((error: Error) => {
-                app.message.error(`Unable to send message: ${error.message}`);
+        await app.client.users.fetch(args[0])
+            .then(user => {
+                user.send(args.slice(1).join(" ")).catch((error: Error) => {
+                    app.message.error(`Could not send message: ${error.message}`);
+                });
+            })
+            .catch((error: Error) => {
+                app.message.error(`${error.message}`);
             });
-        });
     });
 
     // Toggles channels visibility
