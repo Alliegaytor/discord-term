@@ -11,16 +11,15 @@ export default function setupInternalCommands(app: App): void {
         app.login(args[0]);
     });
 
-    app.commands.set("logout", async () => {
+    app.commands.set("logout", () => {
         app.shutdown();
     });
 
     // Display where client is
     app.commands.set("where", () => {
-        const channel = app.state.get().channel as TextChannel;
-        const guild = app.state.get().guild as Guild;
+        const { channel, guild }: IState = app.state.get();
 
-        app.whereAmI(channel as TextChannel, guild as Guild);
+        app.whereAmI(channel, guild);
     })
 
     app.commands.set("mute", () => {
@@ -71,49 +70,47 @@ export default function setupInternalCommands(app: App): void {
     // Edit messages
     // (And delete if the edit is "")
     app.commands.set("edit", async (args: string[]) => {
-        const { channel, lastMessage }: IState = app.state.get();
+        const { channel }: IState = app.state.get();
 
         // TODO: Display message.
-        if (!args[0] || !channel || !lastMessage) {
+        if (!args[0] || !channel) {
+            app.message.warn(`Expecting at least one argument`);
             return;
         }
 
-        // See if message exists
-        const message: Message | void | undefined = await lastMessage.channel.messages.fetch(args[0]).catch(() => {
-            app.message.warn("That message doesn't exist or it is not editable");
-        });
-
-        // If message is defined continue
-        if (message ?? false) {
-            // let msg: Message = message as Message;
-            // Delete if the edit is ""
-            if (!args[1]) {
-                app.deleteMessage(message as Message);
-            }
-            else {
-                const editedMessage: string = args.slice(1).join(" ");
-                app.editMessage(message as Message, editedMessage);
-            }
-        }
+        // Find message then edit it
+        channel.messages.fetch(args[0])
+            .then((message) => {
+                if (!args[1]) {
+                    app.deleteMessage(message);
+                }
+                else {
+                    const editedMessage: string = args.slice(1).join(" ");
+                    app.editMessage(message, editedMessage);
+                }
+            })
+            .catch(() => {
+                app.message.warn("That message doesn't exist");
+            });
     });
 
     // Delete messages
     app.commands.set("delete", async (args: string[]) => {
-        const { channel, lastMessage } = app.state.get();
+        const { channel }: IState = app.state.get();
 
-        if (!args[0] || !channel || !lastMessage) {
+        if (!args[0] || args.length > 1 || !channel ) {
+            app.message.warn(`Expecting one argument instead of ${args.length}`);
             return;
         }
 
-        // See if message exists
-        const message: Message | void | undefined = await lastMessage.channel.messages.fetch(args[0]).catch(() => {
-            app.message.warn("That message doesn't exist or it is not editable");
-        });
-
-        // If message is defined continue
-        if (message ?? false) {
-            app.deleteMessage(message as Message);
-        }
+        // Find message then delete it
+        channel.messages.fetch(args[0])
+            .then((message) => {
+                app.deleteMessage(message);
+            })
+            .catch(() => {
+                app.message.warn("That message doesn't exist");
+            });
     })
 
     app.commands.set("save", () => {

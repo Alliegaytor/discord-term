@@ -783,7 +783,7 @@ export default class App extends EventEmitter {
     // Load previous messages in a channel
     public loadPreviousMessages(channel: TextChannel) {
         const permsNeeded: Array<bigint> = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
-        const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.client.user?.id as UserId, permsNeeded);
+        const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.state.get().userId, permsNeeded);
         // Return if no perms
         if (hasPerms.indexOf(false) !== -1) {
             this.message.error(`Cannot load messages in ${channel.name} due to insufficient permissions "${permsNeeded[hasPerms.indexOf(false)]}"`);
@@ -796,7 +796,7 @@ export default class App extends EventEmitter {
             fetchlimit = this.options.maxFetchMessages;
         }
 
-        channel.messages.fetch({limit: fetchlimit})
+        channel.messages.fetch({ limit: fetchlimit })
             .then(messages => {
                 this.message.system(`Loading ${messages.size} most recent messages`);
                 messages.reverse().forEach(msg => this.handleMessage(msg));
@@ -822,7 +822,7 @@ export default class App extends EventEmitter {
 
     // Displays where the client is
     // TODO: Display whereAmI at the top of the screen at all times
-    public whereAmI(channel: TextChannel, guild: Guild) {
+    public whereAmI(channel: TextChannel | undefined, guild: Guild | undefined) {
         if (guild && channel) {
             this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`)
         }
