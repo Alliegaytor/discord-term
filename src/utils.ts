@@ -61,48 +61,29 @@ export default abstract class Utils {
     }
 
     // Wraps words so blessed doesn't die when rendering emojis
-    public static wordWrapToStringList (text: string, maximumWidth: number): Array<string> {
-          let result: Array<string> = [], line: Array<string> = [];
-          let length: number = 0;
+    public static wordWrapToStringList(text: string, maximumWidth: number): Array<string> {
+        let result: Array<string> = [], line: Array<string> = [];
+        let length: number = 0;
 
-          text.split(" ").forEach((word) => {
-              // If word is bigger than the maximumWidth
-              if (stringWidth(word) >= maximumWidth && stringWidth(word) != word.length) {
-                  let newWord: string = word;
-                  // Shrink the word
-                  function shrink(str: string): string {
-                      let newWord: string = str;
-                      // Cut text if it's a very long word
-                      while (stringWidth(newWord) + 2 >= maximumWidth) {
-                        newWord = newWord.slice(0, -1);
-                      }
-                      result.push(newWord);
-                      newWord = str.replace(newWord, "");
-                      return newWord
-                  }
-
-                  while (stringWidth(newWord) > maximumWidth) {
-                      newWord = shrink(newWord)
-                  }
-
-                  result.push(newWord);
-                  newWord = word.replace(newWord, "");
-              }
-              // If word is not bigger than maximumWidth
-              else {
-                  if ((length + stringWidth(word)) >= maximumWidth) {
-                      result.push(line.join(" "));
-                      line = []; length = 0;
-                  }
-                  length += stringWidth(word) + 1;
-                  line.push(word);
-              }
-          })
-
-          if (line.length > 0) {
-              result.push(line.join(" "));
-          }
-
-          return result;
+        text.split(" ").forEach((word) => {
+            let newWord: string = word;
+            while (stringWidth(newWord) > maximumWidth) {
+                const shrinkIndex = Math.max(0, newWord.length - (stringWidth(newWord) - maximumWidth + 2));
+                result.push(newWord.slice(0, shrinkIndex));
+                newWord = newWord.slice(shrinkIndex);
+            }
+            if (length + stringWidth(newWord) > maximumWidth) {
+                result.push(line.join(" "));
+                line = [newWord];
+                length = stringWidth(newWord) + 1;
+            } else {
+                line.push(newWord);
+                length += stringWidth(newWord) + 1;
+            }
+        });
+        if (line.length > 0) {
+            result.push(line.join(" "));
+        }
+        return result;
     }
 }
