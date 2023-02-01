@@ -80,5 +80,5 @@ The one issue that I couldn't fix is something I refuse to touch.
 ✖ 1 problem (0 errors, 1 warning)
 ```
 
-I'm not going to pretend what half those words mean. 
+I'm not going to pretend to know what half those words mean. 
 <sup>feel free to fix :)</sup>

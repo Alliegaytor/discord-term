@@ -1,3 +1,42 @@
+## [1.4.2] - 2023.02.02
+
+### Added
+- Print users on server switching
+- Gitlab CI pipelines
+- Unit tests (in development)
+- Lint command: `npm run lint`
+- Information about contributing
+
+### Changes
+- Project name from discord-term -> discord-term-ng
+- Memory improvements
+	- /debug now includes memory usage information
+- Improve build time
+- Improve /dm and /tag
+- Improve /edit and /delete
+- Improve word wraping
+- Bumped node version from 14.16 -> 16.9.0
+
+### Fixes
+- Code refactor
+	- Use typescript linter
+	- Cleanup
+- Checks for if client is logged in
+
+### (dev)Dependencies
+#### Bumped
+- typescript from 4.9.4 -> 4.9.5
+
+#### Added
+- @types/jest 29.4.0
+- @typescript-eslint/eslint-plugin 5.50.0
+- @typescript-eslint/parser 5.50.0
+- eslint 8.33.0
+- jest 29.4.1
+- ts-jest 29.0.5
+- ts-node 10.9.1
+
+
 ## [1.4.0] - 2023.01.24
 
 ### IMPORTANT
