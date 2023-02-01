@@ -29,12 +29,12 @@ export default function setupEvents(app: App): void {
         const input: string = rawInput.substr(app.options.commandPrefix.length);
 
         if (rawInput.startsWith(app.options.commandPrefix) && input.indexOf(" ") === -1) {
-            let autocomplete: Array<string> = [];
+            const autocomplete: Array<string> = [];
             // Prevent tab from moving cursor
             app.clearInput(`${rawInput}`);
 
             // Search help commands
-            for (let [name] of app.commands) {
+            for (const [name] of app.commands) {
                 if (name.startsWith(input)) {
                     autocomplete.push(name);
                 }
@@ -56,7 +56,7 @@ export default function setupEvents(app: App): void {
 
 
 
-    app.options.nodes.input.key("enter", (t: any) => {
+    app.options.nodes.input.key("enter", (t: App) => {
         let input: string = app.getInput(true);
 
         const splitInput: string[] = input.split(" ");
@@ -121,7 +121,7 @@ export default function setupEvents(app: App): void {
     // Edit last message
     // TODO: Check to see if last message has been deleted. Find new last message. Decrement message each time up pressed
     app.options.nodes.input.key("up", () => {
-        const { lastMessage }: IState = app.state.get()
+        const { lastMessage }: IState = app.state.get();
         if (lastMessage) {
             app.clearInput(`${app.options.commandPrefix}edit ${lastMessage.id} ${lastMessage.content}`);
         }

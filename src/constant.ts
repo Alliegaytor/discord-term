@@ -36,7 +36,7 @@ export const defaultAppOptions: IAppOptions = {
         partials: [
             Partials.Channel, // Required to receive DMs
         ],
-        allowedMentions: { parse: ['users', 'roles'] }
+        allowedMentions: { parse: ["users", "roles"] }
     },
     initialState: {},
     maxFetchMessages: 50,

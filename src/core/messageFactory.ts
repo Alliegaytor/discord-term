@@ -11,9 +11,9 @@ export default class MessageFactory {
     }
 
     // TODO: Also include time.
-    public create(sender: string, message: string, senderColor: string = "white", messageColor?: ForegroundColorName): this {
+    public create(sender: string, message: string, senderColor = "white", messageColor?: ForegroundColorName): this {
         // Get current state
-        let { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
+        const { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
 
         // Set message color if not specified
         if (!messageColor) {
@@ -32,13 +32,12 @@ export default class MessageFactory {
             return this;
         }
         else {
-            messageString = ((chalk as any)[messageColor] as any)(message);
+            messageString = ((chalk)[messageColor])(message);
         }
 
-        let line: string = messageFormat
+        const line: string = messageFormat
             // TODO: Catch error if sender color doesn't exist.
-            // @ts-ignore
-            .replace("{sender}", chalk[senderColor](sender))
+            .replace("{sender}", ((chalk)[senderColor as ForegroundColorName])(sender))
             .replace("{message}", messageString)
             .replace(/\n/g, " \n"); // Fix for empty new lines
 
@@ -55,8 +54,8 @@ export default class MessageFactory {
         // Fix blessed box hell
         // Calculate where to wrap lines because emojis are thicc
         if (emojisEnabled) {
-            let maximumWidth: number = this.app.options.nodes.messages.width as number;
-            let lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
+            const maximumWidth: number = this.app.options.nodes.messages.width as number;
+            const lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
 
             // Push lines
             lines.forEach(element => {
@@ -76,10 +75,10 @@ export default class MessageFactory {
     }
 
     public user(sender: string, message: string, modifiers: string[] = []): this {
-        let name: string = `@${sender}`;
+        let name = `@${sender}`;
 
         if (modifiers.length > 0) {
-            for (let i: number = 0; i < modifiers.length; i++) {
+            for (let i = 0; i < modifiers.length; i++) {
                 name = modifiers[i] + name;
             }
         }
@@ -95,7 +94,7 @@ export default class MessageFactory {
         return this;
     }
 
-    public special(prefix: string, sender: string, message: string, color: string = "yellow"): this {
+    public special(prefix: string, sender: string, message: string, color = "yellow"): this {
         this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color);
 
         return this;

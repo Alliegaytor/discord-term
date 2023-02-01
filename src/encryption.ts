@@ -14,7 +14,7 @@ export default abstract class Encryption {
     public static decrypt(encryptedMessage: string, password: string): string {
         const decipher: Decipher = crypto.createDecipher("aes-256-cbc", password);
 
-        let result = decipher.update(encryptedMessage, "hex", "utf8")
+        let result = decipher.update(encryptedMessage, "hex", "utf8");
 
         result += decipher.final("utf8");
 

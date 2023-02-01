@@ -1,4 +1,4 @@
-import { Guild, TextChannel, Channel, ChannelType, GuildChannel, GuildBasedChannel, GuildManager, PermissionsBitField } from "discord.js";
+import { Guild, TextChannel, ChannelType, GuildBasedChannel, GuildManager, PermissionsBitField } from "discord.js";
 import { UserId } from "./types.js";
 import stringWidth from "string-width";
 
@@ -12,7 +12,7 @@ export default abstract class Utils {
         }
 
         // Return the "general" chat ?? the first channel
-        return channels.find((channel: TextChannel) => channel.name.toLowerCase() === "general") ?? channels[0]
+        return channels.find((channel: TextChannel) => channel.name.toLowerCase() === "general") ?? channels[0];
     }
 
     public static getRandomInt(min: number, max: number): number {
@@ -31,7 +31,7 @@ export default abstract class Utils {
             else {
                 results[i] = false;
             }
-        })
+        });
 
         return results;
     }
@@ -51,19 +51,20 @@ export default abstract class Utils {
 
     // https://stackoverflow.com/a/54369605
     public static visibleLength(str: string): number {
-        return [...new Intl.Segmenter().segment(str)].length
+        return [...new Intl.Segmenter().segment(str)].length;
     }
 
     // https://stackoverflow.com/a/71619350
     public static getSegments(str: string): Intl.Segments {
         const segmenter = new Intl.Segmenter("en", {granularity: "word"});
-        return segmenter.segment(str)
+        return segmenter.segment(str);
     }
 
     // Wraps words so blessed doesn't die when rendering emojis
     public static wordWrapToStringList(text: string, maximumWidth: number): Array<string> {
-        let result: Array<string> = [], line: Array<string> = [];
-        let length: number = 0;
+        const result: Array<string> = [];
+        let line: Array<string> = [];
+        let length: number = 0 as number;
 
         text.split(" ").forEach((word) => {
             let newWord: string = word;

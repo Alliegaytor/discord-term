@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import App from "../app.js";
-import { ChannelType, Snowflake, Message, TextChannel, Guild } from "discord.js";
+import { ChannelType, Snowflake, TextChannel, Guild } from "discord.js";
 import { tips } from "../constant.js";
 import Utils from "../utils.js";
 import { IState } from "../state/state.js";
@@ -20,7 +20,7 @@ export default function setupInternalCommands(app: App): void {
         const { channel, guild }: IState = app.state.get();
 
         app.whereAmI(channel, guild);
-    })
+    });
 
     app.commands.set("mute", () => {
         app.state.update({
@@ -74,7 +74,7 @@ export default function setupInternalCommands(app: App): void {
 
         // TODO: Display message.
         if (!args[0] || !channel) {
-            app.message.warn(`Expecting at least one argument`);
+            app.message.warn("Expecting at least one argument");
             return;
         }
 
@@ -111,7 +111,7 @@ export default function setupInternalCommands(app: App): void {
             .catch(() => {
                 app.message.warn("That message doesn't exist");
             });
-    })
+    });
 
     app.commands.set("save", () => {
         app.state.saveSync();
@@ -165,7 +165,7 @@ export default function setupInternalCommands(app: App): void {
 
     app.commands.set("theme", (args: string[]) => {
         if (!args[0]) {
-            app.message.system(`The current theme is '{bold}${app.state.get().theme}{/bold}'`)
+            app.message.system(`The current theme is '{bold}${app.state.get().theme}{/bold}'`);
 
             return;
         }
@@ -177,9 +177,9 @@ export default function setupInternalCommands(app: App): void {
         const themesPath: string = path.join("themes");
 
         if (fs.existsSync(themesPath)) {
-            let files: string[] = fs.readdirSync(themesPath);
+            const files: string[] = fs.readdirSync(themesPath);
 
-            for (let i: number = 0; i < files.length; i++) {
+            for (let i = 0; i < files.length; i++) {
                 files[i] = files[i].replace(".json", "");
             }
 
@@ -245,7 +245,7 @@ export default function setupInternalCommands(app: App): void {
 
         // Make sure the user id is a number
         if (!/^-?\d+$/.test(args[0])) {
-            app.message.warn(`DM: ${args[0]} is not a valid user id!`)
+            app.message.warn(`DM: ${args[0]} is not a valid user id!`);
             return;
         }
 
@@ -270,7 +270,7 @@ export default function setupInternalCommands(app: App): void {
     // Toggles servers visibility
     app.commands.set("tg", () => {
         app.toggleGuilds();
-    })
+    });
 
     // Displays name#1234 and ping. Example output:
     // <System> Logged in as Test#5782 | 216ms
@@ -353,16 +353,16 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("help", () => {
         // Generate /help only once and save it
         if (!app.state.get().helpString) {
-            let helpList: Array<string> = [];
+            const helpList: Array<string> = [];
 
-            for (let [name] of app.commands) {
+            for (const [name] of app.commands) {
                 helpList.push(name);
             }
 
             // Set help string
             app.state.update({
                 helpString: helpList.join(", ")
-            })
+            });
         }
 
         app.message.system(`Commands available: \n${app.state.get().helpString}`);
@@ -418,7 +418,7 @@ export default function setupInternalCommands(app: App): void {
                 app.setActiveChannel(channel);
             }
             else {
-                app.message.warn(`Channel does not exist`);
+                app.message.warn("Channel does not exist");
             }
         }
     });
@@ -460,7 +460,7 @@ export default function setupInternalCommands(app: App): void {
 
         // Do not delete channel if there is none
         if (!channel) {
-            let message: string = "Could not delete: You are not on a channel!";
+            let message = "Could not delete: You are not on a channel!";
             if (guild) {
                 message = message + ` This is because ${guild.name} has 0 text channels`;
             }
@@ -469,14 +469,14 @@ export default function setupInternalCommands(app: App): void {
         }
 
         // Delete the channel specified
-        await app.deleteChannel(channel)
+        await app.deleteChannel(channel);
     });
 
     // Toggle header
     app.commands.set("toggleheader", () => {
         app.options.nodes.header.visible ? app.hideHeader() : app.showHeader("Header activated!");
         // Toggle
-        const header: boolean = !(app.state.get().header === true);
+        const header = !(app.state.get().header === true);
         app.state.update({
             header: header
         });
@@ -496,16 +496,16 @@ export default function setupInternalCommands(app: App): void {
         // Type can't be declared in for loop https://github.com/microsoft/TypeScript/issues/3500
         let key: keyof typeof mem;
         for (key in mem) {
-          if (mem.hasOwnProperty(key)) {
-            const element: number = mem[key];
-            app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
-          }
+            if (Object.prototype.hasOwnProperty.call(mem, key)) {
+                const element: number = mem[key];
+                app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
+            }
         }
     });
 
     // Toggle emoji support
     app.commands.set("emoji", () => {
-        const emojisEnabled: boolean = !(app.state.get().emojisEnabled === true);
+        const emojisEnabled = !(app.state.get().emojisEnabled === true);
         app.state.update({
             emojisEnabled: emojisEnabled
         });
