@@ -2,7 +2,7 @@
 
 There aren't many rules or guidlines on contributing at the moment, but the ones that do exist are shown below.
 
-1. The requirments are as follows:
+1. The requirements are as follows:
 
 	1. The code must be in typescript
 	2. The code must compile
@@ -14,37 +14,40 @@ There aren't many rules or guidlines on contributing at the moment, but the ones
 	1. Indentation of 6 spaces
 	2. Block statements
 		a. Spaces before condition
-		
-			```javascript
-			if (true) {}      ✅
-			if(helloThere){}  ❌
-			```
+
+
+		```javascript
+		if (true) {}      ✅
+		if(helloThere){}  ❌
+		```
+
 		b. Curly braces formatting
 
-			```javascitpt
-			if (true) {       ✅
-				return 1;
-			}
-			else {
-				return 0;
-			}
-			if (true) {       ✅
-				return 1 ;
-			} else {
-				return 0;
-			}
-			```
-			Either way works just fine. So long as this does not happen.
+		```javascript
+		if (true) {       ✅
+			return 1;
+		}
+		else {
+			return 0;
+		}
+		if (true) {       ✅
+			return 1 ;
+		} else {
+			return 0;
+		}
+		```
 
-			```javascript
-			if (true)         ❌
-			{
-				return "why";	
-			} else
-			{
-				return "dont";
-			}
-			```
+		Either way works just fine. So long as this does not happen.
+
+		```javascript
+		if (true)         ❌
+		{
+			return "why";	
+		} else
+		{
+			return "dont";
+		}
+		```
 
 	3. Semicolons;
 	4. Readable thing.dothing().then(()=>{print("hello world");}).catch(err=>{print(`red alert ${err}`);});
