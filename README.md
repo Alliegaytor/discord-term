@@ -1,8 +1,8 @@
 # ⚠️ In active development!
 
-**Discord Term** Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree on github.
+[**Discord Term**](https://gitlab.com/P-90-For-Retail/discord-term) Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree on github.
 
-The project needs active maintainers. Any help would be greatly appreciated!
+The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more information. Any help would be greatly appreciated!
 
 [[_TOC_]]
 
@@ -71,9 +71,9 @@ Discord Terminal will show you the first channel in the first server that the Di
 
 The command `/tc` toggles the visibility of the channel picker, and `/tg` toggles the server (guild) picker. By default only the channel picker is visible.
 
-You can use `/tip` to give you some tips in the headerbar (the top bar on the screen). These are currently being worked on and are incomplete.
+Using `/tip` will display some tips in the headerbar. Note that these are currently being worked on and are considered incomplete.
 
-The headerbar can be disabled with `/toggleheader` and Discord Term will remember your preference.
+The headerbar can be disabled with `/toggleheader` and Discord Term will remember your preference. `/emoji` toggles emoji support.
 
 If anything bugs out use `/reset`. It *should* fix almost all visual problems. Resizing the window and `/clear` have shown to sometimes fix ui issues as well.
 
@@ -88,7 +88,7 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
 
 - [ ] Use [blessed-contrib](https://github.com/yaronn/blessed-contrib) with blessed (or a maintained blessed fork)
 
-- [ ] Documentation
+- [ ] Improved documentation
 
 - [ ] Support threads
 
