@@ -12,17 +12,16 @@ export default function setupInternalCommands(app: App): void {
         app.login(args[0]);
     });
 
-    app.commands.set("logout", async () => {
+    app.commands.set("logout", () => {
         app.shutdown();
     });
 
     // Display where client is
     app.commands.set("where", () => {
-        const channel = app.state.get().channel as TextChannel;
-        const guild = app.state.get().guild as Guild;
+        const { channel, guild }: IState = app.state.get();
 
-        app.whereAmI(channel as TextChannel, guild as Guild);
-    })
+        app.whereAmI(channel, guild);
+    });
 
     app.commands.set("mute", () => {
         app.state.update({
@@ -111,12 +110,6 @@ export default function setupInternalCommands(app: App): void {
             app.message.warn("That message doesn't exist or it is not editable");
         });
 
-        // If message is defined continue
-        if (message ?? false) {
-            app.deleteMessage(message as Message);
-        }
-    })
-
     app.commands.set("save", () => {
         app.state.saveSync();
     });
@@ -169,7 +162,7 @@ export default function setupInternalCommands(app: App): void {
 
     app.commands.set("theme", (args: string[]) => {
         if (!args[0]) {
-            app.message.system(`The current theme is '{bold}${app.state.get().theme}{/bold}'`)
+            app.message.system(`The current theme is '{bold}${app.state.get().theme}{/bold}'`);
 
             return;
         }
@@ -181,9 +174,9 @@ export default function setupInternalCommands(app: App): void {
         const themesPath: string = path.join("themes");
 
         if (fs.existsSync(themesPath)) {
-            let files: string[] = fs.readdirSync(themesPath);
+            const files: string[] = fs.readdirSync(themesPath);
 
-            for (let i: number = 0; i < files.length; i++) {
+            for (let i = 0; i < files.length; i++) {
                 files[i] = files[i].replace(".json", "");
             }
 
@@ -211,8 +204,13 @@ export default function setupInternalCommands(app: App): void {
             app.message.system(`Tags: ${tagsString}`);
         }
         else if (args.length === 2) {
-            app.tags.set(args[0], args[1]);
-            app.message.system(`Successfully saved tag '{bold}${args[0]}{/bold}'`);
+            if (/^-?\d+$/.test(args[1])) {
+                app.tags.set(args[0], args[1]);
+                app.message.system(`Successfully saved tag '{bold}${args[0]}{/bold}'`);
+            }
+            else {
+                app.message.warn(`Tag: Could not tag ${args[0]} to ${args[1]} as it is not a valid channel/user id`);
+            }
         }
         else if (args.length === 1 && app.tags.has(args[0])) {
             app.tags.delete(args[0]);
@@ -242,13 +240,23 @@ export default function setupInternalCommands(app: App): void {
             return;
         }
 
+        // Make sure the user id is a number
+        if (!/^-?\d+$/.test(args[0])) {
+            app.message.warn(`DM: ${args[0]} is not a valid user id!`);
+            return;
+        }
+
         args[0] = args[0].replace(/\D/g, "");
 
-        await app.client.users.fetch(args[0]).then(user => {
-            user.send(args.slice(1).join(" ")).catch((error: Error) => {
-                app.message.error(`Unable to send message: ${error.message}`);
+        await app.client.users.fetch(args[0])
+            .then(user => {
+                user.send(args.slice(1).join(" ")).catch((error: Error) => {
+                    app.message.error(`Could not send message: ${error.message}`);
+                });
+            })
+            .catch((error: Error) => {
+                app.message.error(`${error.message}`);
             });
-        });
     });
 
     // Toggles channels visibility
@@ -259,7 +267,7 @@ export default function setupInternalCommands(app: App): void {
     // Toggles servers visibility
     app.commands.set("tg", () => {
         app.toggleGuilds();
-    })
+    });
 
     // Displays name#1234 and ping. Example output:
     // <System> Logged in as Test#5782 | 216ms
@@ -342,16 +350,16 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("help", () => {
         // Generate /help only once and save it
         if (!app.state.get().helpString) {
-            let helpList: Array<string> = [];
+            const helpList: Array<string> = [];
 
-            for (let [name] of app.commands) {
+            for (const [name] of app.commands) {
                 helpList.push(name);
             }
 
             // Set help string
             app.state.update({
                 helpString: helpList.join(", ")
-            })
+            });
         }
 
         app.message.system(`Commands available: \n${app.state.get().helpString}`);
@@ -407,7 +415,7 @@ export default function setupInternalCommands(app: App): void {
                 app.setActiveChannel(channel);
             }
             else {
-                app.message.warn(`Channel does not exist`);
+                app.message.warn("Channel does not exist");
             }
         }
     });
@@ -449,7 +457,7 @@ export default function setupInternalCommands(app: App): void {
 
         // Do not delete channel if there is none
         if (!channel) {
-            let message: string = "Could not delete: You are not on a channel!";
+            let message = "Could not delete: You are not on a channel!";
             if (guild) {
                 message = message + ` This is because ${guild.name} has 0 text channels`;
             }
@@ -458,14 +466,14 @@ export default function setupInternalCommands(app: App): void {
         }
 
         // Delete the channel specified
-        await app.deleteChannel(channel)
+        await app.deleteChannel(channel);
     });
 
     // Toggle header
     app.commands.set("toggleheader", () => {
         app.options.nodes.header.visible ? app.hideHeader() : app.showHeader("Header activated!");
         // Toggle
-        const header: boolean = !(app.state.get().header === true);
+        const header = !(app.state.get().header === true);
         app.state.update({
             header: header
         });
@@ -485,16 +493,16 @@ export default function setupInternalCommands(app: App): void {
         // Type can't be declared in for loop https://github.com/microsoft/TypeScript/issues/3500
         let key: keyof typeof mem;
         for (key in mem) {
-          if (mem.hasOwnProperty(key)) {
-            const element: number = mem[key];
-            app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
-          }
+            if (Object.prototype.hasOwnProperty.call(mem, key)) {
+                const element: number = mem[key];
+                app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
+            }
         }
     });
 
     // Toggle emoji support
     app.commands.set("emoji", () => {
-        const emojisEnabled: boolean = !(app.state.get().emojisEnabled === true);
+        const emojisEnabled = !(app.state.get().emojisEnabled === true);
         app.state.update({
             emojisEnabled: emojisEnabled
         });

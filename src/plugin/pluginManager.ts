@@ -10,7 +10,7 @@ export default class PluginManager {
     }
 
     public async loadAll(): Promise<number> {
-        let loaded: number = 0;
+        const loaded = 0;
 
         if (fs.existsSync(this.app.options.pluginsPath)) {
             const pluginFolders: Set<string> = new Set();
@@ -31,12 +31,12 @@ export default class PluginManager {
                 // Ensure entry file exists.
                 if (fs.existsSync(entryPath)) {
                     // Require/load the plugin's entry file.
-                    let plugin = require(entryPath);
-
-                    // Support for ES5+ (default exports).
-                    if (plugin.default !== undefined) {
-                        plugin = plugin.default;
-                    }
+                    // let plugin = require(entryPath);
+                    //
+                    // // Support for ES5+ (default exports).
+                    // if (plugin.default !== undefined) {
+                    //     plugin = plugin.default;
+                    // }
 
                     // TODO: Continue.
                 }

@@ -37,7 +37,7 @@ export interface IState {
 
     readonly autoHideHeaderTimeout?: NodeJS.Timer;
 
-    readonly tags: any;
+    readonly tags: {[name: string]: string};
 
     readonly theme: string;
 

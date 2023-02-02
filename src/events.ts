@@ -29,12 +29,12 @@ export default function setupEvents(app: App): void {
         const input: string = rawInput.substr(app.options.commandPrefix.length);
 
         if (rawInput.startsWith(app.options.commandPrefix) && input.indexOf(" ") === -1) {
-            let autocomplete: Array<string> = [];
+            const autocomplete: Array<string> = [];
             // Prevent tab from moving cursor
             app.clearInput(`${rawInput}`);
 
             // Search help commands
-            for (let [name] of app.commands) {
+            for (const [name] of app.commands) {
                 if (name.startsWith(input)) {
                     autocomplete.push(name);
                 }
@@ -56,7 +56,7 @@ export default function setupEvents(app: App): void {
 
 
 
-    app.options.nodes.input.key("enter", (t: any) => {
+    app.options.nodes.input.key("enter", (t: App) => {
         let input: string = app.getInput(true);
 
         app.history = 0;
@@ -64,11 +64,11 @@ export default function setupEvents(app: App): void {
         const splitInput: string[] = input.split(" ");
         const tags: string[] = app.tags.getAll();
 
-        for (let i: number = 0; i < tags.length; i++) {
-            while (splitInput.includes(`$${tags[i]}`)) {
-                splitInput[splitInput.indexOf(`$${tags[i]}`)] = app.tags.get(tags[i]) as string;
+        tags.find(tag => {
+            if (splitInput.includes(`$${tag}`)) {
+                splitInput[splitInput.indexOf(`$${tag}`)] = app.tags.get(tag);
             }
-        }
+        });
 
         input = splitInput.join(" ").trim();
 

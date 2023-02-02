@@ -1,4 +1,4 @@
-import { TextChannel, Guild, Client, ChannelType, Message, DMChannel, ClientOptions, User, PermissionsBitField} from "discord.js";
+import { TextChannel, Guild, Client, ChannelType, Message, ClientOptions, User, PermissionsBitField} from "discord.js";
 import Utils from "./utils.js";
 import blessed, { Widgets } from "blessed";
 import chalk from "chalk";
@@ -11,11 +11,10 @@ import Pattern from "./pattern.js";
 import setupEvents from "./events.js";
 import setupInternalCommands from "./commands/internal.js";
 import { EventEmitter } from "events";
-import State, { IState, IStateOptions } from "./state/state.js";
+import State, { IState, IStateOptions, Theme } from "./state/state.js";
 import { defaultState } from "./state/stateConstants.js";
 import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
-import {UserId} from "./types.js";
 
 
 export type IAppNodes = {
@@ -82,7 +81,7 @@ export default class App extends EventEmitter {
 
     public readonly tags: Tags;
 
-    public __dirname: string = "";
+    public __dirname = "";
 
     public history: number = 0;
 
@@ -101,7 +100,7 @@ export default class App extends EventEmitter {
         this.tags = new Tags(this.state);
     }
 
-    public async setup(init: boolean = true) {
+    public async setup(init = true) {
         // Discord events.
         this.client.on("ready", () => {
             this.hideHeader();
@@ -112,7 +111,7 @@ export default class App extends EventEmitter {
 
             // Return if this.client.user is null just in case
             if (this.client.user === null) {
-                this.message.error(`Error: this.client.user is null`);
+                this.message.error("Error: this.client.user is null");
                 return;
             }
 
@@ -275,7 +274,7 @@ export default class App extends EventEmitter {
             this.options.nodes.messages.left = "0%";
             // Input.
             this.options.nodes.input.width = "100%";
-            this.options.nodes.input.left = "0%"
+            this.options.nodes.input.left = "0%";
             // Header.
             this.options.nodes.header.width = "100%";
             this.options.nodes.header.left = "0%";
@@ -356,7 +355,7 @@ export default class App extends EventEmitter {
         const { muted, guild, channel, typingLastChannel, typingLastStarted }: IState = this.state.get();
         // If it can type
         if (!muted && guild && channel) {
-            const timeNow: number = new Date().getTime()
+            const timeNow: number = new Date().getTime();
             // If it has never typed or it has been more than 10 seconds since the last time
             if (typingLastChannel !== channel.id || timeNow - typingLastStarted > 10000) {
                 // Update state
@@ -368,12 +367,12 @@ export default class App extends EventEmitter {
                 // Start typing and catch errors
                 await channel.sendTyping().catch((error: Error) => {
                     this.message.error(`startTyping() failed: ${error.message}`);
-                })
+                });
             }
         }
     }
 
-    public getInput(clear: boolean = false): string {
+    public getInput(clear = false): string {
         const value: string = this.options.nodes.input.getValue();
 
         if (clear) {
@@ -383,7 +382,7 @@ export default class App extends EventEmitter {
         return value.trim();
     }
 
-    public clearInput(newValue: string = "") {
+    public clearInput(newValue = "") {
         this.options.nodes.input.setValue(newValue);
 
         if (this.options.screen.focused !== this.options.nodes.input) {
@@ -403,13 +402,13 @@ export default class App extends EventEmitter {
      * Destroy the client, save the state and exit
      * the application.
      */
-    public shutdown(exitCode: number = 0) {
+    public shutdown(exitCode = 0) {
         this.client.destroy();
         this.state.saveSync();
         process.exit(exitCode);
     }
 
-    public updateChannels(render: boolean = false): boolean {
+    public updateChannels(render = false): boolean {
         const guild: Guild | undefined = this.state.get().guild;
 
         // Return if undefined
@@ -425,13 +424,13 @@ export default class App extends EventEmitter {
         const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
         const { themeData, channel }: IState = this.state.get();
 
-        for (let i: number = 0; i < channels.length; i++) {
+        for (let i = 0; i < channels.length; i++) {
             let channelName: string = channels[i].name
                 // This fixes UI being messed up due to channel names containing unicode emojis.
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            let channelsWidth: number = this.options.nodes.channels.width as number
+            const channelsWidth: number = this.options.nodes.channels.width as number;
             while (Utils.visibleLength(channelName) + 2 >= channelsWidth) {
                 channelName = channelName.slice(0, -1);
             }
@@ -475,7 +474,7 @@ export default class App extends EventEmitter {
         return true;
     }
 
-    public updateGuilds(render: boolean = false): boolean {
+    public updateGuilds(render = false): boolean {
         // Grab all available guilds
         const guilds: Guild[] = Utils.getGuilds(this.client.guilds);
 
@@ -486,7 +485,7 @@ export default class App extends EventEmitter {
 
         const { themeData }: IState = this.state.get();
 
-        for (let i: number = 0; i < guilds.length; i++) {
+        for (let i = 0; i < guilds.length; i++) {
             let guildName: string = guilds[i].name
                 // This fixes UI being messed up due to channel names containing unicode emojis.
                 .replace(Pattern.channels, "?");
@@ -537,7 +536,7 @@ export default class App extends EventEmitter {
     }
 
     // Get members in a server
-    public printUsers(guild: Guild, limit: number = 20) {
+    public printUsers(guild: Guild, limit = 20) {
         guild.members.fetch({ limit: limit }).then(fetchedMembers => {
             const users: string[] = fetchedMembers.map(user => user.displayName);
             if (users.length === 20) {
@@ -570,7 +569,7 @@ export default class App extends EventEmitter {
             this.message.system(`Loading theme '{bold}${name}{/bold}' ...`);
 
             // TODO: Verify schema.
-            const theme: any = fs.readFileSync(themePath).toString();
+            const theme: string = fs.readFileSync(themePath).toString();
 
             // TODO: Catch possible parsing errors.
             this.setTheme(name, JSON.parse(theme), theme.length);
@@ -582,7 +581,7 @@ export default class App extends EventEmitter {
         return true;
     }
 
-    public setTheme(name: string, data: any, length: number): boolean {
+    public setTheme(name: string, data: Theme, length: number): boolean {
         if (!data) {
             this.message.error("Error while setting theme: No data was provided for the theme");
 
@@ -595,7 +594,7 @@ export default class App extends EventEmitter {
         });
 
         // Get theme data
-        const themeData: any = this.state.get().themeData;
+        const { themeData }: IState = this.state.get();
 
         // Messages.
         this.options.nodes.messages.style.fg = themeData.messages.foregroundColor;
@@ -650,7 +649,7 @@ export default class App extends EventEmitter {
                     });
                 }
                 else {
-                    throw "Cannot log in"
+                    throw "Cannot log in";
                 }
             })
             .catch((error: Error) => {
@@ -696,7 +695,7 @@ export default class App extends EventEmitter {
         this.history = 0;
 
         if (!guild) {
-            this.message.warn(`Guild undefined`);
+            this.message.warn("Guild undefined");
             return this;
         }
 
@@ -717,14 +716,14 @@ export default class App extends EventEmitter {
             // This is very important as it makes sure the client can't delete channels from other servers
             this.state.update({
                 channel: undefined
-            })
+            });
         }
 
         this.updateTitle();
         this.updateChannels(true);
     }
 
-    public showHeader(text: string, autoHide: boolean = false) {
+    public showHeader(text: string, autoHide = false) {
         if (!text) {
             throw new Error("[App.showHeader] Expecting header text");
         }
@@ -761,7 +760,7 @@ export default class App extends EventEmitter {
             // Otherwise hide the header
             else {
                 this.state.update({
-                  autoHideHeaderTimeout: setTimeout(this.hideHeader.bind(this), text.length * this.options.headerAutoHideTimeoutPerChar)
+                    autoHideHeaderTimeout: setTimeout(this.hideHeader.bind(this), text.length * this.options.headerAutoHideTimeoutPerChar)
                 });
             }
         }
@@ -804,7 +803,7 @@ export default class App extends EventEmitter {
     // Load previous messages in a channel
     public loadPreviousMessages(channel: TextChannel) {
         const permsNeeded: Array<bigint> = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
-        const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.client.user?.id as UserId, permsNeeded);
+        const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.state.get().userId, permsNeeded);
         // Return if no perms
         if (hasPerms.indexOf(false) !== -1) {
             this.message.error(`Cannot load messages in ${channel.name} due to insufficient permissions "${permsNeeded[hasPerms.indexOf(false)]}"`);
@@ -817,7 +816,7 @@ export default class App extends EventEmitter {
             fetchlimit = this.options.maxFetchMessages;
         }
 
-        channel.messages.fetch({limit: fetchlimit})
+        channel.messages.fetch({ limit: fetchlimit })
             .then(messages => {
                 this.message.system(`Loading ${messages.size} most recent messages`);
                 messages.reverse().forEach(msg => this.handleMessage(msg));
@@ -828,7 +827,7 @@ export default class App extends EventEmitter {
             });
     }
 
-    public render(hard: boolean = false, updateChannels: boolean = false) {
+    public render(hard = false, updateChannels = false) {
         if (updateChannels) {
             this.updateChannels(false);
         }
@@ -843,9 +842,9 @@ export default class App extends EventEmitter {
 
     // Displays where the client is
     // TODO: Display whereAmI at the top of the screen at all times
-    public whereAmI(channel: TextChannel, guild: Guild) {
+    public whereAmI(channel: TextChannel | undefined, guild: Guild | undefined) {
         if (guild && channel) {
-            this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`)
+            this.message.system(`Currently on guild '{bold}${guild.name}{/bold}' # '{bold}${channel.name}{/bold}'`);
         }
         else if (guild) {
             this.message.system(`Currently on guild '{bold}${guild.name}{/bold}`);
@@ -875,10 +874,10 @@ export default class App extends EventEmitter {
                 const { guild } = this.state.get() as { guild: Guild };
                 const newchannel: TextChannel | null = Utils.findDefaultChannel(guild);
                 if (newchannel) {
-                  this.setActiveChannel(newchannel);
+                    this.setActiveChannel(newchannel);
                 }
                 else {
-                  this.message.system(`The last text channel in ${guild.name} has been deleted`);
+                    this.message.system(`The last text channel in ${guild.name} has been deleted`);
                 }
             })
             // Catch errors
@@ -909,7 +908,7 @@ export default class App extends EventEmitter {
             })
             .catch((err) => {
                 this.message.error(`${err}`);
-                this.message.warn(`Could not edit message '${message.id}'`)
+                this.message.warn(`Could not edit message '${message.id}'`);
             });
     }
 }

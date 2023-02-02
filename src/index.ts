@@ -9,6 +9,6 @@ const app: App = new App();
 try {
     app.setup();
 }
-catch (error: any) {
+catch (error: unknown) {
     console.log(error);
 }

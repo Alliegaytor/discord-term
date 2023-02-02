@@ -12,29 +12,24 @@ export default class Tags {
     }
 
     public has(name: string): boolean {
-        return this.getAll().includes(name);
+        const { tags } = this.state.get();
+        return Object.prototype.hasOwnProperty.call(tags, name);
     }
 
-    public get(name: string): string | null {
-        const keys: string[] = this.getAll();
-
-        if (!keys.includes(name)) {
-            return name;
-        }
-
-        return this.state.get().tags[name];
+    public get(name: string): string  {
+        const { tags } = this.state.get();
+        return tags[name];
     }
 
     public set(name: string, value: string): this {
         this.state.get().tags[name] = value;
-
         return this;
     }
 
     public delete(name: string): boolean {
+        const { tags } = this.state.get();
         if (this.has(name)) {
-            delete this.state.get().tags[name];
-
+            delete tags[name];
             return true;
         }
 

@@ -5,114 +5,132 @@ import { IState } from "../state/state.js";
 
 export default class MessageFactory {
     protected readonly app: App;
+    private readonly maxScreenLines: number;
 
     public constructor(app: App) {
         this.app = app;
+        this.maxScreenLines = app.options.maxScreenLines;
     }
 
-    // TODO: Also include time.
-    public create(sender: string, message: string, senderColor: string = "white", messageColor?: ForegroundColorName, attachments?: boolean, embeds?: boolean): this {
-        // Get current state
-        let { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
+    private formatMessage(sender: string, message: string, senderColor: ForegroundColorName, messageColor?: ForegroundColorName): string {
+        // Get the current state of the application
+        const { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
+        const maximumWidth: number = this.app.options.nodes.messages.width as number;
 
-        // Set message color if not specified
-        if (!messageColor) {
-            messageColor = themeData.messages.foregroundColor;
-        }
+        // If no message color is provided, use the default message color from the theme data
+        messageColor = messageColor || themeData.messages.foregroundColor;
+        let messageString = message.toString();
 
-        let messageString: string = message.toString();
-
+        // Apply the color to the message using Chalk library
         if (messageColor.startsWith("#")) {
             messageString = chalk.hex(messageColor)(messageString);
         }
-        //
-        else if (chalk[messageColor] === undefined || typeof chalk[messageColor] !== "function") {
+        else if (typeof chalk[messageColor] !== "function") {
             this.system("Refusing to append message: An invalid color was provided");
-
-            return this;
+            return "";
         }
         else {
-            messageString = ((chalk as any)[messageColor] as any)(message);
+            messageString = chalk[messageColor](message);
         }
 
-        let line: string = messageFormat
-            // TODO: Catch error if sender color doesn't exist.
-            // @ts-ignore
+        // Format sender and message
+        const line = messageFormat
             .replace("{sender}", chalk[senderColor](sender))
             .replace("{message}", messageString)
-            .replace(/\n/g, " \n"); // Fix for empty new lines
+            .replace(/\n/g, " \n");
 
-        // Remove old lines
-        const maxScreenLines: number = this.app.options.maxScreenLines;
-        if (maxScreenLines != 0) {
-            let screenLines: number = this.app.options.nodes.messages.getScreenLines().length ?? 0;
-            while (screenLines > maxScreenLines) {
-                this.app.options.nodes.messages.deleteLine(0);
+        // If emojis are enabled, wrap the message text to the maximum width
+        if (emojisEnabled) {
+            const lines = Utils.wordWrapToStringList(line, maximumWidth - 1);
+            return lines.join("\n");
+        }
+        else {
+            return line;
+        }
+    }
+
+
+    /**
+     * Creates and appends a new message to the message node in the terminal.
+     *
+     * @param sender - The sender of the message.
+     * @param message - The message content.
+     * @param senderColor - The color of the sender text. Default is white.
+     * @param messageColor - The color of the message text. Default is inherited from the theme.
+     *
+     * @returns - The Message instance.
+     */
+    public create(sender: string, message: string, senderColor: ForegroundColorName = "white", messageColor?: ForegroundColorName): this {
+        const { nodes } = this.app.options;
+        const lines: string[] = this.formatMessage(sender, message, senderColor, messageColor).split("\n");
+
+        if (this.maxScreenLines != 0) {
+            let screenLines = nodes.messages.getScreenLines().length ?? 0;
+            while (screenLines + lines.length > this.maxScreenLines) {
+                nodes.messages.deleteLine(0);
                 screenLines--;
             }
         }
 
-        // Fix blessed box hell
-        // Calculate where to wrap lines because emojis are thicc
-        if (emojisEnabled) {
-            let maximumWidth: number = this.app.options.nodes.messages.width as number;
-            let lines: Array<string> = Utils.wordWrapToStringList(line, maximumWidth - 1);
-
-            // Push lines
-            lines.forEach(element => {
-                this.app.options.nodes.messages.pushLine(element);
-
-            });
-        }
-        // Or do it the normal way without emojis
-        else {
-            this.app.options.nodes.messages.pushLine(line);
-        }
-
-        this.app.options.nodes.messages.setScrollPerc(100);
+        lines.forEach(line => nodes.messages.pushLine(line));
+        nodes.messages.setScrollPerc(100);
         this.app.render();
 
         return this;
     }
 
-    public user(sender: string, message: string, modifiers: string[] = [], attachments: boolean = false, embeds: boolean = false): this {
-        let name: string = `@${sender}`;
+    /**
+     * Add a user message to the chat window
+     */
+    public user(sender: string, message: string, modifiers: string[] = []): this {
+        let name = `@${sender}`;
 
-        if (modifiers.length > 0) {
-            for (let i: number = 0; i < modifiers.length; i++) {
-                name = modifiers[i] + name;
-            }
-        }
+        name = modifiers.reduce((acc, current) => current + acc, name);
 
         this.create(name, message, "cyan");
 
         return this;
     }
 
-    public self(name: string, message: string, attachments: boolean = false, embeds: boolean = false): this {
-        this.create(`@{bold}${name}{/bold}`, message, "cyan", undefined, attachments, embeds);
+    /**
+     * Add a self message to the chat window
+     */
+    public self(name: string, message: string): this {
+        this.create(`@{bold}${name}{/bold}`, message, "cyan");
 
         return this;
     }
 
-    public special(prefix: string, sender: string, message: string, color: string = "yellow",  attachments: boolean = false, embeds: boolean = false): this {
-        this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color, undefined, attachments, embeds);
+    /**
+     * Add a special message to the chat window
+     */
+    public special(prefix: string, sender: string, message: string, color = "yellow"): this {
+        this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color as ForegroundColorName);
 
         return this;
     }
 
+    /**
+     * Add a system message to the chat window
+     */
     public system(message: string): this {
         this.create(`{bold}${SpecialSenders.System}{/bold}`, message, "green");
 
         return this;
     }
 
+    /**
+     * Add a warning message to the chat window
+     */
     public warn(message: string): this {
         this.create(`{bold}${SpecialSenders.Warning}{/bold}`, message, "yellowBright");
 
         return this;
     }
 
+    /**
+     * Add an error message to the chat window
+     */
     public error(message: string): this {
         this.create(`{bold}${SpecialSenders.Error}{/bold}`, message, "redBright");
 
