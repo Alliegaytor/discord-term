@@ -83,7 +83,7 @@ export default class App extends EventEmitter {
 
     public __dirname = "";
 
-    public history: number = 0;
+    public history = 0;
 
     public constructor(options?: Partial<IAppOptions>, commands: Map<string, ICommandHandler> = new Map()) {
         super();
@@ -207,8 +207,8 @@ export default class App extends EventEmitter {
         // }
 
         // Check attachments & embeds
-        let attachments = (msg.attachments.size > 0) ? true : false;
-        let embeds = (msg.embeds.length > 0) ? true : false;
+        const attachments = (msg.attachments.size > 0) ? true : false;
+        const embeds = (msg.embeds.length > 0) ? true : false;
 
         let content: string = msg.cleanContent;
 
@@ -231,11 +231,11 @@ export default class App extends EventEmitter {
 
         if (msg.author.id === state.userId) {
             if (msg.channel.type === ChannelType.GuildText) {
-                this.message.self(this.client.user.tag, content, attachments, embeds);
+                this.message.self(this.client.user.tag, content);
             }
             else if (msg.channel.type === ChannelType.DM) {
-                let recipient: User = this.client.users.cache.get(msg.channel.recipientId) as User;
-                this.message.special(`${chalk.magentaBright("=>")} DM to`, recipient.tag, content, "blue", attachments, embeds);
+                const recipient: User = this.client.users.cache.get(msg.channel.recipientId) as User;
+                this.message.special(`${chalk.magentaBright("=>")} DM to`, recipient.tag, content, "blue");
             }
         }
 
@@ -256,13 +256,13 @@ export default class App extends EventEmitter {
                 }
             }
 
-            this.message.user(msg.author.tag, content, modifiers, attachments, embeds);
+            this.message.user(msg.author.tag, content, modifiers);
         }
         else if (msg.channel.type === ChannelType.DM) {
-            this.message.special(`${chalk.greenBright("<=")} DM from`, msg.author.tag, content, "blue", attachments, embeds);
+            this.message.special(`${chalk.greenBright("<=")} DM from`, msg.author.tag, content, "blue");
         }
         else if (this.state.get().globalMessages) {
-            this.message.special("Global", msg.author.tag, content, undefined, attachments, embeds);
+            this.message.special("Global", msg.author.tag, content, undefined);
         }
     }
 
