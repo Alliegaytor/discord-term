@@ -1,4 +1,6 @@
-import Utils from "../src/utils";
+import Utils from "../src/utils.js";
+// import { defaultState } from "../src/state/stateConstants.js";
+
 import {describe, expect} from "@jest/globals";
 
 // TODO: Actually calculate how these properly
@@ -34,3 +36,5 @@ describe("wordWrapToStringList", () => {
     });
     // TODO: Emojis with no spaces, words longer than the maximumWidth, non-english languages...
 });
+
+import "./test_tag.js";
