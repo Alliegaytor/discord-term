@@ -1,16 +1,26 @@
 # ⚠️ In active development!
 
-[**Discord Term**](https://gitlab.com/P-90-For-Retail/discord-term) Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most up to date source tree on github.
-
-The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more information. Any help would be greatly appreciated!
 
 [[_TOC_]]
 
 # ✨ Discord Terminal
 
-A cross platform extensible Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed). It can currently **only** be used with **bot tokens**. **User tokens don't work at all** as [discord.js](https://github.com/discordjs/discord.js) blocks them from being used. This is unwanted behaviour, however. We are trying to patch user tokens back in, and any help in this endeavour would be much appreciated.
+ [![Latest Release](https://gitlab.com/P-90-For-Retail/discord-term/-/badges/release.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/releases)  [![pipeline status](https://gitlab.com/P-90-For-Retail/discord-term/badges/master/pipeline.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/commits/master) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) 
 
-**Disclaimer**: So-called "self-bots" are against Discord's Terms of Service and therefore discouraged to use. We am not responsible for any bans whatsoever caused by this software as described in the project's license. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
+**Discord Terminal** is an extensible cross-platform Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed) that aims to deliver an alternative take of the Discord user experience. The project is being worked on, and preliminary file upload support was just added. Support for viewing media in the client, among other features, are planned.
+
+The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more information. Any help would be greatly appreciated!
+
+
+## **Disclaimer**
+- > It is important to note that "self-bots" are against Discord's Terms of Service and therefore discouraged to use. We am not responsible for any bans whatsoever caused by this software as described in the project's license. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
+
+
+- >It can currently **only** be used with **bot tokens**.  **User tokens don't work at all**. [Discord.js](https://github.com/discordjs/discord.js) blocks self-botting, however we are looking into patching user tokens back in. Any help in this endeavour would be much appreciated.
+
+## New home
+
+[**Discord Term**](https://gitlab.com/P-90-For-Retail/discord-term) Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most recent source tree on github. It has since moved home to this gitlab repo, where all of the core development is taking place.
 
 ## Screenshots
 
@@ -69,13 +79,11 @@ You can issue the `/help` command to display all available commands.
 
 Discord Terminal will show you the first channel in the first server that the Discord API is set to find. The channels are on the left hand side and you can click on them to navigate through them.
 
-The command `/tc` toggles the visibility of the channel picker, and `/tg` toggles the server (guild) picker. By default only the channel picker is visible.
+The `/tc` command toggles the visibility of the channel picker, allowing you to quickly switch between channels. Similarly, the `/tg` command toggles the server (guild) picker. By default, only the channel picker is visible.
 
-Using `/tip` will display some tips in the headerbar. Note that these are currently being worked on and are considered incomplete.
+The `/tip` command displays some tips in the headerbar, which can be toggled with `/toggleheader`. Discord Term will store your preference. 
 
-The headerbar can be disabled with `/toggleheader` and Discord Term will remember your preference. `/emoji` toggles emoji support.
-
-If anything bugs out use `/reset`. It *should* fix almost all visual problems. Resizing the window and `/clear` have shown to sometimes fix ui issues as well.
+If you ever experience any graphical bugs, `/reset` *should* fix almost all visual problems. Resizing the window and using the `/clear` command have shown to sometimes fix ui issues as well. Disabling emojis with the `/emoji` command may also help.
 
 <details>
 <summary>
@@ -170,7 +178,7 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
     * discord
     * purple-glory
 
-    Want more? Make your own! Checkout how those themes were made under the **themes** directory (Psst. It's easy!).
+    Want more? Make your own! Checkout how those themes were made under the **themes** directory. It's all simple JSON!
 
     Don't forget to create a merge request submitting your awesome theme so everyone can use it!
 
@@ -180,8 +188,9 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
     1. Just have your token in your clipboard before starting the application, it will automatically detect it and login.
     2. Alternatively, you can set the **DTERM_TOKEN** environment variable and it will use it to automatically login.
     3. If you ever need to force a re-render because the UI might be buggy or so, use the **/reset** command.
-    4. Pressing the **UP** arrow key after sending a message will allow you to edit it (similar functionality to Discord) or delete it if the edit is an empty string "".
-    5. Pressing the **DOWN** arrow key will clear your input (if there was any). **ESCAPE** does the same.
+    4. Pressing the **UP** arrow key after sending a message will allow you to edit it (similar functionality to Discord) or delete it if the edit is an empty string "". You can cycle through your message history on that particular channel.
+    5. Pressing the **DOWN** arrow key will decrement your editing command to more recent messages (if there are any).
+    6. Pressing  **ESCAPE** clears your current input.
 
 6. **Super-secret mode** Discord Terminal has this cool security feature that allows you to send + receive encrypted messages, and all you need to do is set a password.
 
@@ -201,7 +210,7 @@ If anything bugs out use `/reset`. It *should* fix almost all visual problems. R
 
 # License
 
-The project is licensed under the [ISC](./LICENSE) license. The code was, at one point in time, released into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license by the original owner of the repo ([see 361b603d](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/361b603d2f53b541d2fcce3c80b66d13ea2b02f8)). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit [2a36c2c7](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/2a36c2c73d9be23f3713c8b1b6d47ac8435798f1). Either way, this software comes with no warranty of any kind and we cannot be held liable for any damages caused by it.
+The project is licensed under the [ISC](./LICENSE) license. The previous owner of the repo had released the project into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license ([see 361b603d](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/361b603d2f53b541d2fcce3c80b66d13ea2b02f8)). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit [2a36c2c7](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/2a36c2c73d9be23f3713c8b1b6d47ac8435798f1). Consequently, this software comes with no warranty of any kind.
 
 # Contributors
 
