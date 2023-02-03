@@ -1,4 +1,4 @@
-import {IState} from "./state.js";
+import { IState } from "./state.js";
 
 export const defaultState: IState = {
     globalMessages: false,
@@ -11,7 +11,7 @@ export const defaultState: IState = {
     ignoredUsers: [],
     tags: {},
     theme: "default",
-    decriptionKey: "discord-term",
+    decryptionKey: "discord-term",
     encrypt: false,
     header: true,
     typingLastStarted: 0,
@@ -51,3 +51,17 @@ export const defaultState: IState = {
         }
     }
 };
+
+
+// State properties excluded from saveSync()
+export const excludeProperties: Array<keyof IState> = [
+    "guild",
+    "channel",
+    "messageHistory",
+    "typingTimeout",
+    "autoHideHeaderTimeout",
+    "themeData",
+    "helpString",
+    "typingLastChannel",
+    "typingLastStarted",
+];

@@ -2,7 +2,7 @@ import { Snowflake, TextChannel, Guild, Message } from "discord.js";
 import { EventEmitter } from "events";
 import { ForegroundColorName } from "chalk";
 import fs from "fs";
-import { defaultState } from "./stateConstants.js";
+import { defaultState, excludeProperties } from "./stateConstants.js";
 import App from "../app.js";
 
 export interface IStateOptions {
@@ -11,78 +11,53 @@ export interface IStateOptions {
 
 export interface IState {
     readonly channel?: TextChannel;
-
     readonly guild?: Guild;
 
     readonly globalMessages: boolean;
-
     readonly ignoreBots: boolean;
-
     readonly ignoreEmptyMessages: boolean;
-
     readonly muted: boolean;
+    readonly header: boolean;
+    readonly encrypt: boolean;
+    readonly emojisEnabled: boolean;
 
+    readonly typingLastStarted: number;
+
+    readonly token?: string;
+    readonly tags: { [name: string]: string };
+    readonly theme: string;
+    readonly wordPins: string[];
+    readonly decryptionKey: string;
+    readonly typingLastChannel: string;
+    readonly userId: string;
+    readonly helpString: string;
     readonly messageFormat: string;
 
     // TODO: Only grab the needed bits of the message to save on memory
     readonly messageHistory?: Message[];
-
     readonly typingTimeout?: NodeJS.Timeout;
-
-    readonly trackList: Snowflake[];
-
-    readonly wordPins: string[];
-
-    readonly ignoredUsers: Snowflake[];
-
     readonly autoHideHeaderTimeout?: NodeJS.Timer;
-
-    readonly tags: {[name: string]: string};
-
-    readonly theme: string;
-
+    readonly trackList: Snowflake[];
+    readonly ignoredUsers: Snowflake[];
     readonly themeData: Theme;
-
-    readonly decriptionKey: string;
-
-    readonly header: boolean;
-
-    readonly encrypt: boolean;
-
-    readonly token?: string;
-
-    readonly typingLastStarted: number;
-
-    readonly typingLastChannel: string;
-
-    readonly emojisEnabled: boolean;
-
-    readonly userId: string;
-
-    readonly helpString: string;
 }
 
 export interface Theme {
-    readonly messages: Colors;
-
-    readonly channels: Colors;
-
-    readonly input: Colors;
-
-    readonly header: Colors;
-
-    readonly servers: Colors;
+    readonly messages: Color;
+    readonly channels: Color;
+    readonly input: Color;
+    readonly header: Color;
+    readonly servers: Color;
 }
 
-export interface Colors {
+export interface Color {
     readonly foregroundColor: ForegroundColorName;
-
     readonly backgroundColor: string;
-
     readonly backgroundColorHover?: string;
-
     readonly foregroundColorHover?: string;
 }
+
+export type IStateCopy = { [key: string]: unknown };
 
 export default class State extends EventEmitter {
     public readonly options: IStateOptions;
@@ -98,10 +73,7 @@ export default class State extends EventEmitter {
         this.options = options;
 
         // Initialize the state.
-        this.state = {
-            ...defaultState,
-            ...initialState
-        };
+        this.state = Object.assign({}, defaultState, initialState);
     }
 
     public get(): IState {
@@ -119,10 +91,7 @@ export default class State extends EventEmitter {
         const previousState: IState = this.state;
 
         // Update the state.
-        this.state = {
-            ...this.state,
-            ...changes
-        };
+        this.state = Object.assign({}, this.state, changes);
 
         // Fire the state change event. Provide the old and new state.
         this.emit("stateChanged", this.state, previousState);
@@ -135,70 +104,62 @@ export default class State extends EventEmitter {
      * file system.
      */
     public async sync(): Promise<boolean> {
-        if (fs.existsSync(this.options.stateFilePath)) {
-            return new Promise<boolean>((resolve) => {
-                fs.readFile(this.options.stateFilePath, (error: Error | null, data: Buffer) => {
-                    if (error) {
-                        this.app.message.error(`There was an error while reading the state file: ${error.message}`);
+        return new Promise((resolve) => {
+            fs.readFile(this.options.stateFilePath, (error, data) => {
+                if (error) {
+                    this.app.message.error(`There was an error while reading the state file: ${error.message}`);
 
-                        resolve(false);
+                    resolve(false);
 
-                        return;
-                    }
+                    return;
+                }
 
-                    this.state = {
-                        ...JSON.parse(data.toString()),
-                        guild: this.state.guild,
-                        channel: this.state.channel,
-                        themeData: this.state.themeData
-                    };
+                // Apply state
+                this.state = {
+                    ...JSON.parse(data.toString()),
+                    guild: this.state.guild,
+                    channel: this.state.channel,
+                    themeData: this.state.themeData,
+                };
 
-                    this.app.message.system(`Synced state @ ${this.options.stateFilePath} (${data.length} bytes)`);
+                this.app.message.system(`Synced state @ ${this.options.stateFilePath} (${data.length} bytes)`);
 
-                    resolve(true);
-                });
+                resolve(true);
             });
-        }
-
-        return false;
+        });
     }
 
-    // public save(): void {
-    //     this.app.message.system("Saving application state ...");
-    //
-    //     const data: string = JSON.stringify({
-    //         ...this.state,
-    //         guild: undefined,
-    //         channel: undefined,
-    //         lastMessage: undefined,
-    //         typingTimeout: undefined,
-    //         autoHideHeaderTimeout: undefined,
-    //         themeData: undefined
-    //     });
-    //
-    //     fs.writeFileSync(this.options.stateFilePath, data);
-    //     this.app.message.system(`Application state saved @ '${this.options.stateFilePath}' (${data.length} bytes)`);
-    // }
-
-    public saveSync(): this {
+    /**
+     * Write current included working state to the
+     * file system.
+     */
+    public async saveSync(): Promise<boolean> {
         this.app.message.system("Saving application state ...");
 
-        const data: string = JSON.stringify({
-            ...this.state,
-            guild: undefined,
-            channel: undefined,
-            lastMessage: undefined,
-            typingLastChannel: undefined,
-            messageHistory: undefined,
-            typingTimeout: undefined,
-            autoHideHeaderTimeout: undefined,
-            themeData: undefined,
-            helpString: undefined
+        // Create a copy of the state and exclude the specified properties
+        const stateCopy: IStateCopy = { ...this.state };
+        for (const prop of excludeProperties) {
+            delete stateCopy[prop];
+        }
+
+        // Create a human-readable JSON
+        const data: string = JSON.stringify(stateCopy, (_, value) => typeof value === "string" ? value : value, 2);
+
+        // Try to write to state.json
+        return new Promise<boolean>((resolve) => {
+            fs.writeFile(this.options.stateFilePath, data, (error: Error | null) => {
+                if (error) {
+                    this.app.message.error(`There was an error while writing the state file: ${error.message}`);
+
+                    resolve(false);
+
+                    return;
+                }
+
+                this.app.message.system(`Application state saved @ '${this.options.stateFilePath}' (${data.length} bytes)`);
+
+                resolve(true);
+            });
         });
-
-        fs.writeFileSync(this.options.stateFilePath, data);
-        this.app.message.system(`Application state saved @ '${this.options.stateFilePath}' (${data.length} bytes)`);
-
-        return this;
     }
 }

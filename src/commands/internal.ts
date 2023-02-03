@@ -145,7 +145,7 @@ export default function setupInternalCommands(app: App): void {
         }
 
         app.state.update({
-            decriptionKey: args[0]
+            decryptionKey: args[0]
         });
 
         app.message.system(`Using decryption key '{bold}${args[0]}{/bold}'`);

@@ -88,7 +88,7 @@ export default function setupEvents(app: App): void {
             }
         }
         else {
-            const { muted, guild, channel, encrypt, decriptionKey}: IState = app.state.get();
+            const { muted, guild, channel, encrypt, decryptionKey }: IState = app.state.get();
             if (muted) {
                 app.message.system(`Message not sent; Muted mode is active. Please use {bold}${app.options.commandPrefix}mute{/bold} to toggle`);
             }
@@ -96,7 +96,7 @@ export default function setupEvents(app: App): void {
                 let msg: string = input;
 
                 if (encrypt) {
-                    msg = "$dt_" + Encryption.encrypt(msg, decriptionKey);
+                    msg = "$dt_" + Encryption.encrypt(msg, decryptionKey);
                 }
 
                 channel.send({ content: msg }).catch((error: Error) => {

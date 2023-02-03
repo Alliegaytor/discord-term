@@ -221,7 +221,7 @@ export default class App extends EventEmitter {
 
         if (content.startsWith("$dt_")) {
             try {
-                content = Encryption.decrypt(content.substr(4), state.decriptionKey);
+                content = Encryption.decrypt(content.substr(4), state.decryptionKey);
             }
             catch (error) {
                 // Don't show the error.
@@ -402,9 +402,9 @@ export default class App extends EventEmitter {
      * Destroy the client, save the state and exit
      * the application.
      */
-    public shutdown(exitCode = 0) {
+    public async shutdown(exitCode = 0) {
         this.client.destroy();
-        this.state.saveSync();
+        await this.state.saveSync();
         process.exit(exitCode);
     }
 
