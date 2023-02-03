@@ -1,40 +1,13 @@
-import Utils from "../src/utils.js";
-// import { defaultState } from "../src/state/stateConstants.js";
+import State from "../src/state/state.js";
+import "../src/state/stateConstants.js";
+import App from "../src/app.js";
 
-import {describe, expect} from "@jest/globals";
 
-// TODO: Actually calculate how these properly
-//       The expected test results were gathered
-//       from the potentially broken function...
+export const app: App = new App();
+export const state: State = new State(app, app.options);
 
-describe("wordWrapToStringList", () => {
-    test("wrap words seperated with space", () => {
-        const text = "The quick brown fox jumps over the lazy dog.";
-        const maximumWidth = 20;
-        const expectedResult: string[] = [
-            "The quick brown fox",
-            "jumps over the lazy",
-            "dog."
-        ];
 
-        const result: string[] = Utils.wordWrapToStringList(text, maximumWidth);
+import "./wordwrapstring_test.js";
+import "./tag_test.js";
 
-        expect(result).toEqual(expectedResult);
-    });
-    test("wrap emojis seperated with space", () => {
-        const text = "🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧";
-        const maximumWidth = 20;
-        const expectedResult: string[] = [
-            "🐧 🐧 🐧 🐧 🐧 🐧 🐧",
-            "🐧 🐧 🐧 🐧 🐧 🐧 🐧",
-            "🐧 🐧 🐧 🐧 🐧 🐧 🐧"
-        ];
-
-        const result: string[] = Utils.wordWrapToStringList(text, maximumWidth);
-
-        expect(result).toEqual(expectedResult);
-    });
-    // TODO: Emojis with no spaces, words longer than the maximumWidth, non-english languages...
-});
-
-import "./test_tag.js";
+// app.message.system("hi");

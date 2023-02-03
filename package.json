@@ -7,7 +7,7 @@
         "build": "tsc -skipLibCheck true",
         "start": "npm run build && node dist/index.js",
         "prepublish": "tsc",
-        "test": "cd test/ && tsc && cd .. && NODE_OPTIONS=--experimental-vm-modules jest --config=test/jest.config.ts",
+        "test": "test/run_tests.sh",
         "lint": "eslint ."
     },
     "keywords": [

@@ -1,17 +1,15 @@
 import State from "../src/state/state.js";
-import "../src/state/stateConstants.js";
 import Tags from "../src/tags.js";
-import App from "../src/app.js";
+
+import { state } from "./test.js";
 import { describe, expect } from "@jest/globals";
 
 describe("Tags", () => {
     let tags: Tags;
-    let state: State;
-    const app: App = new App();
 
     beforeEach(() => {
-        state = new State(app, app.options);
-        tags = new Tags(state);
+        const newstate: State = state as State;
+        tags = new Tags(newstate);
     });
 
     test("getAll", () => {
