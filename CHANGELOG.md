@@ -1,3 +1,23 @@
+## [1.5.0] - 2023.02.04
+
+### Main commits
+
+* Update README.md, CONTRIBUTING.md
+* Add ability to edit more than the most recent message ([b4f16a7](https://gitlab.com/P-90-For-Retail/discord-term/commit/b4f16a7))
+* Detect if message is an image/embed, upload images with /img ([4930f1d](https://gitlab.com/P-90-For-Retail/discord-term/commit/4930f1d))
+* Don't upload directories or token from state.json ([e53476e](https://gitlab.com/P-90-For-Retail/discord-term/commit/e53476e))
+* Ensure state.json exists ([8563875](https://gitlab.com/P-90-For-Retail/discord-term/commit/8563875))
+* Fix .gitignore ([b53e68e](https://gitlab.com/P-90-For-Retail/discord-term/commit/b53e68e))
+* Fix encryption ([80f67e2](https://gitlab.com/P-90-For-Retail/discord-term/commit/80f67e2))
+* Improve state ([7b0db2a](https://gitlab.com/P-90-For-Retail/discord-term/commit/7b0db2a))
+* Initial framework for tests & rework of tags ([1a98fbe](https://gitlab.com/P-90-For-Retail/discord-term/commit/1a98fbe))
+* Merge conflicts & lint ([a694c87](https://gitlab.com/P-90-For-Retail/discord-term/commit/a694c87))
+* Move uploadHandler to its own file ([d9ef4a1](https://gitlab.com/P-90-For-Retail/discord-term/commit/d9ef4a1))
+* Remove /mute, remove unused events, improve tab completion ([7886f40](https://gitlab.com/P-90-For-Retail/discord-term/commit/7886f40))
+* Split MessageFactory create into two functions ([045792e](https://gitlab.com/P-90-For-Retail/discord-term/commit/045792e))
+* Update tests ([593f49b](https://gitlab.com/P-90-For-Retail/discord-term/commit/593f49b))
+
+
 ## [1.4.2] - 2023.02.02
 
 ### Added
