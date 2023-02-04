@@ -2,21 +2,38 @@ import crypto, { Decipher, Cipher } from "crypto";
 
 export default abstract class Encryption {
     public static encrypt(message: string, password: string): string {
-        const cipher: Cipher = crypto.createCipher("aes-256-cbc", password);
+        const iv: Buffer = crypto.randomBytes(16);
 
-        let result = cipher.update(message, "utf8", "hex");
+        const derivedKey: Buffer = crypto.createHash("sha256").update(password, "utf8").digest();
+        const cipher: Cipher = crypto.createCipheriv("aes-256-cbc", derivedKey, iv);
 
-        result += cipher.final("hex");
+        let result: string = iv.toString("hex") + cipher.update(message, "utf8", "hex");
+
+        try {
+            result += cipher.final("hex");
+        }
+        catch (error) {
+            throw new Error("Incorrect password or decryption error.");
+        }
 
         return result;
     }
 
     public static decrypt(encryptedMessage: string, password: string): string {
-        const decipher: Decipher = crypto.createDecipher("aes-256-cbc", password);
+        const iv = Buffer.from(encryptedMessage.slice(0, 32), "hex");
+        const encryptedMessageWithoutIv: string = encryptedMessage.slice(32);
 
-        let result = decipher.update(encryptedMessage, "hex", "utf8");
+        const derivedKey: Buffer = crypto.createHash("sha256").update(password, "utf8").digest();
+        const decipher: Decipher = crypto.createDecipheriv("aes-256-cbc", derivedKey, iv);
 
-        result += decipher.final("utf8");
+        let result: string = decipher.update(encryptedMessageWithoutIv, "hex", "utf8");
+
+        try {
+            result += decipher.final("utf8");
+        }
+        catch (error) {
+            throw new Error("Incorrect password or decryption error.");
+        }
 
         return result;
     }

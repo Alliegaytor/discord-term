@@ -6,6 +6,7 @@ import { tips } from "../constant.js";
 import Utils from "../utils.js";
 import { IState } from "../state/state.js";
 import uploadHandler from "./upload.js";
+import Encryption from "../encryption.js";
 
 export default function setupInternalCommands(app: App): void {
     app.commands.set("login", (args: string[]) => {
@@ -58,7 +59,7 @@ export default function setupInternalCommands(app: App): void {
     // Edit messages
     // (And delete if the edit is "")
     app.commands.set("edit", async (args: string[]) => {
-        const { channel }: IState = app.state.get();
+        const { channel, encrypt, decryptionKey }: IState = app.state.get();
 
         // TODO: Display message.
         if (!args[0] || !channel) {
@@ -74,7 +75,7 @@ export default function setupInternalCommands(app: App): void {
                 }
                 else {
                     const editedMessage: string = args.slice(1).join(" ");
-                    app.editMessage(message, editedMessage);
+                    app.editMessage(message, editedMessage, encrypt, decryptionKey);
                 }
             })
             .catch(() => {
@@ -239,9 +240,16 @@ export default function setupInternalCommands(app: App): void {
 
         args[0] = args[0].replace(/\D/g, "");
 
+        let msg: string = args.slice(1).join(" ");
+
+        // Encryption
+        if (app.state.get().encrypt) {
+            msg = "$dt_" + Encryption.encrypt(msg, app.state.get().decryptionKey);
+        }
+
         await app.client.users.fetch(args[0])
             .then(user => {
-                user.send(args.slice(1).join(" ")).catch((error: Error) => {
+                user.send(msg).catch((error: Error) => {
                     app.message.error(`Could not send message: ${error.message}`);
                 });
             })

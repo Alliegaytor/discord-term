@@ -900,8 +900,11 @@ export default class App extends EventEmitter {
     }
 
     // Edit message
-    public editMessage(message: Message, editedMessage:string) {
+    public editMessage(message: Message, editedMessage: string, encrypt: boolean, decryptionKey: string) {
         const msg: string = message.content;
+        if (encrypt) {
+            editedMessage = "$dt_" + Encryption.encrypt(editedMessage, decryptionKey);
+        }
         message.edit(editedMessage)
             .then(() => {
                 this.message.system(`Message edited from "${msg}" -> "${editedMessage}"`);

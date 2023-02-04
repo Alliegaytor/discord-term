@@ -112,9 +112,12 @@ export default function setupEvents(app: App): void {
 
     // Edit message
     app.options.nodes.input.key("up", () => {
-        const { messageHistory }: IState = app.state.get();
+        const { messageHistory, decryptionKey }: IState = app.state.get();
         if (messageHistory && app.history + 1 < messageHistory.length) {
             const message = messageHistory[app.history];
+            if (message.content.startsWith("$dt_")) {
+                message.content = Encryption.decrypt(message.content.substr(4), decryptionKey);
+            }
             app.clearInput(`${app.options.commandPrefix}edit ${message.id} ${message.content}`);
             app.history++;
         }
@@ -122,10 +125,13 @@ export default function setupEvents(app: App): void {
 
     // Edit message
     app.options.nodes.input.key("down", () => {
-        const { messageHistory }: IState = app.state.get();
+        const { messageHistory, decryptionKey }: IState = app.state.get();
         if (messageHistory && app.history > 0) {
             app.history--;
             const message = messageHistory[app.history];
+            if (message.content.startsWith("$dt_")) {
+                message.content = Encryption.decrypt(message.content.substr(4), decryptionKey);
+            }
             app.clearInput(`${app.options.commandPrefix}edit ${message.id} ${message.content}`);
         }
     });
