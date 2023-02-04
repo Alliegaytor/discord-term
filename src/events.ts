@@ -116,7 +116,7 @@ export default function setupEvents(app: App): void {
         if (messageHistory && app.history + 1 < messageHistory.length) {
             const message = messageHistory[app.history];
             if (message.content.startsWith("$dt_")) {
-                message.content = Encryption.decrypt(message.content.substr(4), decryptionKey);
+                message.content = Encryption.decrypt(message.content.substr(4), app, decryptionKey);
             }
             app.clearInput(`${app.options.commandPrefix}edit ${message.id} ${message.content}`);
             app.history++;
@@ -130,7 +130,7 @@ export default function setupEvents(app: App): void {
             app.history--;
             const message = messageHistory[app.history];
             if (message.content.startsWith("$dt_")) {
-                message.content = Encryption.decrypt(message.content.substr(4), decryptionKey);
+                message.content = Encryption.decrypt(message.content.substr(4), app, decryptionKey);
             }
             app.clearInput(`${app.options.commandPrefix}edit ${message.id} ${message.content}`);
         }

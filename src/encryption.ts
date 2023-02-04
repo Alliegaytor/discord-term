@@ -1,4 +1,5 @@
 import crypto, { Decipher, Cipher } from "crypto";
+import App from "./app.js";
 
 export default abstract class Encryption {
     public static encrypt(message: string, password: string): string {
@@ -19,7 +20,11 @@ export default abstract class Encryption {
         return result;
     }
 
-    public static decrypt(encryptedMessage: string, password: string): string {
+    public static decrypt(encryptedMessage: string, app: App, password: string | undefined): string {
+        if (!password) {
+            return encryptedMessage;
+        }
+
         const iv = Buffer.from(encryptedMessage.slice(0, 32), "hex");
         const encryptedMessageWithoutIv: string = encryptedMessage.slice(32);
 
@@ -32,7 +37,7 @@ export default abstract class Encryption {
             result += decipher.final("utf8");
         }
         catch (error) {
-            throw new Error("Incorrect password or decryption error.");
+            app.message.error("Incorrect password or decryption error.");
         }
 
         return result;

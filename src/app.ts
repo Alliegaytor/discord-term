@@ -221,7 +221,7 @@ export default class App extends EventEmitter {
 
         if (content.startsWith("$dt_")) {
             try {
-                content = Encryption.decrypt(content.substr(4), state.decryptionKey);
+                content = Encryption.decrypt(content.substr(4), this, state.decryptionKey);
             }
             catch (error) {
                 // Don't show the error.
