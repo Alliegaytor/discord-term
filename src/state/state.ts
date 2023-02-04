@@ -1,7 +1,7 @@
 import { Snowflake, TextChannel, Guild, Message } from "discord.js";
 import { EventEmitter } from "events";
 import { ForegroundColorName } from "chalk";
-import fs from "fs";
+import fs from "fs-extra";
 import { defaultState, excludeProperties } from "./stateConstants.js";
 import App from "../app.js";
 
@@ -73,6 +73,9 @@ export default class State extends EventEmitter {
 
         // Initialize the state.
         this.state = Object.assign({}, defaultState, initialState);
+
+        // Ensure state.json exists
+        fs.ensureFileSync(this.app.options.stateFilePath);
     }
 
     public get(): IState {
@@ -110,6 +113,12 @@ export default class State extends EventEmitter {
 
                     resolve(false);
 
+                    return;
+                }
+
+                // Don't parse if the file is empty
+                if (Object.keys(data).length === 0) {
+                    resolve(false);
                     return;
                 }
 
