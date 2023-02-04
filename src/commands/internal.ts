@@ -12,7 +12,7 @@ export default function setupInternalCommands(app: App): void {
         app.login(args[0]);
     });
 
-    app.commands.set("logout", () => {
+    app.commands.set("exit", () => {
         app.shutdown();
     });
 
@@ -21,19 +21,6 @@ export default function setupInternalCommands(app: App): void {
         const { channel, guild }: IState = app.state.get();
 
         app.whereAmI(channel, guild);
-    });
-
-    app.commands.set("mute", () => {
-        app.state.update({
-            muted: !app.state.get().muted
-        });
-
-        if (app.state.get().muted) {
-            app.message.system("Muted mode activated");
-        }
-        else {
-            app.message.system("Muted mode is no longer activated");
-        }
     });
 
     app.commands.set("ignore", (args: string[]) => {

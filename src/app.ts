@@ -352,9 +352,9 @@ export default class App extends EventEmitter {
     // TODO: Cleanup startTyping()
     public async startTyping() {
         // Get context
-        const { muted, guild, channel, typingLastChannel, typingLastStarted }: IState = this.state.get();
+        const { guild, channel, typingLastChannel, typingLastStarted }: IState = this.state.get();
         // If it can type
-        if (!muted && guild && channel) {
+        if (guild && channel) {
             const timeNow: number = new Date().getTime();
             // If it has never typed or it has been more than 10 seconds since the last time
             if (typingLastChannel !== channel.id || timeNow - typingLastStarted > 10000) {

@@ -5,12 +5,11 @@
         "target": "ES2022", /* 2020 doesn't play nice with Intl */
         "sourceMap": true,
 
-
         "outDir": "dist",
         /*"rootDir": "./src",*/
 
         "strict": true,
-    		"moduleDetection": "force",
+    	"moduleDetection": "force",
         "esModuleInterop": true
     },
     "include": ["src/**/*"]

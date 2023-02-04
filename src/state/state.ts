@@ -16,7 +16,6 @@ export interface IState {
     readonly globalMessages: boolean;
     readonly ignoreBots: boolean;
     readonly ignoreEmptyMessages: boolean;
-    readonly muted: boolean;
     readonly header: boolean;
     readonly encrypt: boolean;
     readonly emojisEnabled: boolean;

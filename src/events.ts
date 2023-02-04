@@ -3,19 +3,6 @@ import Encryption from "./encryption.js";
 import { IState } from "./state/state.js";
 
 export default function setupEvents(app: App): void {
-    // Screen.
-    app.options.screen.key("C-c", async () => {
-        app.shutdown();
-    });
-
-    app.options.screen.key("C-x", () => {
-        process.exit(0);
-    });
-
-    app.options.screen.key("space", () => {
-        app.options.nodes.input.focus();
-    });
-
     // Input.
     app.options.nodes.input.on("keypress", () => {
         // TODO: If logged in.
@@ -28,34 +15,37 @@ export default function setupEvents(app: App): void {
         const rawInput: string = app.getInput();
         const input: string = rawInput.substr(app.options.commandPrefix.length);
 
-        if (rawInput.startsWith(app.options.commandPrefix) && input.indexOf(" ") === -1) {
-            const autocomplete: Array<string> = [];
-            // Prevent tab from moving cursor
-            app.clearInput(`${rawInput}`);
+        if (!rawInput.startsWith(app.options.commandPrefix) || input.indexOf(" ") !== -1) {
+            return;
+        }
 
-            // Search help commands
-            for (const [name] of app.commands) {
-                if (name.startsWith(input)) {
-                    autocomplete.push(name);
-                }
+        // Prevent tab from moving cursor
+        app.clearInput(`${rawInput}`);
+
+        const autocomplete: Array<string> = [];
+        for (const [name] of app.commands) {
+            if (name.startsWith(input)) {
+                autocomplete.push(name);
             }
-            // Auto complete if there is one match
-            if (autocomplete.length === 1) {
-                app.clearInput(`${app.options.commandPrefix}${autocomplete[0]} `);
-            }
-            // Show all available completions
-            else if (autocomplete.length > 1) {
-                app.message.system(autocomplete.join(", "));
-            }
+        }
+
+        switch (autocomplete.length) {
+        case 0:
             // Let user know there is no command
-            else {
-                app.message.system(`No autocompletions for ${input}`);
-            }
+            app.message.system(`No autocompletions for "${input}"`);
+            break;
+        case 1:
+            // Autocomplete command
+            app.clearInput(`${app.options.commandPrefix}${autocomplete[0]} `);
+            break;
+        default:
+            // Show all available completions
+            app.message.system(autocomplete.join(", "));
+            break;
         }
     });
 
-
-
+    // Format output
     app.options.nodes.input.key("enter", (t: App) => {
         let input: string = app.getInput(true);
 
@@ -64,6 +54,7 @@ export default function setupEvents(app: App): void {
         const splitInput: string[] = input.split(" ");
         const tags: string[] = app.tags.getAll();
 
+        // Format tags
         tags.find(tag => {
             if (splitInput.includes(`$${tag}`)) {
                 splitInput[splitInput.indexOf(`$${tag}`)] = app.tags.get(tag);
@@ -88,11 +79,9 @@ export default function setupEvents(app: App): void {
             }
         }
         else {
-            const { muted, guild, channel, encrypt, decryptionKey }: IState = app.state.get();
-            if (muted) {
-                app.message.system(`Message not sent; Muted mode is active. Please use {bold}${app.options.commandPrefix}mute{/bold} to toggle`);
-            }
-            else if (guild && channel) {
+            const { guild, channel, encrypt, decryptionKey }: IState = app.state.get();
+
+            if (guild && channel) {
                 let msg: string = input;
 
                 if (encrypt) {
@@ -147,9 +136,5 @@ export default function setupEvents(app: App): void {
 
     app.options.nodes.input.key("C-x", () => {
         process.exit(0);
-    });
-
-    app.options.nodes.input.key("p", () => {
-        return;
     });
 }

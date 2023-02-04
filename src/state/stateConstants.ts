@@ -4,7 +4,6 @@ export const defaultState: IState = {
     globalMessages: false,
     ignoreBots: false,
     ignoreEmptyMessages: true,
-    muted: false,
     messageFormat: "<{sender}> {message}",
     trackList: [],
     wordPins: [],
