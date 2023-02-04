@@ -1,19 +1,17 @@
 # ⚠️ In active development!
 
-
-[[_TOC_]]
-
 # ✨ Discord Terminal
 
- [![Latest Release](https://gitlab.com/P-90-For-Retail/discord-term/-/badges/release.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/releases)  [![pipeline status](https://gitlab.com/P-90-For-Retail/discord-term/badges/master/pipeline.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/commits/master) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) 
+[![Latest Release](https://gitlab.com/P-90-For-Retail/discord-term/-/badges/release.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/releases)  [![pipeline status](https://gitlab.com/P-90-For-Retail/discord-term/badges/master/pipeline.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/commits/master) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) 
 
 **Discord Terminal** is an extensible cross-platform Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed) that aims to deliver an alternative take of the Discord user experience. The project is being worked on, and preliminary file upload support was just added. Support for viewing media in the client, among other features, are planned.
 
 The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more information. Any help would be greatly appreciated!
 
+[[_TOC_]]
 
 ## **Disclaimer**
-- > It is important to note that "self-bots" are against Discord's Terms of Service and therefore discouraged to use. We am not responsible for any bans whatsoever caused by this software as described in the project's license. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
+- > It is important to note that "self-bots" are against Discord's Terms of Service and therefore discouraged to use. We are not responsible for any bans whatsoever caused by this software as described in the project's license. This program is intended to be used with a **bot token** which is compliant with Discord's Terms of Service.
 
 
 - >It can currently **only** be used with **bot tokens**.  **User tokens don't work at all**. [Discord.js](https://github.com/discordjs/discord.js) blocks self-botting, however we are looking into patching user tokens back in. Any help in this endeavour would be much appreciated.
@@ -197,15 +195,17 @@ If you ever experience any graphical bugs, `/reset` *should* fix almost all visu
     1. **/encrypt secret_password_here_no_spaces** This will set your decryption/encryption password
     2. **/doencrypt** Toggle automatic encryption of messages
 
-    From now on, your messages will be sent encrypted, preventing anyone (including Discord) from deciphering them **unless** they have set the same password as you. This way, you can give your friends the secret password and both talk in an encrypted, safe manner.
+    From now on, your messages will be sent encrypted, preventing anyone (including Discord) from deciphering them **unless** they have set the same password as you. This way, you can give your friends the secret password and both talk in an encrypted, safe manner. You can also edit encrypted messages seemlessly.
 
     Any encrypted messages sent by other users using Discord Terminal will be intercepted and attempted to be decrypted with the currently set decryption key.
 
-    **Note**: Your friend(s) must have set the same password in order to view your messages!
+    **Note**: Your friend(s) must have set the same password in order to view your messages, and if you lose your password you won't be able to decrypt your previous messages!
 
-    Keep in mind that your password cannot contain spaces.
+	Spaces in the password are not currently support.
+	
+    ⚠ **This feature has not been properly audited. Do not rely on the encryption (or anything else in this project) for anything important. Don't expect it to work and be plesantly surprised if it does.**
 
-    ⚠ **This feature has not been properly tested since code refractor. Do not rely on it (or anything in this project) for anything important.**
+    ![Encryption Preview](https://i.imgur.com/v1dHiXp.png)
 
 
 # License
