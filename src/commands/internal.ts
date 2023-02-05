@@ -127,7 +127,7 @@ export default function setupInternalCommands(app: App): void {
 
     app.commands.set("encrypt", (args: string[]) => {
         if (!args[0]) {
-            app.message.system("You must provide a password");
+            app.message.system(`Current password: ${app.state.get().decryptionKey}`);
 
             return;
         }
@@ -486,6 +486,7 @@ export default function setupInternalCommands(app: App): void {
         app.message.system(`Lines: ${messageLines}`);
         app.message.system(`emojisEnabled: ${app.state.get().emojisEnabled}`);
         app.message.system(`userId: ${app.state.get().userId}`);
+        app.message.system(`encrypt: ${app.state.get().encrypt}`);
         // Memory info
         app.message.system("Memory info:");
         const mem: NodeJS.MemoryUsage = process.memoryUsage();
