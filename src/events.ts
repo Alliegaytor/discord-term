@@ -22,7 +22,7 @@ export default function setupEvents(app: App): void {
         // Prevent tab from moving cursor
         app.clearInput(`${rawInput}`);
 
-        const autocomplete: Array<string> = [];
+        const autocomplete: string[] = [];
         for (const [name] of app.commands) {
             if (name.startsWith(input)) {
                 autocomplete.push(name);

@@ -1,10 +1,9 @@
 import { TextChannel } from "discord.js";
 import { existsSync } from "fs";
-import { UserId } from "../types.js";
 import App from "../app.js";
 
 // Upload handler
-export default function uploadHandler(app: App, file: string, recipient: UserId | TextChannel, userdm = false): void {
+export default function uploadHandler(app: App, file: string, recipient: string | TextChannel, userdm = false): void {
     // Check to see if not a directory
     if (file.split("").pop() === "/") {
         throw "Upload: Cannot upload a directory!";
@@ -21,7 +20,7 @@ export default function uploadHandler(app: App, file: string, recipient: UserId 
 
     // DM message
     if (userdm) {
-        app.client.users.fetch(recipient as UserId)
+        app.client.users.fetch(recipient as string)
             .then(user => {
                 user.send({ files: [file] });
                 app.message.system(`Upload: Sent ${user} ${file}`);

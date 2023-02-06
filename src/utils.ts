@@ -1,5 +1,4 @@
 import { Guild, TextChannel, ChannelType, GuildBasedChannel, GuildManager, PermissionsBitField } from "discord.js";
-import { UserId } from "./types.js";
 import stringWidth from "string-width";
 
 export default abstract class Utils {
@@ -20,9 +19,9 @@ export default abstract class Utils {
     }
 
     // Checks to see if client has permissions on a channel in an array
-    public static permissionCheck(channel: TextChannel, userid: UserId, permissions: Array<bigint> ): Array<boolean> {
+    public static permissionCheck(channel: TextChannel, userid: string, permissions: bigint[]): boolean[] {
         const userperms = channel.permissionsFor(userid) as Readonly<PermissionsBitField>;
-        const results: Array<boolean> = new Array(permissions.length);
+        const results: boolean[] = new Array(permissions.length);
 
         permissions.forEach((permission, i) => {
             if (userperms.has(permission, true)) {
@@ -61,9 +60,9 @@ export default abstract class Utils {
     }
 
     // Wraps words so blessed doesn't die when rendering emojis
-    public static wordWrapToStringList(text: string, maximumWidth: number): Array<string> {
-        const result: Array<string> = [];
-        let line: Array<string> = [];
+    public static wordWrapToStringList(text: string, maximumWidth: number): string[] {
+        const result: string[] = [];
+        let line: string[] = [];
         let length: number = 0 as number;
 
         text.split(" ").forEach((word) => {
@@ -77,7 +76,8 @@ export default abstract class Utils {
                 result.push(line.join(" "));
                 line = [newWord];
                 length = stringWidth(newWord) + 1;
-            } else {
+            }
+            else {
                 line.push(newWord);
                 length += stringWidth(newWord) + 1;
             }

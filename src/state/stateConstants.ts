@@ -53,7 +53,7 @@ export const defaultState: IState = {
 
 
 // State properties excluded from saveSync()
-export const excludeProperties: Array<keyof IState> = [
+export const excludeProperties: (keyof IState)[] = [
     "guild",
     "channel",
     "messageHistory",

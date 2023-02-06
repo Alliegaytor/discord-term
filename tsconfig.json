@@ -9,7 +9,8 @@
         /*"rootDir": "./src",*/
 
         "strict": true,
-    	"moduleDetection": "force",
+        "noImplicitAny": true,
+        "moduleDetection": "force",
         "esModuleInterop": true
     },
     "include": ["src/**/*"]

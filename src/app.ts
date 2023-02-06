@@ -1,4 +1,4 @@
-import { TextChannel, Guild, Client, ChannelType, Message, ClientOptions, User, PermissionsBitField} from "discord.js";
+import { TextChannel, Guild, Client, ChannelType, Message, ClientOptions, User, PermissionsBitField } from "discord.js";
 import Utils from "./utils.js";
 import blessed, { Widgets } from "blessed";
 import chalk from "chalk";
@@ -17,7 +17,7 @@ import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
 
 
-export type IAppNodes = {
+export interface IAppNodes {
     readonly messages: Widgets.BoxElement;
 
     readonly channels: Widgets.BoxElement;
@@ -537,7 +537,7 @@ export default class App extends EventEmitter {
 
     // Get members in a server
     public printUsers(guild: Guild, limit = 20) {
-        guild.members.fetch({ limit: limit }).then(fetchedMembers => {
+        guild.members.fetch({ limit }).then(fetchedMembers => {
             const users: string[] = fetchedMembers.map(user => user.displayName);
             if (users.length === 20) {
                 users.push("and more ...");
@@ -688,7 +688,7 @@ export default class App extends EventEmitter {
 
     public setActiveGuild(guild: Guild) {
         this.state.update({
-            guild: guild,
+            guild,
             messageHistory: []
         });
 
@@ -788,7 +788,7 @@ export default class App extends EventEmitter {
     public setActiveChannel(channel: TextChannel) {
 
         this.state.update({
-            channel: channel,
+            channel,
             messageHistory: []
         });
 
@@ -802,8 +802,8 @@ export default class App extends EventEmitter {
 
     // Load previous messages in a channel
     public loadPreviousMessages(channel: TextChannel) {
-        const permsNeeded: Array<bigint> = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
-        const hasPerms: Array<boolean> = Utils.permissionCheck(channel, this.state.get().userId, permsNeeded);
+        const permsNeeded: bigint[] = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
+        const hasPerms: boolean[] = Utils.permissionCheck(channel, this.state.get().userId, permsNeeded);
         // Return if no perms
         if (hasPerms.indexOf(false) !== -1) {
             this.message.error(`Cannot load messages in ${channel.name} due to insufficient permissions "${permsNeeded[hasPerms.indexOf(false)]}"`);

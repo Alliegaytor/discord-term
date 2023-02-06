@@ -87,7 +87,7 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("delete", async (args: string[]) => {
         const { channel }: IState = app.state.get();
 
-        if (!args[0] || args.length > 1 || !channel ) {
+        if (!args[0] || args.length > 1 || !channel) {
             app.message.warn(`Expecting one argument instead of ${args.length}`);
             return;
         }
@@ -349,7 +349,7 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("help", () => {
         // Generate /help only once and save it
         if (!app.state.get().helpString) {
-            const helpList: Array<string> = [];
+            const helpList: string[] = [];
 
             for (const [name] of app.commands) {
                 helpList.push(name);
@@ -474,7 +474,7 @@ export default function setupInternalCommands(app: App): void {
         // Toggle
         const header = !(app.state.get().header === true);
         app.state.update({
-            header: header
+            header
         });
         app.message.system(`Header has been set to: ${header}`);
     });
@@ -504,7 +504,7 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("emoji", () => {
         const emojisEnabled = !(app.state.get().emojisEnabled === true);
         app.state.update({
-            emojisEnabled: emojisEnabled
+            emojisEnabled
         });
         app.options.screen.fullUnicode = emojisEnabled;
         // app.options.nodes.messages.setContent("");

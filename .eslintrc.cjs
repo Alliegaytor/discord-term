@@ -1,41 +1,36 @@
 /*global module*/
 
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
+    env: {
+        browser: true,
+        es2021: true
     },
-    "extends": [
+    extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended"
     ],
-    "overrides": [
+    overrides: [
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module"
     },
-    "plugins": [
+    plugins: [
         "@typescript-eslint"
     ],
-    "ignorePatterns": ["dist/*", "test/dist/*"],
-    "rules": {
-        "indent": [
-            "error",
-            // "tab"
-        ],
+    ignorePatterns: ["dist/*", "test/dist/*"],
+    rules: {
+        "indent": "error",
         "linebreak-style": [
             "error",
             "unix"
         ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
+        "quotes": "error",
+        "semi": "error",
+        "prefer-object-spread": "error",
+        "no-trailing-spaces": "error",
+        "object-shorthand": "error",
+        "space-in-parens": "error",
     }
 };

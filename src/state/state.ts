@@ -56,7 +56,7 @@ export interface Color {
     readonly foregroundColorHover?: string;
 }
 
-export type IStateCopy = { [key: string]: unknown };
+export interface IStateCopy { [key: string]: unknown }
 
 export default class State extends EventEmitter {
     public readonly options: IStateOptions;
@@ -72,14 +72,14 @@ export default class State extends EventEmitter {
         this.options = options;
 
         // Initialize the state.
-        this.state = Object.assign({}, defaultState, initialState);
+        this.state = { ...defaultState, ...initialState };
 
         // Ensure state.json exists
         fs.ensureFileSync(this.app.options.stateFilePath);
     }
 
     public get(): IState {
-        return Object.assign({}, this.state);
+        return { ...this.state };
     }
 
     /**
@@ -93,7 +93,7 @@ export default class State extends EventEmitter {
         const previousState: IState = this.state;
 
         // Update the state.
-        this.state = Object.assign({}, this.state, changes);
+        this.state = { ...this.state, ...changes };
 
         // Fire the state change event. Provide the old and new state.
         this.emit("stateChanged", this.state, previousState);

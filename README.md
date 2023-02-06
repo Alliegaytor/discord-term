@@ -2,7 +2,7 @@
 
 # ✨ Discord Terminal
 
-[![Latest Release](https://gitlab.com/P-90-For-Retail/discord-term/-/badges/release.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/releases)  [![pipeline status](https://gitlab.com/P-90-For-Retail/discord-term/badges/master/pipeline.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/commits/master) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) 
+[![Latest Release](https://gitlab.com/P-90-For-Retail/discord-term/-/badges/release.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/releases)  [![pipeline status](https://gitlab.com/P-90-For-Retail/discord-term/badges/master/pipeline.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/commits/master) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng)
 
 **Discord Terminal** is an extensible cross-platform Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed) that aims to deliver an alternative take of the Discord user experience. The project is being worked on, and preliminary file upload support was just added. Support for viewing media in the client, among other features, are planned.
 
@@ -59,7 +59,7 @@ sudo npm install -g
 
 That's it! Although keep in mind that since the project is unfinished and WIP, you might encounter some bugs here and there. Please report them if you do find them!
 
-**This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 4.9.4**
+**This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 4.9.5**
 
 Pst. Consider **starring** the repository if you like it! <3
 
@@ -79,7 +79,7 @@ Discord Terminal will show you the first channel in the first server that the Di
 
 The `/tc` command toggles the visibility of the channel picker, allowing you to quickly switch between channels. Similarly, the `/tg` command toggles the server (guild) picker. By default, only the channel picker is visible.
 
-The `/tip` command displays some tips in the headerbar, which can be toggled with `/toggleheader`. Discord Term will store your preference. 
+The `/tip` command displays some tips in the headerbar, which can be toggled with `/toggleheader`. Discord Term will store your preference.
 
 If you ever experience any graphical bugs, `/reset` *should* fix almost all visual problems. Resizing the window and using the `/clear` command have shown to sometimes fix ui issues as well. Disabling emojis with the `/emoji` command may also help.
 
@@ -201,11 +201,15 @@ If you ever experience any graphical bugs, `/reset` *should* fix almost all visu
 
     **Note**: Your friend(s) must have set the same password in order to view your messages, and if you lose your password you won't be able to decrypt your previous messages!
 
-	Spaces in the password are not currently support.
-	
+    Spaces in the password are not currently supported.
+
     ⚠ **This feature has not been properly audited. Do not rely on the encryption (or anything else in this project) for anything important. Don't expect it to work and be plesantly surprised if it does.**
 
     ![Encryption Preview](https://i.imgur.com/v1dHiXp.png)
+
+7. **Administration-tools** There is currently only one admin tool, but there are more administration features in the works.
+
+    1. The `/deletechannel` command deletes the current channel provided that the bot has the right permissions to do so.
 
 
 # License

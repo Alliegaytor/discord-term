@@ -64,7 +64,7 @@ export default class MessageFactory {
         const { nodes } = this.app.options;
         const lines: string[] = this.formatMessage(sender, message, senderColor, messageColor).split("\n");
 
-        if (this.maxScreenLines != 0) {
+        if (this.maxScreenLines !== 0) {
             let screenLines = nodes.messages.getScreenLines().length ?? 0;
             while (screenLines + lines.length > this.maxScreenLines) {
                 nodes.messages.deleteLine(0);

@@ -1,6 +1,6 @@
 import App from "./app.js";
 
-export type IPlugin = {
+export interface Plugin {
     readonly name: string;
 
     readonly description?: string;
