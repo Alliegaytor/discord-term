@@ -5,7 +5,7 @@ import { describe, expect } from "@jest/globals";
 //       The expected test results were gathered
 //       from the potentially broken function...
 
-describe("wordWrapToStringList", () => {
+describe("wordWrapToString", () => {
     test("wrap words seperated with space", () => {
         const text = "The quick brown fox jumps over the lazy dog.";
         const maximumWidth = 20;
@@ -15,7 +15,7 @@ describe("wordWrapToStringList", () => {
             "dog."
         ];
 
-        const result: string[] = Utils.wordWrapToStringList(text, maximumWidth);
+        const result: string[] = Utils.wordWrapToString(text, maximumWidth).split("\n");
 
         expect(result).toEqual(expectedResult);
     });
@@ -28,7 +28,7 @@ describe("wordWrapToStringList", () => {
             "🐧 🐧 🐧 🐧 🐧 🐧 🐧"
         ];
 
-        const result: string[] = Utils.wordWrapToStringList(text, maximumWidth);
+        const result: string[] = Utils.wordWrapToString(text, maximumWidth).split("\n");
 
         expect(result).toEqual(expectedResult);
     });

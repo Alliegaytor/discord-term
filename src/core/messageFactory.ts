@@ -41,8 +41,8 @@ export default class MessageFactory {
 
         // If emojis are enabled, wrap the message text to the maximum width
         if (emojisEnabled) {
-            const lines = Utils.wordWrapToStringList(line, maximumWidth - 1);
-            return lines.join("\n");
+            const lines = Utils.wordWrapToString(line, maximumWidth);
+            return lines;
         }
         else {
             return line;

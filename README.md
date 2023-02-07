@@ -195,7 +195,7 @@ If you ever experience any graphical bugs, `/reset` *should* fix almost all visu
     1. **/encrypt secret_password_here_no_spaces** This will set your decryption/encryption password
     2. **/doencrypt** Toggle automatic encryption of messages
 
-    From now on, your messages will be sent encrypted, preventing anyone (including Discord) from deciphering them **unless** they have set the same password as you. This way, you can give your friends the secret password and both talk in an encrypted, safe manner. You can also edit encrypted messages seemlessly.
+    From now on, your messages will be sent encrypted, preventing anyone (including Discord) from deciphering them **unless** they have set the same password as you. This way, you can give your friends the secret password and both talk in an encrypted, safe manner. You can also edit encrypted messages seamlessly.
 
     Any encrypted messages sent by other users using Discord Terminal will be intercepted and attempted to be decrypted with the currently set decryption key.
 
@@ -203,7 +203,7 @@ If you ever experience any graphical bugs, `/reset` *should* fix almost all visu
 
     Spaces in the password are not currently supported.
 
-    ⚠ **This feature has not been properly audited. Do not rely on the encryption (or anything else in this project) for anything important. Don't expect it to work and be plesantly surprised if it does.**
+    ⚠ **This feature has not been properly audited. Do not rely on the encryption (or anything else in this project) for anything important. Don't expect it to work and be pleasantly surprised if it does.**
 
     ![Encryption Preview](https://i.imgur.com/v1dHiXp.png)
 

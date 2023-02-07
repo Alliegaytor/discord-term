@@ -60,31 +60,28 @@ export default abstract class Utils {
     }
 
     // Wraps words so blessed doesn't die when rendering emojis
-    public static wordWrapToStringList(text: string, maximumWidth: number): string[] {
-        const result: string[] = [];
-        let line: string[] = [];
-        let length: number = 0 as number;
+    public static wordWrapToString(str: string, maxWidth: number): string {
+        const lines: string[] = str.split("\n");
+        let result = "";
 
-        text.split(" ").forEach((word) => {
-            let newWord: string = word;
-            while (stringWidth(newWord) > maximumWidth) {
-                const shrinkIndex = Math.max(0, newWord.length - (stringWidth(newWord) - maximumWidth + 2));
-                result.push(newWord.slice(0, shrinkIndex));
-                newWord = newWord.slice(shrinkIndex);
+        for (const line of lines) {
+            const words: string[] = line.split(" ");
+            let currentLine = "";
+
+            for (const word of words) {
+                const width: number = stringWidth(currentLine + word + " ");
+
+                if (width > maxWidth) {
+                    result += currentLine.trim() + "\n";
+                    currentLine = word + " ";
+                } else {
+                    currentLine += word + " ";
+                }
             }
-            if (length + stringWidth(newWord) > maximumWidth) {
-                result.push(line.join(" "));
-                line = [newWord];
-                length = stringWidth(newWord) + 1;
-            }
-            else {
-                line.push(newWord);
-                length += stringWidth(newWord) + 1;
-            }
-        });
-        if (line.length > 0) {
-            result.push(line.join(" "));
+
+            result += currentLine.trim() + " \n";
         }
-        return result;
+
+        return result.trim();
     }
 }
