@@ -2,65 +2,66 @@
 
 There aren't many rules or guidlines on contributing at the moment, but the ones that do exist are shown below.
 
-1. The requirements are as follows:
+1.  The requirements are as follows:
 
-	1. The code must be in typescript
-	2. The code must compile
-	3. The code must work (or at least appear to function)
-	4. Variables CANNOT be typed as **any**<sup>1</sup>
+    1.  The code must be in typescript
+    2.  The code must compile
+    3.  The code must work (or at least appear to function)
+    4.  Variables CANNOT be typed as **any**<sup>1</sup>
 
-2. The standard/style:
+2.  The standard/style:
 
-	1. Indentation of 6 spaces
-	2. Block statements
-		a. Spaces before condition
+    1.  Indentation of 6 spaces
 
+    2.  Block statements
+        a. Spaces before condition
 
-		```javascript
-		if (true) {}      ✅
-		if(helloThere){}  ❌
-		```
+        ```javascript
+        if (true) {}      ✅
+        if(helloThere){}  ❌
+        ```
 
-		b. Curly braces formatting
+        b. Curly braces formatting
 
-		```javascript
-		if (true) {       ✅
-			return 1;
-		}
-		else {
-			return 0;
-		}
-		if (true) {       ✅
-			return 1 ;
-		} else {
-			return 0;
-		}
-		```
+        ```javascript
+        if (true) {       ✅
+        	return 1;
+        }
+        else {
+        	return 0;
+        }
+        if (true) {       ✅
+        	return 1 ;
+        } else {
+        	return 0;
+        }
+        ```
 
-		Either way works just fine. So long as this does not happen.
+        Either way works just fine. So long as this does not happen.
 
-		```javascript
-		if (true)         ❌
-		{
-			return "why";	
-		} else
-		{
-			return "dont";
-		}
-		```
+        ```javascript
+        if (true)         ❌
+        {
+        	return "why";	
+        } else
+        {
+        	return "dont";
+        }
+        ```
 
-	3. Semicolons;
-	4. Readable thing.dothing().then(()=>{print("hello world");}).catch(err=>{print(`red alert ${err}`);});
+    3.  Semicolons;
 
-		```javascript
-		thing.dothing()
-		    .then(() => {
-		        print("hello world");
-		    })
-		    .catch(err => {
-		        print(`red alert ${err}`);
-		    });
-		```
+    4.  Readable thing.dothing().then(()=>{print("hello world");}).catch(err=>{print(`red alert ${err}`);});
+
+        ```javascript
+        thing.dothing()
+            .then(() => {
+                print("hello world");
+            })
+            .catch(err => {
+                print(`red alert ${err}`);
+            });
+        ```
 
 <sup>1.</sup> Provided that the entire codebase doesn't expload without it. But then I think I'd rather have that happen than to see `as any` anywhere
 
@@ -80,5 +81,4 @@ The one issue that I couldn't fix is something I refuse to touch.
 ✖ 1 problem (0 errors, 1 warning)
 ```
 
-I'm not going to pretend to know what half those words mean. 
-<sup>feel free to fix :)</sup>
+I'm not going to pretend to know what half those words mean. <sup>feel free to fix :)</sup>
