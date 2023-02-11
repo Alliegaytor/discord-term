@@ -29,7 +29,7 @@ export interface IState {
     readonly decryptionKey: string;
     readonly typingLastChannel: string;
     readonly userId: string;
-    readonly helpString: string;
+    readonly helpString?: string;
     readonly messageFormat: string;
 
     // TODO: Only grab the needed bits of the message to save on memory

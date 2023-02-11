@@ -42,7 +42,7 @@ There aren't many rules or guidlines on contributing at the moment, but the ones
         ```javascript
         if (true)         ❌
         {
-        	return "why";	
+        	return "why";
         } else
         {
         	return "dont";
@@ -71,14 +71,3 @@ There's a linter, with its relevant config file, that enforces coding styles. It
 Even if your code doesn't quite fit with these styles it would be accepted if it's good code. The linter is mainly here so that I don't follow a different standard for each function... It also tells you if what you're doing sucks (sometimes).
 
 There were several hundred linter errors when I first enforced the linter. They were all very easy to fix (apart from one). So don't stress if you can't get it right the first time- I certainly didn't.
-
-The one issue that I couldn't fix is something I refuse to touch.
-
-```sh
-/home/allison/Repos/discord-term/src/events.ts
-  82:17  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
-
-✖ 1 problem (0 errors, 1 warning)
-```
-
-I'm not going to pretend to know what half those words mean. <sup>feel free to fix :)</sup>

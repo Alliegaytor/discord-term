@@ -71,8 +71,11 @@ export default function setupEvents(app: App): void {
             const base: string = args[0];
 
             if (app.commands.has(base)) {
+                const cmds = app.commands.get(base);
                 args.splice(0, 1);
-                app.commands.get(base)!(args, t);
+                if (cmds) {
+                    cmds(args, t);
+                }
             }
             else {
                 app.message.system(`Unknown command: ${base}`);
