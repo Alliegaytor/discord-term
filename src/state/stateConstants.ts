@@ -15,7 +15,7 @@ export const defaultState: IState = {
     header: true,
     typingLastStarted: 0,
     typingLastChannel: "",
-    emojisEnabled: true,
+    emojisEnabled: false,
     userId: "",
 
     themeData: {
