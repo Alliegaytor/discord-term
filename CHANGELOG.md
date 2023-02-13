@@ -1,3 +1,18 @@
+## \[1.5.1] - 2023.02.13
+
+### Commits
+
+*   Add Codacy Badge to README.md ([9617c82](https://gitlab.com/P-90-For-Retail/discord-term/commit/9617c82))
+*   Better word wrap ([d075a9c](https://gitlab.com/P-90-For-Retail/discord-term/commit/d075a9c))
+*   Bump @types/node ([2a31184](https://gitlab.com/P-90-For-Retail/discord-term/commit/2a31184))
+*   Bump packages ([6e0f992](https://gitlab.com/P-90-For-Retail/discord-term/commit/6e0f992))
+*   Decryption using wrong password should no longer crash client ([6e8d21a](https://gitlab.com/P-90-For-Retail/discord-term/commit/6e8d21a))
+*   Default emoji support to false ([cd7b2fb](https://gitlab.com/P-90-For-Retail/discord-term/commit/cd7b2fb))
+*   Fix  "Forbidden non-null assertion"  ([3e15847](https://gitlab.com/P-90-For-Retail/discord-term/commit/3e15847))
+*   Format markdown files with linter 🔥 ([73a798c](https://gitlab.com/P-90-For-Retail/discord-term/commit/73a798c))
+*   More linting 🔥 ([9ec0755](https://gitlab.com/P-90-For-Retail/discord-term/commit/9ec0755))
+*   Show password when /encrypt has no args ([49f541b](https://gitlab.com/P-90-For-Retail/discord-term/commit/49f541b))
+
 ## \[1.5.0] - 2023.02.04
 
 ### Main commits
