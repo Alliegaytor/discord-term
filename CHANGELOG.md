@@ -1,3 +1,11 @@
+## \[1.5.2] - 2023.03.14
+
+* Add nodemon for autoreloading ([3b73265](https://gitlab.com/P-90-For-Retail/discord-term/commit/3b73265))
+* Bump packages ([2aacd35](https://gitlab.com/P-90-For-Retail/discord-term/commit/2aacd35))
+* Bump packages ([8b3734b](https://gitlab.com/P-90-For-Retail/discord-term/commit/8b3734b))
+* Bump packages (notably discord.js ^14.7.1 > ^14.8.0) ([502f9b0](https://gitlab.com/P-90-For-Retail/discord-term/commit/502f9b0))
+* Print working dir in /debug ([58d60f4](https://gitlab.com/P-90-For-Retail/discord-term/commit/58d60f4))
+
 ## \[1.5.1] - 2023.02.13
 
 ### Commits
