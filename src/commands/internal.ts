@@ -498,6 +498,8 @@ export default function setupInternalCommands(app: App): void {
                 app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
             }
         }
+        // Current directory
+        app.message.system(`Working directory: ${process.cwd()}`);
     });
 
     // Toggle emoji support
