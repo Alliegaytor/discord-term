@@ -914,4 +914,19 @@ export default class App extends EventEmitter {
                 this.message.warn(`Could not edit message '${message.id}'`);
             });
     }
+
+    // Cycles through message history
+    public cycleMessageHistory(change: number) {
+        const { messageHistory, decryptionKey }: IState = this.state.get();
+        if (messageHistory && ((this.history  < messageHistory.length && change === 1) || (this.history > 1 && change === -1))) {
+            this.history = this.history + change;
+            const message = messageHistory[this.history - 1];
+            if (message.content.startsWith("$dt_")) {
+                message.content = Encryption.decrypt(message.content.substr(4), this, decryptionKey);
+            }
+            this.clearInput(`${this.options.commandPrefix}edit ${message.id} ${message.content}`);
+            this.options.nodes.header.setText(`[${this.history}/${messageHistory.length}] Editing`);
+            this.render();
+        }
+    }
 }
