@@ -5,9 +5,22 @@ import { IState } from "./state/state.js";
 export default function setupEvents(app: App): void {
     // Input.
     app.options.nodes.input.on("keypress", () => {
-        // TODO: If logged in.
-        app.startTyping();
+        // Don't show as typing when using commands
+        const input: string = app.getInput().substr(0,app.options.commandPrefix.length);
+        if (input === app.options.commandPrefix || "") {
+            return;
+        }
 
+        // Don't show as typing when pressing RETURN
+        if (input === "") {
+            return;
+        }
+
+        // Try to type if in a channel
+        const { channel }: IState = app.state.get();
+        if (channel) {
+            app.startTyping();
+        }
     });
 
     // Tab completion
