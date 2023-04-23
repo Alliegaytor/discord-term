@@ -448,6 +448,11 @@ export default function setupInternalCommands(app: App): void {
         else if (guild) {
             app.setActiveGuild(guild);
         }
+
+        // Reset message history
+        app.state.update({
+            messageHistory: []
+        });
     });
 
     // Deletes channels

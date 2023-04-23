@@ -61,7 +61,7 @@ sudo npm install -g
 
 That's it! Although keep in mind that since the project is unfinished and WIP, you might encounter some bugs here and there. Please report them if you do find them!
 
-**This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 4.9.5**
+**This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 5.0.4**
 
 Pst. Consider **starring** the repository if you like it! <3
 
