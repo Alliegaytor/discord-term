@@ -1,3 +1,13 @@
+## \[1.6.0] - 2023.04.23
+
+*   Fix codacy complaining about markdown ([1566aa2](https://gitlab.com/P-90-For-Retail/discord-term/commit/1566aa2f56c1ff72dd9f142058b74c8e526e3bc2))
+*   Remove Github workflows ([05c8d4e](https://gitlab.com/P-90-For-Retail/discord-term/commit/05c8d4ec61e38007b9d59d647651d41ccb8c2218))
+*   Bump packages ([cde570d](https://gitlab.com/P-90-For-Retail/discord-term/commit/cde570df49080a4534dcb8e46a0ed1755161c3ff))
+*   Fix cycling through message history via down & up ([f9baa27](https://gitlab.com/P-90-For-Retail/discord-term/commit/f9baa277fc2865b211456061a4762d6bea3889b8))
+*   Bump packages ([80b3557](https://gitlab.com/P-90-For-Retail/discord-term/commit/80b35574e77a83a4faec65e097d0fcc404c5dbbd))
+*   Don't show as typing when using commands ([c31c0b3](https://gitlab.com/P-90-For-Retail/discord-term/commit/c31c0b3e3d150188f5731c890aeca768dbce1dbb))
+*   Enhanced /debug menu ([f23035f](https://gitlab.com/P-90-For-Retail/discord-term/commit/f23035f5cb0e1db754b475d9f1de58e48e76d31c))
+
 ## \[1.5.2] - 2023.03.14
 
 *   Add nodemon for autoreloading ([3b73265](https://gitlab.com/P-90-For-Retail/discord-term/commit/3b73265))
