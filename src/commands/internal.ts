@@ -479,14 +479,34 @@ export default function setupInternalCommands(app: App): void {
         app.message.system(`Header has been set to: ${header}`);
     });
 
-    // Debug Info
-    app.commands.set("debug", () => {
-        const messageLines: number = app.options.nodes.messages.getLines().length;
+    // Print debug info
+    app.commands.set("debug", (args: string[]) => {
+        // Verbose
+        const verbose = args[0] === "-v" ? true: false;
+        const guildsearchCount = verbose ? 10 : 1;
+
+        app.message.system(guildsearchCount.toString());
+        // Message box demensions
+        const width = app.options.nodes.messages.width as number;
+        const height = app.options.nodes.messages.height as number;
+
+        // System debug formatter
+        function ams(str1: string, str2: string) {
+            app.message.system(Utils.formatWide(str1, str2, width - 12));
+        }
+
+        app.message.break("-", width - 9);
         app.message.system("Debug info:");
-        app.message.system(`Lines: ${messageLines}`);
-        app.message.system(`emojisEnabled: ${app.state.get().emojisEnabled}`);
-        app.message.system(`userId: ${app.state.get().userId}`);
-        app.message.system(`encrypt: ${app.state.get().encrypt}`);
+        app.message.break("-", width - 9);
+
+        ams("userId:", `${app.state.get().userId}`);
+        ams("emojisEnabled:", `${app.state.get().emojisEnabled}`);
+        ams("encryption:", `${app.state.get().encrypt}`);
+        ams("theme:", `${app.state.get().theme}`);
+        ams("history:", `${app.state.get().messageHistory?.length}`);
+
+        app.message.break("-", width - 9);
+
         // Memory info
         app.message.system("Memory info:");
         const mem: NodeJS.MemoryUsage = process.memoryUsage();
@@ -494,12 +514,37 @@ export default function setupInternalCommands(app: App): void {
         let key: keyof typeof mem;
         for (key in mem) {
             if (Object.prototype.hasOwnProperty.call(mem, key)) {
-                const element: number = mem[key];
-                app.message.system(`→ ${key} ${Math.round(element / 1024 / 1024 * 100) / 100} MB`);
+                ams(`→ ${key}`, `${Math.round(mem[key] / 1024 / 1024 * 100) / 100} MB`);
             }
         }
-        // Current directory
-        app.message.system(`Working directory: ${process.cwd()}`);
+
+        app.message.break("-", width - 9);
+
+        ams("Working directory:", `${process.cwd()}`);
+        ams("Messagebox height:", `${height}`);
+        verbose && height < 20 ? app.message.warn("Recommended heigh is >20") : null;
+        ams("Messagebox width:", `${width}`);
+        verbose && width < 70 ? app.message.warn("Recommended width is >70") : null;
+        ams("Lines:", `${app.options.nodes.messages.getLines().length}`);
+
+        app.message.break("-", width - 9);
+
+        // Discord info
+        const guilds: Guild[] = Utils.getGuilds(app.client.guilds);
+        const guildNames: string[] = [];
+        let guildMembers = 0;
+
+        for (let i = 0 ; i < guildsearchCount && i < guilds.length; i++) {
+            guildNames[i] = guilds[i].name;
+            guildMembers = guildMembers + guilds[i].memberCount;
+        }
+
+        app.message.system("Discord stats:");
+        app.message.system("Guilds");
+        ams("→ count", `${guilds.length}`);
+        app.message.system(`→ first ${guildNames.length}`);
+        ams(":: names", `${guildNames.join(", ")}`);
+        ams(":: members", `${guildMembers}`);
     });
 
     // Toggle emoji support

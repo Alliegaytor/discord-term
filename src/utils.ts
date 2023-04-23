@@ -84,4 +84,16 @@ export default abstract class Utils {
 
         return result.trim();
     }
+
+    // When possible returns two strings joined with spaces such that its length equals width
+    public static formatWide(str1: string, str2: string, width: number): string {
+        const gap: number = width - stringWidth(str1) - stringWidth(str2);
+
+        // Return strings joined with space
+        if (gap <= 0) {
+            return str1 + " " + str2;
+        }
+        // Return formatted with a gap of " "
+        return str1 + " ".repeat(gap) + str2;
+    }
 }

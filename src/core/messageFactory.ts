@@ -104,10 +104,20 @@ export default class MessageFactory {
     /**
      * Add a special message to the chat window
      */
-    public special(prefix: string, sender: string, message: string, color = "yellow"): this {
-        this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color as ForegroundColorName);
+    public special(prefix: string, sender: string, message: string, color = "yellow", suffix = " ~> @{bold}"): this {
+        // this.create(`${prefix} ~> @{bold}${sender}{/bold}`, message, color as ForegroundColorName);
+        this.create(`${prefix}${suffix}${sender}{/bold}`, message, color as ForegroundColorName);
 
         return this;
+    }
+
+    /**
+     * Add a break message to the chat window
+     * Example: <> ---------- <>
+     */
+    public break(str: string, count: number): this {
+        // Count must be greater than 0
+        return this.create("", `${str.repeat(count > 0 ? count : 0)} <>`);
     }
 
     /**
