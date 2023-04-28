@@ -1,24 +1,27 @@
 import { IState } from "./state.js";
 
 export const defaultState: IState = {
+    messageFormat: "<{sender}> {message}",
+    theme: "default",
+    decryptionKey: "discord-term",
+    ignoreEmptyMessages: true,
     globalMessages: false,
     ignoreBots: false,
-    ignoreEmptyMessages: true,
-    messageFormat: "<{sender}> {message}",
+    encrypt: false,
+    header: true,
+    emojisEnabled: false,
+    userId: "",
     trackList: [],
     wordPins: [],
     ignoredUsers: [],
     tags: {},
-    theme: "default",
-    decryptionKey: "discord-term",
-    encrypt: false,
-    header: true,
-    typingLastStarted: 0,
-    typingLastChannel: "",
-    emojisEnabled: false,
-    userId: "",
 
     themeData: {
+        input: {
+            foregroundColor: "gray",
+            backgroundColor: "lightgray"
+        },
+
         messages: {
             foregroundColor: "white",
             backgroundColor: "gray"
@@ -31,21 +34,16 @@ export const defaultState: IState = {
             backgroundColorHover: "gray"
         },
 
-        input: {
-            foregroundColor: "gray",
-            backgroundColor: "lightgray"
-        },
-
-        header: {
-            foregroundColor: "black",
-            backgroundColor: "white"
-        },
-
         servers: {
             foregroundColor: "white",
             backgroundColor: "black",
             foregroundColorHover: "white",
             backgroundColorHover: "gray"
+        },
+
+        header: {
+            foregroundColor: "black",
+            backgroundColor: "white"
         }
     }
 };

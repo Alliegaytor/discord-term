@@ -20,14 +20,14 @@ export interface IState {
     readonly encrypt: boolean;
     readonly emojisEnabled: boolean;
 
-    readonly typingLastStarted: number;
+    readonly typingLastStarted?: number;
 
     readonly token?: string;
     readonly tags: { [name: string]: string };
     readonly theme: string;
     readonly wordPins: string[];
     readonly decryptionKey: string;
-    readonly typingLastChannel: string;
+    readonly typingLastChannel?: string;
     readonly userId: string;
     readonly helpString?: string;
     readonly messageFormat: string;
@@ -38,18 +38,10 @@ export interface IState {
     readonly autoHideHeaderTimeout?: NodeJS.Timer;
     readonly trackList: Snowflake[];
     readonly ignoredUsers: Snowflake[];
-    readonly themeData: Theme;
+    readonly themeData: { [key: string]: IThemeColors };
 }
 
-export interface Theme {
-    readonly messages: Color;
-    readonly channels: Color;
-    readonly input: Color;
-    readonly header: Color;
-    readonly servers: Color;
-}
-
-export interface Color {
+export interface IThemeColors {
     readonly foregroundColor: ForegroundColorName;
     readonly backgroundColor: string;
     readonly backgroundColorHover?: string;

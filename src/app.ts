@@ -11,7 +11,7 @@ import Pattern from "./pattern.js";
 import setupEvents from "./events.js";
 import setupInternalCommands from "./commands/internal.js";
 import { EventEmitter } from "events";
-import State, { IState, IStateOptions, Theme } from "./state/state.js";
+import State, { IState, IStateOptions } from "./state/state.js";
 import { defaultState } from "./state/stateConstants.js";
 import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
@@ -151,12 +151,8 @@ export default class App extends EventEmitter {
             }
         });
 
-        // Append nodes.
-        this.options.screen.append(this.options.nodes.input);
-        this.options.screen.append(this.options.nodes.messages);
-        this.options.screen.append(this.options.nodes.channels);
-        this.options.screen.append(this.options.nodes.servers);
-        this.options.screen.append(this.options.nodes.header);
+        // Append nodes to screen
+        Object.entries(this.options.nodes).forEach(([, value]) => this.options.screen.append(value));
 
         // Sync state.
         await this.state.sync();
@@ -284,7 +280,7 @@ export default class App extends EventEmitter {
             this.options.nodes.channels.free();
             // Servers.
             this.options.nodes.servers.hide();
-            this.options.nodes.channels.free();
+            this.options.nodes.servers.free();
         }
         // Messages.
         this.options.nodes.messages.width = this.options.nodes.messages.width as number - width;
@@ -293,7 +289,7 @@ export default class App extends EventEmitter {
         this.options.nodes.input.width = this.options.nodes.input.width as number - width;
         this.options.nodes.input.left = this.options.nodes.input.left as number + width;
         // Header.
-        this.options.nodes.header.width = this.options.nodes.header.width as number -width;
+        this.options.nodes.header.width = this.options.nodes.header.width as number - width;
         this.options.nodes.header.left = this.options.nodes.header.left as number + width;
     }
 
@@ -353,11 +349,11 @@ export default class App extends EventEmitter {
     public async startTyping() {
         // Get context
         const { guild, channel, typingLastChannel, typingLastStarted }: IState = this.state.get();
-        // If it can type
+        // Make sure client is in a channel
         if (guild && channel) {
             const timeNow: number = new Date().getTime();
             // If it has never typed or it has been more than 10 seconds since the last time
-            if (typingLastChannel !== channel.id || timeNow - typingLastStarted > 10000) {
+            if (!typingLastStarted || !typingLastChannel || typingLastChannel !== channel.id || timeNow - typingLastStarted > 10000) {
                 // Update state
                 this.state.update({
                     typingLastStarted: timeNow,
@@ -581,7 +577,7 @@ export default class App extends EventEmitter {
         return true;
     }
 
-    public setTheme(name: string, data: Theme, length: number): boolean {
+    public setTheme(name: string, data: IState["themeData"], length: number): boolean {
         if (!data) {
             this.message.error("Error while setting theme: No data was provided for the theme");
 
@@ -857,7 +853,9 @@ export default class App extends EventEmitter {
     // Deletes specified channel
     // TODO: ADD SAFEGAURDS TO THIS
     public async deleteChannel(channel: TextChannel) {
-        if (!channel) {
+        const { guild }: IState = this.state.get();
+        if (!channel || !guild) {
+            this.message.warn("You must be in a channel to run this command");
             return;
         }
 
@@ -871,7 +869,6 @@ export default class App extends EventEmitter {
             })
             // Move to another channel if there is one
             .then(() => {
-                const { guild } = this.state.get() as { guild: Guild };
                 const newchannel: TextChannel | null = Utils.findDefaultChannel(guild);
                 if (newchannel) {
                     this.setActiveChannel(newchannel);

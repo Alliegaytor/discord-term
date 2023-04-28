@@ -55,6 +55,21 @@ export const defaultAppOptions: IAppOptions = {
     }),
 
     nodes: {
+        input: blessed.textbox({
+            bottom: "0",
+            left: "0%",
+            width: "100%",
+            height: "shrink",
+
+            style: {
+                fg: defaultState.themeData.input.foregroundColor,
+                bg: defaultState.themeData.input.backgroundColor
+            },
+
+            inputOnFocus: true,
+            padding: 1
+        }),
+
         messages: blessed.box({
             top: "0%",
             left: "0%",
@@ -70,11 +85,6 @@ export const defaultAppOptions: IAppOptions = {
             tags: true,
             padding: 1,
             mouse: true,
-            // scrollbar: {
-            //   style: {
-            //     bg: 'yellow'
-            //   }
-            // }
         }),
 
         channels: blessed.box({
@@ -94,19 +104,21 @@ export const defaultAppOptions: IAppOptions = {
             mouse: true,
         }),
 
-        input: blessed.textbox({
-            bottom: "0",
+        servers: blessed.box({
+            top: "0%",
             left: "0%",
-            width: "100%",
-            height: "shrink",
+            width: "0%+17",
+            height: "100%",
 
             style: {
-                fg: defaultState.themeData.input.foregroundColor,
-                bg: defaultState.themeData.input.backgroundColor
+                fg: defaultState.themeData.servers.foregroundColor,
+                bg: defaultState.themeData.servers.backgroundColor
             },
 
-            inputOnFocus: true,
-            padding: 1
+            scrollable: true,
+            padding: 1,
+            hidden: true,
+            mouse: true,
         }),
 
         header: blessed.box({
@@ -123,23 +135,6 @@ export const defaultAppOptions: IAppOptions = {
             padding: 1,
             hidden: true,
             tags: true
-        }),
-
-        servers: blessed.box({
-            top: "0%",
-            left: "0%",
-            width: "0%+17",
-            height: "100%",
-
-            style: {
-                fg: defaultState.themeData.channels.foregroundColor,
-                bg: defaultState.themeData.channels.backgroundColor
-            },
-
-            scrollable: true,
-            padding: 1,
-            hidden: true,
-            mouse: true,
         })
     }
 };
