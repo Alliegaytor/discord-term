@@ -11,6 +11,7 @@ export const defaultState: IState = {
     header: true,
     emojisEnabled: false,
     userId: "",
+    themeFilePath: "",
     trackList: [],
     wordPins: [],
     ignoredUsers: [],

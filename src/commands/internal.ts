@@ -163,10 +163,10 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("themes", () => {
-        const themesPath: string = path.join("themes");
+        const themePath: string = path.join(app.state.get().themeFilePath ?? `${path.join(process.argv[1], "../../themes/")}`);
 
-        if (fs.existsSync(themesPath)) {
-            const files: string[] = fs.readdirSync(themesPath);
+        if (fs.existsSync(themePath)) {
+            const files: string[] = fs.readdirSync(themePath);
 
             for (let i = 0; i < files.length; i++) {
                 files[i] = files[i].replace(".json", "");
@@ -525,7 +525,13 @@ export default function setupInternalCommands(app: App): void {
 
         app.message.break("-", width - 9);
 
-        ams("Working directory:", `${process.cwd()}`);
+        // Directories
+        ams("Executable directory: ", `${process.argv[1]}`);
+        ams("State file path:", app.options.stateFilePath);
+        ams("Theme file path:", app.state.get().themeFilePath ?? `${path.join(process.argv[1], "../../themes/")}`);
+
+        app.message.break("-", width - 9);
+
         ams("Messagebox height:", `${height}`);
         verbose && height < 20 ? app.message.warn("Recommended heigh is >20") : null;
         ams("Messagebox width:", `${width}`);

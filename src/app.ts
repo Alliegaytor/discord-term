@@ -547,9 +547,7 @@ export default class App extends EventEmitter {
     }
 
     public loadTheme(name: string) {
-        // TODO: Allow to change themes folder path (by option).
-        const themePath: string = path.join(this.__dirname, "themes", `${name}.json`);
-
+        const themePath: string = path.join(this.state.get().themeFilePath ?? `${path.join(process.argv[1], "../../themes/")}`, `${name}.json`);
         if (name === defaultState.theme) {
             this.setTheme(defaultState.theme, defaultState.themeData, 0);
         }

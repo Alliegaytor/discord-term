@@ -2,6 +2,7 @@ import { IAppOptions } from "./app.js";
 import blessed from "blessed";
 import { defaultState } from "./state/stateConstants.js";
 import { Partials, GatewayIntentBits } from "discord.js";
+import Os from "os";
 
 
 export const tips: string[] = [
@@ -41,6 +42,7 @@ export const defaultAppOptions: IAppOptions = {
     initialState: {},
     maxFetchMessages: 50,
     commandPrefix: "/",
+    configPath: Os.homedir(),
     stateFilePath: "state.json",
     pluginsPath: "plugins",
     headerAutoHideTimeoutPerChar: 100,

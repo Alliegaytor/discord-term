@@ -2,11 +2,13 @@ import { Snowflake, TextChannel, Guild, Message } from "discord.js";
 import { EventEmitter } from "events";
 import { ForegroundColorName } from "chalk";
 import fs from "fs-extra";
+import path from "path";
 import { defaultState, excludeProperties } from "./stateConstants.js";
 import App from "../app.js";
 
 export interface IStateOptions {
-    readonly stateFilePath: string;
+    stateFilePath: string;
+    configPath: string;
 }
 
 export interface IState {
@@ -39,6 +41,7 @@ export interface IState {
     readonly trackList: Snowflake[];
     readonly ignoredUsers: Snowflake[];
     readonly themeData: { [key: string]: IThemeColors };
+    readonly themeFilePath?: string;
 }
 
 export interface IThemeColors {
@@ -51,7 +54,7 @@ export interface IThemeColors {
 export interface IStateCopy { [key: string]: unknown }
 
 export default class State extends EventEmitter {
-    public readonly options: IStateOptions;
+    public options: IStateOptions;
 
     protected state: IState;
 
@@ -63,11 +66,18 @@ export default class State extends EventEmitter {
         this.app = app;
         this.options = options;
 
+        // Use local config if installed via git repo
+        if (fs.existsSync(`${path.join(process.cwd(), ".git")}`)) {
+            this.options.configPath = `${process.cwd()}`;
+        }
+
+        this.options.stateFilePath = path.join(this.options.configPath, this.options.stateFilePath);
+
         // Initialize the state.
         this.state = { ...defaultState, ...initialState };
 
         // Ensure state.json exists
-        fs.ensureFileSync(this.app.options.stateFilePath);
+        fs.ensureFileSync(this.options.stateFilePath);
     }
 
     public get(): IState {
