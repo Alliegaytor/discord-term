@@ -11,6 +11,14 @@
         "backgroundColorHover": "#23272A"
     },
 
+    "servers": {
+        "foregroundColor": "white",
+        "backgroundColor": "#2f3136",
+        "foregroundColorHover": "#FFF",
+        "backgroundColorHover": "#23272A"
+    },
+
+
     "input": {
         "foregroundColor": "#fff",
         "backgroundColor": "#484b51"

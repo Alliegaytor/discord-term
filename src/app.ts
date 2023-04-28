@@ -592,26 +592,11 @@ export default class App extends EventEmitter {
         // Get theme data
         const { themeData }: IState = this.state.get();
 
-        // Messages.
-        this.options.nodes.messages.style.fg = themeData.messages.foregroundColor;
-        this.options.nodes.messages.style.bg = themeData.messages.backgroundColor;
-
-        // Input.
-        this.options.nodes.input.style.fg = themeData.input.foregroundColor;
-        this.options.nodes.input.style.bg = themeData.input.backgroundColor;
-
-        // Channels.
-        this.options.nodes.channels.style.fg = themeData.channels.foregroundColor;
-        this.options.nodes.channels.style.bg = themeData.channels.backgroundColor;
-
-        // Servers.
-        // TODO: Give servers their own themes
-        this.options.nodes.servers.style.fg = themeData.channels.foregroundColor;
-        this.options.nodes.servers.style.bg = themeData.channels.backgroundColor;
-
-        // Header.
-        this.options.nodes.header.style.fg = themeData.header.foregroundColor;
-        this.options.nodes.header.style.bg = themeData.header.backgroundColor;
+        // Update each node to use the new theme
+        Object.entries(this.options.nodes).forEach(([key, value]) => {
+            value.style.fg = themeData[key].foregroundColor;
+            value.style.bg = themeData[key].backgroundColor;
+        });
 
         this.updateChannels();
         this.updateGuilds();
