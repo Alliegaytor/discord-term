@@ -17,6 +17,11 @@ export default class MessageFactory {
         const { themeData, messageFormat, emojisEnabled }: IState = this.app.state.get();
         const maximumWidth: number = this.app.options.nodes.messages.width as number;
 
+        // Remove chalk formatting of sender for width calc
+        if (emojisEnabled) {
+            sender = sender.replace("{bold}", "").replace("{/bold}", "");
+        }
+
         // If no message color is provided, use the default message color from the theme data
         messageColor = messageColor || themeData.messages.foregroundColor;
         let messageString = message.toString();
@@ -41,8 +46,7 @@ export default class MessageFactory {
 
         // If emojis are enabled, wrap the message text to the maximum width
         if (emojisEnabled) {
-            const lines = Utils.wordWrapToString(line, maximumWidth);
-            return lines;
+            return Utils.wordWrapToString(line, maximumWidth);
         }
         else {
             return line;
