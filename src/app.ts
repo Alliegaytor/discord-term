@@ -160,7 +160,7 @@ export default class App extends EventEmitter {
         // Load & apply saved theme.
         this.loadTheme(this.state.get().theme);
 
-        // Detect emoji preference
+        // Set emoji preference
         this.options.screen.fullUnicode = this.state.get().emojisEnabled;
 
         if (init) {
@@ -295,20 +295,25 @@ export default class App extends EventEmitter {
 
     public showChannels() {
         this.blessedNodeWidths(18);
+
+        if (this.options.nodes.servers.visible) {
+            this.options.nodes.channels.left = "18";
+        }
+
         this.options.nodes.channels.show();
-        this.render();
+        this.render(true);
     }
 
     public hideChannels() {
         this.blessedNodeWidths(-18);
         this.options.nodes.channels.hide();
         this.options.nodes.channels.free();
-        this.render();
+        this.render(true);
     }
 
     // Toggle channel visibility
     public toggleChannels() {
-        this.options.nodes.channels.visible ? this.hideChannels() : this.updateChannels() && this.showChannels();
+        this.options.nodes.channels.visible ? this.hideChannels() : (this.updateChannels(), this.showChannels());
     }
 
     public showGuilds() {
@@ -319,7 +324,7 @@ export default class App extends EventEmitter {
         }
 
         this.options.nodes.servers.show();
-        this.render();
+        this.render(true);
     }
 
     public hideGuilds() {
@@ -327,12 +332,12 @@ export default class App extends EventEmitter {
         this.options.nodes.channels.left = "0";
         this.options.nodes.servers.hide();
         this.options.nodes.servers.free();
-        this.render();
+        this.render(true);
     }
 
     // Toggle server visibility
     public toggleGuilds() {
-        this.options.nodes.servers.visible ? this.hideGuilds() : this.updateGuilds() && this.showGuilds();
+        this.options.nodes.servers.visible ? this.hideGuilds() : (this.updateGuilds(), this.showGuilds());
     }
 
     private setupEvents() {
@@ -404,17 +409,17 @@ export default class App extends EventEmitter {
         process.exit(exitCode);
     }
 
-    public updateChannels(render = false): boolean {
+    public updateChannels(render = false) {
         const guild: Guild | undefined = this.state.get().guild;
 
-        // Return if undefined
         if (!guild) {
-            return false;
+            return;
         }
+
         // Fixes "ghost" children bug.
-        while (this.options.nodes.channels.children.length > 0) {
-            this.options.nodes.channels.remove(this.options.nodes.channels.children[0]);
-        }
+        Object.entries(this.options.nodes.channels.children).forEach(([, value]) => {
+            this.options.nodes.channels.remove(value);
+        });
 
         // Grab all available text channels
         const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
@@ -464,22 +469,20 @@ export default class App extends EventEmitter {
         }
 
         if (render) {
-            this.render(false, false);
+            this.render();
         }
-
-        return true;
     }
 
-    public updateGuilds(render = false): boolean {
+    public updateGuilds(render = false) {
         // Grab all available guilds
         const guilds: Guild[] = Utils.getGuilds(this.client.guilds);
 
         // Fixes "ghost" children bug.
-        while (this.options.nodes.servers.children.length > 0) {
-            this.options.nodes.servers.remove(this.options.nodes.servers.children[0]);
-        }
+        Object.entries(this.options.nodes.servers.children).forEach(([, value]) => {
+            this.options.nodes.servers.remove(value);
+        });
 
-        const { themeData }: IState = this.state.get();
+        const { guild, themeData }: IState = this.state.get();
 
         for (let i = 0; i < guilds.length; i++) {
             let guildName: string = guilds[i].name
@@ -496,8 +499,7 @@ export default class App extends EventEmitter {
                     bg: themeData.channels.backgroundColor,
                     fg: themeData.channels.foregroundColor,
 
-                    // TODO: Not working
-                    // bold: this.state.get().guild !== undefined && this.state.get().guild?.id === guilds[i].id,
+                    bold: guild !== undefined && guild.id === guilds[i].id,
 
                     hover: {
                         bg: themeData.channels.backgroundColorHover,
@@ -517,7 +519,7 @@ export default class App extends EventEmitter {
                 const { guild }: IState = this.state.get();
                 if (guild && guilds[i].id !== guild.id) {
                     this.setActiveGuild(guilds[i]);
-                    this.updateChannels(true);
+                    this.updateGuilds(true);
                 }
             });
 
@@ -525,10 +527,8 @@ export default class App extends EventEmitter {
         }
 
         if (render) {
-            this.render(false, false);
+            this.render();
         }
-
-        return true;
     }
 
     // Get members in a server
@@ -546,15 +546,7 @@ export default class App extends EventEmitter {
         setupInternalCommands(this);
     }
 
-    public loadTheme(name: string): boolean {
-        if (!name) {
-            return false;
-        }
-        // TODO: Trivial expression.
-        /*else if (this.state.theme === name) {
-            return this;
-        }*/
-
+    public loadTheme(name: string) {
         // TODO: Allow to change themes folder path (by option).
         const themePath: string = path.join(this.__dirname, "themes", `${name}.json`);
 
@@ -573,15 +565,11 @@ export default class App extends EventEmitter {
         else {
             this.message.warn(`The theme {bold}"${name}"{/bold} could not be found (Are you sure thats under the {bold}themes{/bold} folder?)`);
         }
-
-        return true;
     }
 
-    public setTheme(name: string, data: IState["themeData"], length: number): boolean {
+    public setTheme(name: string, data: IState["themeData"], length: number) {
         if (!data) {
             this.message.error("Error while setting theme: No data was provided for the theme");
-
-            return false;
         }
 
         this.state.update({
@@ -601,8 +589,6 @@ export default class App extends EventEmitter {
         this.updateChannels();
         this.updateGuilds();
         this.message.system(`Applied theme '${name}' (${length} bytes)`);
-
-        return true;
     }
 
     private updateTitle() {
@@ -670,7 +656,8 @@ export default class App extends EventEmitter {
     public setActiveGuild(guild: Guild) {
         this.state.update({
             guild,
-            messageHistory: []
+            messageHistory: [],
+            channel: undefined // To make sure the client can't delete channels from other servers
         });
 
         this.history = 0;
@@ -688,16 +675,11 @@ export default class App extends EventEmitter {
 
         const defaultChannel: TextChannel | null = Utils.findDefaultChannel(guild);
 
-        if (defaultChannel !== null) {
+        if (defaultChannel) {
             this.setActiveChannel(defaultChannel);
         }
         else {
             this.message.warn(`Guild '${guild.name}' doesn't have any text channels`);
-            // Sets current channel to undefined
-            // This is very important as it makes sure the client can't delete channels from other servers
-            this.state.update({
-                channel: undefined
-            });
         }
 
         this.updateTitle();
@@ -808,10 +790,7 @@ export default class App extends EventEmitter {
             });
     }
 
-    public render(hard = false, updateChannels = false) {
-        if (updateChannels) {
-            this.updateChannels(false);
-        }
+    public render(hard = false) {
 
         if (!hard) {
             this.options.screen.render();

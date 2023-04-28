@@ -436,7 +436,7 @@ export default function setupInternalCommands(app: App): void {
         // Reset
         app.options.nodes.messages.setContent("");
         app.blessedNodeWidths(0);
-        app.render(true, true);
+        app.render(true);
         app.updateChannels(true);
         app.showChannels();
 
