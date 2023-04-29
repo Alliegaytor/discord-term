@@ -33,6 +33,7 @@ export interface IState {
     readonly userId: string;
     readonly helpString?: string;
     readonly messageFormat: string;
+    readonly themeFilePath: string;
 
     // TODO: Only grab the needed bits of the message to save on memory
     readonly messageHistory?: Message[];
@@ -41,7 +42,6 @@ export interface IState {
     readonly trackList: Snowflake[];
     readonly ignoredUsers: Snowflake[];
     readonly themeData: { [key: string]: IThemeColors };
-    readonly themeFilePath?: string;
 }
 
 export interface IThemeColors {

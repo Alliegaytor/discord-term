@@ -15,7 +15,7 @@ import State, { IState, IStateOptions } from "./state/state.js";
 import { defaultState } from "./state/stateConstants.js";
 import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
-
+import Os from "os";
 
 export interface IAppNodes {
     readonly messages: Widgets.BoxElement;
@@ -157,6 +157,23 @@ export default class App extends EventEmitter {
         // Sync state.
         await this.state.sync();
 
+        // Theme folder detection
+        if (!this.state.get().themeFilePath) {
+            let themeFilePath = undefined;
+            if (fs.existsSync(`${process.cwd()}/.git/`)) {
+                themeFilePath = `${path.join(process.argv[1], "../../themes/")}`;
+            }
+            else if (Os.platform() === "linux") {
+                themeFilePath = path.join("/usr/lib/node_modules/discord-term-ng/themes/");
+            }
+            else if (Os.platform() === "win32") {
+                themeFilePath = path.join(this.options.configPath, "AppData/Roaming/npm/node_modules/discord-term-ng/themes/");
+            }
+            this.state.update({
+                themeFilePath
+            });
+        }
+
         // Load & apply saved theme.
         this.loadTheme(this.state.get().theme);
 
@@ -166,7 +183,6 @@ export default class App extends EventEmitter {
         if (init) {
             this.init();
         }
-
     }
 
     private handleMessage(msg: Message): void {
@@ -547,7 +563,7 @@ export default class App extends EventEmitter {
     }
 
     public loadTheme(name: string) {
-        const themePath: string = path.join(this.state.get().themeFilePath ?? `${path.join(process.argv[1], "../../themes/")}`, `${name}.json`);
+        const themePath: string = path.join(this.state.get().themeFilePath, `${name}.json`);
         if (name === defaultState.theme) {
             this.setTheme(defaultState.theme, defaultState.themeData, 0);
         }
@@ -559,6 +575,9 @@ export default class App extends EventEmitter {
 
             // TODO: Catch possible parsing errors.
             this.setTheme(name, JSON.parse(theme), theme.length);
+        }
+        else if (name === undefined) {
+            this.loadTheme("dark-red");
         }
         else {
             this.message.warn(`The theme {bold}"${name}"{/bold} could not be found (Are you sure thats under the {bold}themes{/bold} folder?)`);

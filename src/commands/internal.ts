@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import App from "../app.js";
 import { ChannelType, Snowflake, TextChannel, Guild } from "discord.js";
 import { tips } from "../constant.js";
@@ -163,7 +162,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("themes", () => {
-        const themePath: string = path.join(app.state.get().themeFilePath ?? `${path.join(process.argv[1], "../../themes/")}`);
+        const themePath = `${app.state.get().themeFilePath}`;
 
         if (fs.existsSync(themePath)) {
             const files: string[] = fs.readdirSync(themePath);
@@ -528,7 +527,7 @@ export default function setupInternalCommands(app: App): void {
         // Directories
         ams("Executable directory: ", `${process.argv[1]}`);
         ams("State file path:", app.options.stateFilePath);
-        ams("Theme file path:", app.state.get().themeFilePath ?? `${path.join(process.argv[1], "../../themes/")}`);
+        ams("Theme file path:", app.state.get().themeFilePath);
 
         app.message.break("-", width - 9);
 
