@@ -59,6 +59,12 @@ To install on your system globally:
 sudo npm install -g
 ```
 
+And then run
+
+```shell
+dterm
+```
+
 That's it! Although keep in mind that since the project is unfinished and WIP, you might encounter some bugs here and there. Please report them if you do find them!
 
 **This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 5.0.4**
@@ -84,6 +90,8 @@ The `/tc` command toggles the visibility of the channel picker, allowing you to 
 The `/tip` command displays some tips in the headerbar, which can be toggled with `/toggleheader`. Discord Term will store your preference.
 
 If you ever experience any graphical bugs, `/reset` *should* fix almost all visual problems. Resizing the window and using the `/clear` command have shown to sometimes fix ui issues as well. Disabling emojis with the `/emoji` command may also help.
+
+You can also customise the location of the `/themes` by editing the `state.json` file which should either be in your home directory or the directory you installed discord-term to.
 
 <details>
 <summary>

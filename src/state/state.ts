@@ -30,6 +30,7 @@ export interface IState {
     readonly wordPins: string[];
     readonly decryptionKey: string;
     readonly typingLastChannel?: string;
+    readonly commandPrefix: string;
     readonly userId: string;
     readonly helpString?: string;
     readonly messageFormat: string;

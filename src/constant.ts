@@ -16,7 +16,8 @@ export const tips: string[] = [
     "Press {bold}CTRL + X{/bold} to force exit without saving state",
     "Use {bold}{prefix}/tg{/bold} to toggle on/off the guild menu",
     "Use {bold}{prefix}/tc{/bold} to toggle on/off the channels menu",
-    "You can toggle emoji support on/off with {bold}{prefix}emoji{/bold}"
+    "You can toggle emoji support on/off with {bold}{prefix}emoji{/bold}",
+    "The debug menu can be accessed with {bold}{prefix}debug{/bold}"
 ];
 
 export const defaultAppOptions: IAppOptions = {
@@ -41,7 +42,6 @@ export const defaultAppOptions: IAppOptions = {
     },
     initialState: {},
     maxFetchMessages: 50,
-    commandPrefix: "/",
     configPath: Os.homedir(),
     stateFilePath: "state.json",
     pluginsPath: "plugins",

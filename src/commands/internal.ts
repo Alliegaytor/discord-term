@@ -215,7 +215,7 @@ export default function setupInternalCommands(app: App): void {
     app.commands.set("tip", () => {
         // TODO: Replace all.
         const tip: string = tips[Utils.getRandomInt(0, tips.length - 1)]
-            .replace("{prefix}", app.options.commandPrefix);
+            .replace("{prefix}", app.state.get().commandPrefix);
 
         app.showHeader(tip, true);
     });

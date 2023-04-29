@@ -10,6 +10,7 @@ export const defaultState: IState = {
     encrypt: false,
     header: true,
     emojisEnabled: false,
+    commandPrefix: "/",
     userId: "",
     themeFilePath: "",
     trackList: [],

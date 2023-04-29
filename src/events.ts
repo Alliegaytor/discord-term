@@ -6,8 +6,8 @@ export default function setupEvents(app: App): void {
     // Input.
     app.options.nodes.input.on("keypress", () => {
         // Don't show as typing when using commands
-        const input: string = app.getInput().substr(0,app.options.commandPrefix.length);
-        if (input === app.options.commandPrefix || "") {
+        const input: string = app.getInput().substr(0,app.state.get().commandPrefix.length);
+        if (input === app.state.get().commandPrefix || "") {
             return;
         }
 
@@ -26,9 +26,9 @@ export default function setupEvents(app: App): void {
     // Tab completion
     app.options.nodes.input.key("tab", () => {
         const rawInput: string = app.getInput();
-        const input: string = rawInput.substr(app.options.commandPrefix.length);
+        const input: string = rawInput.substr(app.state.get().commandPrefix.length);
 
-        if (!rawInput.startsWith(app.options.commandPrefix) || input.indexOf(" ") !== -1) {
+        if (!rawInput.startsWith(app.state.get().commandPrefix) || input.indexOf(" ") !== -1) {
             return;
         }
 
@@ -49,7 +49,7 @@ export default function setupEvents(app: App): void {
             break;
         case 1:
             // Autocomplete command
-            app.clearInput(`${app.options.commandPrefix}${autocomplete[0]} `);
+            app.clearInput(`${app.state.get().commandPrefix}${autocomplete[0]} `);
             break;
         default:
             // Show all available completions
@@ -79,8 +79,8 @@ export default function setupEvents(app: App): void {
         if (input === "") {
             return;
         }
-        else if (input.startsWith(app.options.commandPrefix)) {
-            const args: string[] = input.substr(app.options.commandPrefix.length).split(" ");
+        else if (input.startsWith(app.state.get().commandPrefix)) {
+            const args: string[] = input.substr(app.state.get().commandPrefix.length).split(" ");
             const base: string = args[0];
 
             if (app.commands.has(base)) {
@@ -118,8 +118,8 @@ export default function setupEvents(app: App): void {
 
     app.options.nodes.input.key("escape", () => {
         app.history = 0;
-        if (app.getInput().startsWith(app.options.commandPrefix)) {
-            app.clearInput(app.options.commandPrefix);
+        if (app.getInput().startsWith(app.state.get().commandPrefix)) {
+            app.clearInput(app.state.get().commandPrefix);
         }
         else {
             app.clearInput();

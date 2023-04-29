@@ -18,37 +18,26 @@ import Tags from "./tags.js";
 import Os from "os";
 
 export interface IAppNodes {
-    readonly messages: Widgets.BoxElement;
-
-    readonly channels: Widgets.BoxElement;
-
     readonly input: Widgets.TextboxElement;
-
-    readonly header: Widgets.BoxElement;
-
+    readonly messages: Widgets.BoxElement;
+    readonly channels: Widgets.BoxElement;
     readonly servers: Widgets.BoxElement;
+    readonly header: Widgets.BoxElement;
 }
 
 export interface IAppOptions extends IStateOptions {
     readonly maxFetchMessages: number;
-
-    readonly screen: Widgets.Screen;
-
-    readonly nodes: IAppNodes;
-
-    readonly commandPrefix: string;
-
     readonly headerAutoHideTimeoutPerChar: number;
+    readonly maxScreenLines: number;
 
-    readonly initialState: Partial<IState>;
-
-    readonly clientOptions: ClientOptions;
-
+    // readonly commandPrefix: string;
     readonly pluginsPath: string;
-
     readonly headerPrefix: string;
 
-    readonly maxScreenLines: number;
+    readonly screen: Widgets.Screen;
+    readonly nodes: IAppNodes;
+    readonly clientOptions: ClientOptions;
+    readonly initialState: Partial<IState>;
 }
 
 export enum SpecialSenders {
@@ -64,24 +53,18 @@ export default class App extends EventEmitter {
      * Instance options for the application.
      */
     public readonly options: IAppOptions;
-
     /**
      * The Discord client class instance.
      */
     public readonly client: Client;
-
     /**
      * Registered commands usable by the client.
      */
     public readonly commands: Map<string, ICommandHandler>;
 
     public readonly state: State;
-
     public readonly message: MessageFactory;
-
     public readonly tags: Tags;
-
-    public __dirname = "";
 
     public history = 0;
 
@@ -125,7 +108,7 @@ export default class App extends EventEmitter {
 
             this.toggleChannels();
             // this.toggleGuilds(); // TODO: Set guild menu to toggle
-            this.showHeader(`Type ${this.options.commandPrefix}tg to show the guild switch menu`, true);
+            this.showHeader(`Type ${this.state.get().commandPrefix}tg to show the guild switch menu`, true);
             this.state.saveSync();
         });
 
@@ -156,6 +139,14 @@ export default class App extends EventEmitter {
 
         // Sync state.
         await this.state.sync();
+
+        // Ensure commandPrefix isn't undefined
+        if (!this.state.get().commandPrefix) {
+            this.message.system("Setting commandPrefix to default");
+            this.state.update({
+                commandPrefix: "/"
+            });
+        }
 
         // Theme folder detection
         if (!this.state.get().themeFilePath) {
@@ -279,14 +270,16 @@ export default class App extends EventEmitter {
     }
 
     // Handles resizing blessed boxes
+    // This can be looped over, but the nodes' arrangement might not stay the same
     public blessedNodeWidths(width: number) {
         // Resets widths
         if (width === 0) {
-            this.options.nodes.messages.width = "100%";
-            this.options.nodes.messages.left = "0%";
             // Input.
             this.options.nodes.input.width = "100%";
             this.options.nodes.input.left = "0%";
+            // Messages.
+            this.options.nodes.messages.width = "100%";
+            this.options.nodes.messages.left = "0%";
             // Header.
             this.options.nodes.header.width = "100%";
             this.options.nodes.header.left = "0%";
@@ -298,15 +291,15 @@ export default class App extends EventEmitter {
             this.options.nodes.servers.hide();
             this.options.nodes.servers.free();
         }
-        // Messages.
-        this.options.nodes.messages.width = this.options.nodes.messages.width as number - width;
-        this.options.nodes.messages.left = this.options.nodes.messages.left as number + width;
         // Input.
-        this.options.nodes.input.width = this.options.nodes.input.width as number - width;
-        this.options.nodes.input.left = this.options.nodes.input.left as number + width;
+        (this.options.nodes.input.width as number) -= width;
+        (this.options.nodes.input.left as number) += width;
+        // Messages.
+        (this.options.nodes.messages.width as number) -= width;
+        (this.options.nodes.messages.left as number) += width;
         // Header.
-        this.options.nodes.header.width = this.options.nodes.header.width as number - width;
-        this.options.nodes.header.left = this.options.nodes.header.left as number + width;
+        (this.options.nodes.header.width as number) -= width;
+        (this.options.nodes.header.left as number) += width;
     }
 
     public showChannels() {
@@ -651,7 +644,7 @@ export default class App extends EventEmitter {
         }
         // Login with saved token
         else if (this.state.get().token) {
-            this.message.system(`Attempting to login using saved token; Use {bold}${this.options.commandPrefix}forget{/bold} to forget the token`);
+            this.message.system(`Attempting to login using saved token; Use {bold}${this.state.get().commandPrefix}forget{/bold} to forget the token`);
             this.login(this.state.get().token as string);
         }
         // Login with clipboard
@@ -661,7 +654,7 @@ export default class App extends EventEmitter {
         }
         // If not logged in
         if (!this.state.get().userId) {
-            this.options.nodes.input.setValue(`${this.options.commandPrefix}login `);
+            this.options.nodes.input.setValue(`${this.state.get().commandPrefix}login `);
             this.showHeader("{bold}Pro Tip.{/bold} Set the environment variable {bold}DTERM_TOKEN{/bold} to automagically login!");
             this.message.system("Welcome! Please login using {bold}/login <token>{/bold} or {bold}/help{/bold} to view available commands");
         }
@@ -895,14 +888,14 @@ export default class App extends EventEmitter {
 
     // Cycles through message history
     public cycleMessageHistory(change: number) {
-        const { messageHistory, decryptionKey }: IState = this.state.get();
+        const { messageHistory, decryptionKey, commandPrefix }: IState = this.state.get();
         if (messageHistory && ((this.history  < messageHistory.length && change === 1) || (this.history > 1 && change === -1))) {
-            this.history = this.history + change;
+            this.history += change;
             const message = messageHistory[this.history - 1];
             if (message.content.startsWith("$dt_")) {
                 message.content = Encryption.decrypt(message.content.substr(4), this, decryptionKey);
             }
-            this.clearInput(`${this.options.commandPrefix}edit ${message.id} ${message.content}`);
+            this.clearInput(`${commandPrefix}edit ${message.id} ${message.content}`);
             this.options.nodes.header.setText(`[${this.history}/${messageHistory.length}] Editing`);
             this.render();
         }
