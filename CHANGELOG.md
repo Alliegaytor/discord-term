@@ -1,3 +1,17 @@
+## \[1.6.1] - 2023.04.30
+
+*   Reset message history on /reset ([02bc4fd](https://gitlab.com/P-90-For-Retail/discord-term/commit/02bc4fd8acf2bd9008e3b9d8256c7964eeabf598))
+*   Cleanup code, remove some duplicated code ([8b261dd](https://gitlab.com/P-90-For-Retail/discord-term/commit/8b261ddadeae21dd0197fc5c6ed1bacf8bcc5432))
+*   Add support to theme guilds menu ([d8e492e](https://gitlab.com/P-90-For-Retail/discord-term/commit/d8e492eb0e1d18919c9c1ea8d3f828294a5e256e))
+*   Fix some rendering bugs ([cb92af9](https://gitlab.com/P-90-For-Retail/discord-term/commit/cb92af955316e9e9adc3f0b1d99f046efd15bf35))
+*   Fix some word wrapping issues due to chalk formatting ([17a4c13](https://gitlab.com/P-90-For-Retail/discord-term/commit/17a4c138f7e53cf14ed9ccd8af5f456a47ecab32))
+*   Allow custom location of /themes folder, and use home dir for config file ([ba1d676](https://gitlab.com/P-90-For-Retail/discord-term/commit/ba1d676f0cd146181512fb43eb5bbf5069914ad1))
+*   Better implementation of theme folder detection with os detection ([22ad8be](https://gitlab.com/P-90-For-Retail/discord-term/commit/22ad8be7a602de31b99e3f5bb790788b18cd3106))
+*   Minor code changes ([e42ca22](https://gitlab.com/P-90-For-Retail/discord-term/commit/e42ca221f1239e5d8b5af873f65393fd79af3858))
+*   Change config path ([1eb1a7a](https://gitlab.com/P-90-For-Retail/discord-term/commit/1eb1a7ab6e32c61b76ef88cbbefcbc80a8f4e8d4))
+
+
+
 ## \[1.6.0] - 2023.04.23
 
 *   Fix codacy complaining about markdown ([1566aa2](https://gitlab.com/P-90-For-Retail/discord-term/commit/1566aa2f56c1ff72dd9f142058b74c8e526e3bc2))
