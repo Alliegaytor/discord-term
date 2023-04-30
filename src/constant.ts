@@ -2,7 +2,7 @@ import { IAppOptions } from "./app.js";
 import blessed from "blessed";
 import { defaultState } from "./state/stateConstants.js";
 import { Partials, GatewayIntentBits } from "discord.js";
-import Os from "os";
+import path from "path";
 
 
 export const tips: string[] = [
@@ -42,7 +42,7 @@ export const defaultAppOptions: IAppOptions = {
     },
     initialState: {},
     maxFetchMessages: 50,
-    configPath: Os.homedir(),
+    configPath: path.join(process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Preferences" : process.env.HOME + "/.local/share"), "discord-term"),
     stateFilePath: "state.json",
     pluginsPath: "plugins",
     headerAutoHideTimeoutPerChar: 100,
