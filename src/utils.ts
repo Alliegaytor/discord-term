@@ -69,7 +69,7 @@ export default abstract class Utils {
             let currentLine = "";
 
             for (const word of words) {
-                const width: number = stringWidth(currentLine + word + " ");
+                const width: number = stringWidth(currentLine + word);
 
                 if (width > maxWidth) {
                     result += currentLine.trim() + "\n";

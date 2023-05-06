@@ -1,10 +1,6 @@
 import Utils from "../src/utils.js";
 import { describe, expect } from "@jest/globals";
 
-// TODO: Actually calculate how these properly
-//       The expected test results were gathered
-//       from the potentially broken function...
-
 describe("wordWrapToString", () => {
     test("wrap words seperated with space", () => {
         const text = "The quick brown fox jumps over the lazy dog.";
@@ -26,6 +22,18 @@ describe("wordWrapToString", () => {
             "🐧 🐧 🐧 🐧 🐧 🐧 🐧",
             "🐧 🐧 🐧 🐧 🐧 🐧 🐧",
             "🐧 🐧 🐧 🐧 🐧 🐧 🐧"
+        ];
+
+        const result: string[] = Utils.wordWrapToString(text, maximumWidth).split("\n");
+
+        expect(result).toEqual(expectedResult);
+    });
+    test("wrap sus unicode with spaces", () => {
+        const text = "ඞ they are among us ඞ";
+        const maximumWidth = 10;
+        const expectedResult: string[] = [
+            "ඞ they are",
+            "among us ඞ"
         ];
 
         const result: string[] = Utils.wordWrapToString(text, maximumWidth).split("\n");

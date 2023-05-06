@@ -9,5 +9,3 @@ export const state: State = new State(app, app.options);
 
 import "./wordwrapstring_test.js";
 import "./tag_test.js";
-
-// app.message.system("hi");
