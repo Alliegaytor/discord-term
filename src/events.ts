@@ -6,7 +6,7 @@ export default function setupEvents(app: App): void {
     // Input.
     app.options.nodes.input.on("keypress", () => {
         // Don't show as typing when using commands
-        const input: string = app.getInput().substr(0,app.state.get().commandPrefix.length);
+        const input: string = app.getInput().substr(0, app.state.get().commandPrefix.length);
         if (input === app.state.get().commandPrefix || "") {
             return;
         }

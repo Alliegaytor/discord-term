@@ -489,7 +489,6 @@ export default function setupInternalCommands(app: App): void {
         const verbose = args[0] === "-v" ? true: false;
         const guildsearchCount = verbose ? 10 : 1;
 
-        app.message.system(guildsearchCount.toString());
         // Message box demensions
         const width = app.options.nodes.messages.width as number;
         const height = app.options.nodes.messages.height as number;

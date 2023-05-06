@@ -53,12 +53,6 @@ export default abstract class Utils {
         return [...new Intl.Segmenter().segment(str)].length;
     }
 
-    // https://stackoverflow.com/a/71619350
-    public static getSegments(str: string): Intl.Segments {
-        const segmenter = new Intl.Segmenter("en", {granularity: "word"});
-        return segmenter.segment(str);
-    }
-
     // Wraps words so blessed doesn't die when rendering emojis
     public static wordWrapToString(str: string, maxWidth: number): string {
         const lines: string[] = str.split("\n");
