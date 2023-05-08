@@ -2,5 +2,6 @@
     "recommendations": [
         "dbaeumer.vscode-eslint",
         "ms-vscode.vscode-typescript-next",
+        "yoavbls.pretty-ts-errors"
     ]
 }
