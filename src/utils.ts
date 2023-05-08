@@ -19,18 +19,20 @@ export default abstract class Utils {
     }
 
     // Checks to see if client has permissions on a channel in an array
-    public static permissionCheck(channel: TextChannel, userid: string, permissions: bigint[]): boolean[] {
-        const userperms = channel.permissionsFor(userid) as Readonly<PermissionsBitField>;
-        const results: boolean[] = new Array(permissions.length);
+    public static checkPerms(channel: TextChannel, userid: string, permissions: bigint[]): boolean[] {
+        const userperms: Readonly<PermissionsBitField> | null = channel.permissionsFor(userid);
+        const results: boolean[] = new Array(permissions.length).fill(false);
 
-        permissions.forEach((permission, i) => {
-            if (userperms.has(permission, true)) {
-                results[i] = true;
-            }
-            else {
-                results[i] = false;
-            }
-        });
+        if (userperms) {
+            permissions.forEach((permission, i) => {
+                if (userperms.has(permission, true)) {
+                    results[i] = true;
+                }
+                else {
+                    results[i] = false;
+                }
+            });
+        }
 
         return results;
     }

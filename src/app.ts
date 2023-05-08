@@ -6,7 +6,7 @@ import fs from "fs";
 import clipboardy from "clipboardy";
 import path from "path";
 import Encryption from "./encryption.js";
-import { defaultAppOptions } from "./constant.js";
+import { permissionList, defaultAppOptions } from "./constant.js";
 import Pattern from "./pattern.js";
 import setupEvents from "./events.js";
 import setupInternalCommands from "./commands/internal.js";
@@ -775,11 +775,8 @@ export default class App extends EventEmitter {
 
     // Load previous messages in a channel
     public loadPreviousMessages(channel: TextChannel) {
-        const permsNeeded: bigint[] = [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel];
-        const hasPerms: boolean[] = Utils.permissionCheck(channel, this.state.get().userId, permsNeeded);
-        // Return if no perms
-        if (hasPerms.indexOf(false) !== -1) {
-            this.message.error(`Cannot load messages in ${channel.name} due to insufficient permissions "${permsNeeded[hasPerms.indexOf(false)]}"`);
+        if (Utils.checkPerms(channel, this.state.get().userId, permissionList.loadPrevious).includes(false)) {
+            this.message.error(`Cannot load messages in ${channel.name} due to insufficient permissions`);
             return;
         }
 
@@ -830,6 +827,11 @@ export default class App extends EventEmitter {
         const { guild }: IState = this.state.get();
         if (!channel || !guild) {
             this.message.warn("You must be in a channel to run this command");
+            return;
+        }
+
+        if (Utils.checkPerms(channel, this.state.get().userId, permissionList.deletechannel).includes(false)) {
+            this.message.error(`Cannot delete ${channel.name} due to insufficient permissions`);
             return;
         }
 

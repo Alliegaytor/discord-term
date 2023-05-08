@@ -1,9 +1,8 @@
 import { IAppOptions } from "./app.js";
 import blessed from "blessed";
 import { defaultState } from "./state/stateConstants.js";
-import { Partials, GatewayIntentBits } from "discord.js";
+import { Partials, GatewayIntentBits, PermissionsBitField } from "discord.js";
 import path from "path";
-
 
 export const tips: string[] = [
     "You can use the {bold}{prefix}sync{/bold} command to discard unsaved changes and reload saved state",
@@ -19,6 +18,11 @@ export const tips: string[] = [
     "You can toggle emoji support on/off with {bold}{prefix}emoji{/bold}",
     "The debug menu can be accessed with {bold}{prefix}debug{/bold}"
 ];
+
+export const permissionList: { [key: string]: bigint[] } = {
+    deleteChannel: [PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ViewChannel],
+    loadPrevious: [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel]
+};
 
 export const defaultAppOptions: IAppOptions = {
     clientOptions: {
