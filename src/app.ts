@@ -831,7 +831,7 @@ export default class App extends EventEmitter {
             return;
         }
 
-        if (Utils.checkPerms(channel, this.state.get().userId, permissionList.deletechannel).includes(false)) {
+        if (Utils.checkPerms(channel, this.state.get().userId, permissionList.deleteChannel).includes(false)) {
             this.message.error(`Cannot delete ${channel.name} due to insufficient permissions`);
             return;
         }
