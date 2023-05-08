@@ -19,7 +19,12 @@ export const tips: string[] = [
     "The debug menu can be accessed with {bold}{prefix}debug{/bold}"
 ];
 
-export const permissionList: { [key: string]: bigint[] } = {
+export interface IPermissions {
+    deleteChannel: bigint[],
+    loadPrevious: bigint[]
+}
+
+export const permissionList: IPermissions = {
     deleteChannel: [PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ViewChannel],
     loadPrevious: [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel]
 };
