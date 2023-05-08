@@ -88,15 +88,15 @@ export default class App extends EventEmitter {
         this.client.on("ready", () => {
             this.hideHeader();
 
-            this.state.update({
-                token: this.client.token as string
-            });
-
-            // Return if this.client.user is null just in case
-            if (this.client.user === null) {
-                this.message.error("Error: this.client.user is null");
+            // Type check token just in case
+            if (this.client.user === null || this.client.token === null) {
+                this.message.error("Error: token does not exist");
                 return;
             }
+
+            this.state.update({
+                token: this.client.token
+            });
 
             this.message.system(`Successfully connected as {bold}${this.client.user.tag}{/bold}`);
 
@@ -119,18 +119,20 @@ export default class App extends EventEmitter {
             this.message.error(`An error occurred within the client: ${error.message}`);
         });
 
-        // On guild creation
+        // On guild creation (join)
         this.client.on("guildCreate", (guild: Guild) => {
             this.message.system(`Joined guild '{bold}${guild.name}{/bold}' (${guild.memberCount} members)`);
+            this.updateGuilds();
         });
 
-        // On guild deletion
+        // On guild deletion (leave)
         this.client.on("guildDelete", (guild: Guild) => {
             this.message.system(`Left guild '{bold}${guild.name}{/bold}' (${guild.memberCount} members)`);
             // Change active guild if client was on it
             if (guild === this.state.get().guild) {
                 this.message.warn("Client was viewing this guild!");
-                this.setActiveGuild(this.client.guilds.cache.first() as Guild);
+                const nextGuild = this.client.guilds.cache.first();
+                nextGuild ? this.setActiveGuild(nextGuild) : this.message.warn("Client is not on any more guilds");
             }
         });
 
@@ -182,27 +184,23 @@ export default class App extends EventEmitter {
             throw ("Error: this.client.user is null");
         }
 
-        const state: IState = this.state.get();
-        const channel: TextChannel | undefined = state.channel;
+        const { messageHistory, userId, ignoredUsers, trackList, ignoreBots, decryptionKey, guild, channel  }: IState = this.state.get();
 
-        const { messageHistory }: IState = this.state.get();
-
-
-        if (msg.author.id === state.userId) {
+        if (msg.author.id === userId) {
             this.state.update({
                 messageHistory: (messageHistory) ? [msg, ... messageHistory] : [msg]
             });
         }
 
-        if (state.ignoredUsers.includes(msg.author.id)) {
+        if (ignoredUsers.includes(msg.author.id)) {
             return;
         }
-        else if (state.trackList.includes(msg.author.id)) {
+        else if (trackList.includes(msg.author.id)) {
             this.message.special("Track", msg.author.tag, msg.content);
 
             return;
         }
-        else if (state.ignoreBots && msg.author.bot && msg.author.id !== state.userId) {
+        else if (ignoreBots && msg.author.bot && msg.author.id !== userId) {
             return;
         }
         // else if (state.ignoreEmptyMessages && !msg.content) {
@@ -224,7 +222,7 @@ export default class App extends EventEmitter {
 
         if (content.startsWith("$dt_")) {
             try {
-                content = Encryption.decrypt(content.substr(4), this, state.decryptionKey);
+                content = Encryption.decrypt(content.substr(4), this, decryptionKey);
             }
             catch (error) {
                 // Don't show the error.
@@ -232,17 +230,17 @@ export default class App extends EventEmitter {
             }
         }
 
-        if (msg.author.id === state.userId) {
+        if (msg.author.id === userId) {
             if (msg.channel.type === ChannelType.GuildText) {
                 this.message.self(this.client.user.tag, content);
             }
             else if (msg.channel.type === ChannelType.DM) {
-                const recipient: User = this.client.users.cache.get(msg.channel.recipientId) as User;
-                this.message.special(`${chalk.magentaBright("=>")} DM to`, recipient.tag, content, "blue");
+                const recipient: User | undefined = this.client.users.cache.get(msg.channel.recipientId);
+                recipient && this.message.special(`${chalk.magentaBright("=>")} DM to`, recipient.tag, content, "blue");
             }
         }
 
-        else if (state.guild && channel && msg.channel.id === channel.id) {
+        else if (guild && channel && msg.channel.id === channel.id) {
             // TODO: Turn this into a function
             const modifiers: string[] = [];
 
@@ -431,6 +429,7 @@ export default class App extends EventEmitter {
         });
 
         // Grab all available text channels
+        // TODO: Handle other channel types
         const channels: TextChannel[] = Utils.getChannels(guild, ChannelType.GuildText) as TextChannel[];
         const { themeData, channel }: IState = this.state.get();
 
@@ -499,7 +498,8 @@ export default class App extends EventEmitter {
                 .replace(Pattern.channels, "?");
 
             // Shrink channels to the right width
-            while (Utils.visibleLength(guildName) + 2 >= (this.options.nodes.servers.width as number)) {
+            const guildsWidth: number = this.options.nodes.servers.width as number;
+            while (Utils.visibleLength(guildName) + 2 >= guildsWidth) {
                 guildName = guildName.slice(0, -1);
             }
 
@@ -693,6 +693,7 @@ export default class App extends EventEmitter {
         }
 
         this.updateTitle();
+        this.updateGuilds();
         this.updateChannels(true);
     }
 
