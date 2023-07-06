@@ -1,6 +1,6 @@
 # CONTRIBUTING
 
-There aren't many rules or guidlines on contributing at the moment, but the ones that do exist are shown below.
+There aren't many rules or guidelines on contributing at the moment, but the ones that do exist are shown below.
 
 1.  The requirements are as follows:
 
@@ -63,7 +63,7 @@ There aren't many rules or guidlines on contributing at the moment, but the ones
             });
         ```
 
-<sup>1.</sup> Provided that the entire codebase doesn't expload without it. But then I think I'd rather have that happen than to see `as any` anywhere
+<sup>1.</sup> Provided that the entire codebase doesn't explode without it. But then I think I'd rather have that happen than to see `as any` anywhere
 
 # LINTER
 
