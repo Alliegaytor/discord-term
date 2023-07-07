@@ -2,7 +2,7 @@
 
 # ✨ Discord Terminal
 
-[![Latest Release](https://gitlab.com/P-90-For-Retail/discord-term/-/badges/release.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/releases)  [![pipeline status](https://gitlab.com/P-90-For-Retail/discord-term/badges/master/pipeline.svg)](https://gitlab.com/P-90-For-Retail/discord-term/-/commits/master) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/419e77f4430c4276bb62db2b054c9401)](https://www.codacy.com/gl/P-90-For-Retail/discord-term/dashboard?utm_source=gitlab.com\&utm_medium=referral\&utm_content=P-90-For-Retail/discord-term\&utm_campaign=Badge_Grade) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng)
+[![Latest Release](https://gitlab.com/Alliegaytor/discord-term/-/badges/release.svg)](https://gitlab.com/Alliegaytor/discord-term/-/releases)  [![pipeline status](https://gitlab.com/Alliegaytor/discord-term/badges/master/pipeline.svg)](https://gitlab.com/Alliegaytor/discord-term/-/commits/master) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/419e77f4430c4276bb62db2b054c9401)](https://www.codacy.com/gl/Alliegaytor/discord-term/dashboard?utm_source=gitlab.com\&utm_medium=referral\&utm_content=Alliegaytor/discord-term\&utm_campaign=Badge_Grade) [![NPM version](https://img.shields.io/npm/v/discord-term-ng.svg?style=flat)](https://www.npmjs.com/package/discord-term-ng) [![NPM monthly downloads](https://img.shields.io/npm/dm/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng) [![NPM total downloads](https://img.shields.io/npm/dt/discord-term-ng.svg?style=flat)](https://npmjs.org/package/discord-term-ng)
 
 **Discord Terminal** is an extensible cross-platform Discord terminal client written in [Typescript](https://en.wikipedia.org/wiki/TypeScript) using [blessed](https://github.com/chjj/blessed) that aims to deliver an alternative take of the Discord user experience. The project is being worked on, and preliminary file upload support was just added. Support for viewing media in the client, among other features, are planned.
 
@@ -18,7 +18,7 @@ The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CO
 
 ## New home
 
-[**Discord Term**](https://gitlab.com/P-90-For-Retail/discord-term) Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most recent source tree on github. It has since moved home to this gitlab repo, where all of the core development is taking place.
+[**Discord Term**](https://gitlab.com/Alliegaytor/discord-term) Is forked from the [original project](https://github.com/AL1L/discord-term) on github. [Alliegaytor/discord-term](https://github.com/Alliegaytor/discord-term) has the most recent source tree on github. It has since moved home to this gitlab repo, where all of the core development is taking place.
 
 ## Screenshots
 
@@ -35,7 +35,7 @@ The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CO
 Setting up is extremely easy. Just issue the following commands to install and run **Discord Term** locally:
 
 ```shell
-git clone https://gitlab.com/P-90-For-Retail/discord-term.git
+git clone https://gitlab.com/Alliegaytor/discord-term.git
 cd discord-term
 npm install
 npm run start
@@ -223,7 +223,7 @@ You can also customise the location of the `/themes` by editing the `state.json`
 
 # License
 
-The project is licensed under the [ISC](./LICENSE) license. The previous owner of the repo had released the project into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license ([see 361b603d](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/361b603d2f53b541d2fcce3c80b66d13ea2b02f8)). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit [2a36c2c7](https://gitlab.com/P-90-For-Retail/discord-term/-/commit/2a36c2c73d9be23f3713c8b1b6d47ac8435798f1). Consequently, this software comes with no warranty of any kind.
+The project is licensed under the [ISC](./LICENSE) license. The previous owner of the repo had released the project into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license ([see 361b603d](https://gitlab.com/Alliegaytor/discord-term/-/commit/361b603d2f53b541d2fcce3c80b66d13ea2b02f8)). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit [2a36c2c7](https://gitlab.com/Alliegaytor/discord-term/-/commit/2a36c2c73d9be23f3713c8b1b6d47ac8435798f1). Consequently, this software comes with no warranty of any kind.
 
 # Contributors
 
@@ -233,4 +233,4 @@ Here are all the lovely people who have contributed to the project. It wouldn't 
 *   [@anirudhbs](https://github.com/anirudhbs)
 *   [@jellz](https://github.com/jellz)
 *   [@JustCaptcha](https://github.com/JustCaptcha)
-*   [@Alliegaytor](https://gitlab.com/P-90-For-Retail/)
+*   [@Alliegaytor](https://gitlab.com/Alliegaytor/) \(Github: [@Alliegaytor](https://github.com/Alliegaytor)\)

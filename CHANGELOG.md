@@ -9,7 +9,7 @@ This is a very small release. It is mainly for the dependencies to update.
 *   Improve permissions check (9b37225a6187e4493eef0f3e2ea4417c865bfe5c)
 *   Reduce the amount of \`as\` type (21bcf8f7d9ed2120e1981c6c8e1b513d483fb37a)
 *   Fix extensions\.json file (dc5df655b967f113fcc69a9722bfd7f4f8ded732)
-* Delete channel perms (69726b45d44676550befea38e1f53d8a6ff60c7a)
+*   Delete channel perms (69726b45d44676550befea38e1f53d8a6ff60c7a)
 *   Use interface for permissionList (8ac250d34cc417f14b20524a0da9b9aed9bcb196)
 
 ## \[1.6.1] - 2023.04.30

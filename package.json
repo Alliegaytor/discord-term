@@ -21,12 +21,12 @@
         "typescript",
         "blessed"
     ],
-    "homepage": "https://gitlab.com/P-90-For-Retail/discord-term",
+    "homepage": "https://gitlab.com/Alliegaytor/discord-term",
     "author": "Allison <alyway@protonmail.com>",
     "license": "ISC",
     "repository": {
         "type": "git",
-        "url": "https://gitlab.com/P-90-For-Retail/discord-term"
+        "url": "https://gitlab.com/Alliegaytor/discord-term"
     },
     "dependencies": {
         "blessed": "^0.1.81",
