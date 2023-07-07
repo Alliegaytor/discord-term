@@ -1,6 +1,6 @@
 {
     "name": "discord-term-ng",
-    "version": "1.6.2",
+    "version": "1.6.3",
     "description": "Extensible Discord terminal client",
     "exports": "./dist/index.js",
     "scripts": {

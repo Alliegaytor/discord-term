@@ -1,3 +1,8 @@
+## \[1.6.3\] - 2023.07.07 (0853a78eea1b1c7010504712503280b3f7a8a358...5cce52cc5a387de141c5fc0e02d3ac017b5bf848)
+
+### refactor
+*   Update links to represent namespace changes (5cce52cc5a387de141c5fc0e02d3ac017b5bf848)
+
 ## \[1.6.2\] - 2023.07.07 (df88610a5ef52bf03eeed39b21889f348fafcb93...1d088611e1bacb4fb949423d5ccd0099e18e7b65)
 
 This is a very small release. It is mainly for the dependencies to update.
