@@ -69,7 +69,7 @@ export default class App extends EventEmitter {
 
     public history = 0;
 
-    public constructor(options?: Partial<IAppOptions>, commands: Map<string, ICommandHandler> = new Map()) {
+    public constructor(options?: Partial<IAppOptions>, commands = new Map<string, ICommandHandler>()) {
         super();
 
         this.options = {
@@ -86,7 +86,7 @@ export default class App extends EventEmitter {
 
     public async setup(init = true) {
         // Discord events.
-        this.client.on("ready", () => {
+        this.client.on("ready", async () => {
             this.hideHeader();
 
             // Type check token just in case
@@ -104,13 +104,13 @@ export default class App extends EventEmitter {
             const firstGuild: Guild | undefined = this.client.guilds.cache.first();
 
             if (firstGuild) {
-                this.setActiveGuild(firstGuild);
+                void this.setActiveGuild(firstGuild);
             }
 
             this.toggleChannels();
             // this.toggleGuilds(); // TODO: Set guild menu to toggle
             this.showHeader(`Type ${this.state.get().commandPrefix}tg to show the guild switch menu`, true);
-            this.state.saveSync();
+            await this.state.saveSync();
         });
 
         this.client.on("messageCreate", this.handleMessage.bind(this));
@@ -133,12 +133,12 @@ export default class App extends EventEmitter {
             if (guild === this.state.get().guild) {
                 this.message.warn("Client was viewing this guild!");
                 const nextGuild = this.client.guilds.cache.first();
-                nextGuild ? this.setActiveGuild(nextGuild) : this.message.warn("Client is not on any more guilds");
+                nextGuild ? void this.setActiveGuild(nextGuild) : this.message.warn("Client is not on any more guilds");
             }
         });
 
         // Append nodes to screen
-        Object.entries(this.options.nodes).forEach(([, value]) => this.options.screen.append(value));
+        Object.entries(this.options.nodes).forEach(([, value]) => this.options.screen.append(value as Widgets.Node));
 
         // Sync state.
         await this.state.sync();
@@ -412,7 +412,7 @@ export default class App extends EventEmitter {
      * the application.
      */
     public async shutdown(exitCode = 0) {
-        this.client.destroy();
+        await this.client.destroy();
         await this.state.saveSync();
         process.exit(exitCode);
     }
@@ -528,7 +528,7 @@ export default class App extends EventEmitter {
             guildNode.on("click", () => {
                 const { guild }: IState = this.state.get();
                 if (guild && guilds[i].id !== guild.id) {
-                    this.setActiveGuild(guilds[i]);
+                    void this.setActiveGuild(guilds[i]);
                     this.updateGuilds(true);
                 }
             });
@@ -542,8 +542,8 @@ export default class App extends EventEmitter {
     }
 
     // Get members in a server
-    public printUsers(guild: Guild, limit = 20) {
-        guild.members.fetch({ limit }).then(fetchedMembers => {
+    public async printUsers(guild: Guild, limit = 20) {
+        await guild.members.fetch({ limit }).then(fetchedMembers => {
             const users: string[] = fetchedMembers.map(user => user.displayName);
             if (users.length === 20) {
                 users.push("and more ...");
@@ -659,7 +659,7 @@ export default class App extends EventEmitter {
         // Login with saved token
         else if (this.state.get().token) {
             this.message.system(`Attempting to login using saved token; Use {bold}${this.state.get().commandPrefix}forget{/bold} to forget the token`);
-            this.login(this.state.get().token as string);
+            this.login(this.state.get().token!);
         }
         // Login with clipboard
         else if (Pattern.token.test(clipboard)) {
@@ -677,7 +677,7 @@ export default class App extends EventEmitter {
             .setupInternalCommands();
     }
 
-    public setActiveGuild(guild: Guild) {
+    public async setActiveGuild(guild: Guild) {
         this.state.update({
             guild,
             messageHistory: [],
@@ -692,7 +692,7 @@ export default class App extends EventEmitter {
         }
 
         this.message.system(`Switched to guild '{bold}${guild.name}{/bold}'`);
-        this.printUsers(guild);
+        await this.printUsers(guild);
         if (this.state.get().header) {
             this.showHeader(`Guild: ${guild.name}`);
         }
@@ -807,7 +807,7 @@ export default class App extends EventEmitter {
                 messages.reverse().forEach(msg => this.handleMessage(msg));
             })
             .catch(err => {
-                this.message.error(err);
+                this.message.error(`${err}`);
                 this.message.warn("Could not fetch recent messages");
             });
     }

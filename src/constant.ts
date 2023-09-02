@@ -51,7 +51,7 @@ export const defaultAppOptions: IAppOptions = {
     },
     initialState: {},
     maxFetchMessages: 50,
-    configPath: path.join(process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Preferences" : process.env.HOME + "/.local/share"), "discord-term"),
+    configPath: path.join(process.env.APPDATA ?? (process.platform == "darwin" ? process.env.HOME + "/Library/Preferences" : process.env.HOME + "/.local/share"), "discord-term"),
     stateFilePath: "state.json",
     pluginsPath: "plugins",
     headerAutoHideTimeoutPerChar: 100,

@@ -8,7 +8,7 @@ describe("Tags", () => {
     let tags: Tags;
 
     beforeEach(() => {
-        const newstate: State = state as State;
+        const newstate: State = state ;
         tags = new Tags(newstate);
     });
 

@@ -23,7 +23,7 @@ export default class MessageFactory {
         }
 
         // If no message color is provided, use the default message color from the theme data
-        messageColor = messageColor || themeData.messages.foregroundColor;
+        messageColor = messageColor ?? themeData.messages.foregroundColor;
         let messageString = message.toString();
 
         // Apply the color to the message using Chalk library

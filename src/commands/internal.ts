@@ -13,7 +13,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("exit", () => {
-        app.shutdown();
+        void app.shutdown();
     });
 
     // Display where client is
@@ -57,7 +57,7 @@ export default function setupInternalCommands(app: App): void {
 
     // Edit messages
     // (And delete if the edit is "")
-    app.commands.set("edit", async (args: string[]) => {
+    app.commands.set("edit", (args: string[]) => {
         const { channel, encrypt, decryptionKey }: IState = app.state.get();
 
         // TODO: Display message.
@@ -83,7 +83,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     // Delete messages
-    app.commands.set("delete", async (args: string[]) => {
+    app.commands.set("delete", (args: string[]) => {
         const { channel }: IState = app.state.get();
 
         if (!args[0] || args.length > 1 || !channel) {
@@ -102,7 +102,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("save", () => {
-        app.state.saveSync();
+        void app.state.saveSync();
     });
 
     app.commands.set("format", (args: string[]) => {
@@ -120,7 +120,7 @@ export default function setupInternalCommands(app: App): void {
                 userId: undefined
             });
 
-            app.state.saveSync();
+            void app.state.saveSync();
         }
     });
 
@@ -220,7 +220,7 @@ export default function setupInternalCommands(app: App): void {
         app.showHeader(tip, true);
     });
 
-    app.commands.set("dm", async (args: string[]) => {
+    app.commands.set("dm", (args: string[]) => {
         if (!app.state.get().userId) {
             app.message.warn("Cannot DM: Not logged in!");
             return;
@@ -246,7 +246,7 @@ export default function setupInternalCommands(app: App): void {
             msg = "$dt_" + Encryption.encrypt(msg, app.state.get().decryptionKey);
         }
 
-        await app.client.users.fetch(args[0])
+        void app.client.users.fetch(args[0])
             .then(user => {
                 user.send(msg).catch((error: Error) => {
                     app.message.error(`Could not send message: ${error.message}`);
@@ -280,7 +280,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     app.commands.set("sync", () => {
-        app.state.sync();
+        void app.state.sync();
     });
 
     app.commands.set("pin", (args: string[]) => {
@@ -421,7 +421,7 @@ export default function setupInternalCommands(app: App): void {
     // Change guild
     app.commands.set("g", (args: string[]) => {
         if (app.client.guilds.cache.has(args[0])) {
-            app.setActiveGuild(app.client.guilds.cache.get(args[0]) as Guild);
+            void app.setActiveGuild(app.client.guilds.cache.get(args[0])!);
         }
         else {
             app.message.warn(`Guild ${args[0]} does not exist`);
@@ -445,7 +445,7 @@ export default function setupInternalCommands(app: App): void {
             app.whereAmI(channel, guild);
         }
         else if (guild) {
-            app.setActiveGuild(guild);
+            void app.setActiveGuild(guild);
         }
 
         // Reset message history
@@ -455,7 +455,7 @@ export default function setupInternalCommands(app: App): void {
     });
 
     // Deletes channels
-    app.commands.set("deletechannel", async () => {
+    app.commands.set("deletechannel", () => {
         const { channel, guild }: IState = app.state.get();
 
         // Do not delete channel if there is none
@@ -469,7 +469,7 @@ export default function setupInternalCommands(app: App): void {
         }
 
         // Delete the channel specified
-        await app.deleteChannel(channel);
+        void app.deleteChannel(channel);
     });
 
     // Toggle header
@@ -575,7 +575,7 @@ export default function setupInternalCommands(app: App): void {
             return;
         }
 
-        const recepient: string | TextChannel = (args[1]) ? args[1] : app.state.get().channel as TextChannel;
+        const recepient: string | TextChannel = (args[1]) ? args[1] : app.state.get().channel!;
         const userdm: boolean = (args[1]) ? true : false;
         const file: string = (args[0]) ? `img/${args[0]}` : "img/miles.jpg";
 
@@ -584,7 +584,7 @@ export default function setupInternalCommands(app: App): void {
         }
 
         catch (error: unknown) {
-            app.message.error(`${error}`);
+            app.message.error("Could not upload file!");
         }
     });
 }

@@ -25,7 +25,7 @@ export interface IState {
     readonly typingLastStarted?: number;
 
     readonly token?: string;
-    readonly tags: { [name: string]: string };
+    readonly tags: Record<string, string>;
     readonly theme: string;
     readonly wordPins: string[];
     readonly decryptionKey: string;
@@ -45,7 +45,7 @@ export interface IState {
     readonly themeData: IThemes;
 }
 
-export interface IStateCopy { [key: string]: unknown }
+export type IStateCopy = Record<string, unknown>;
 
 export default class State extends EventEmitter {
     public options: IStateOptions;

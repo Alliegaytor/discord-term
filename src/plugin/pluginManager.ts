@@ -13,11 +13,11 @@ export default class PluginManager {
         const loaded = 0;
 
         if (fs.existsSync(this.app.options.pluginsPath)) {
-            const pluginFolders: Set<string> = new Set();
+            const pluginFolders = new Set<string>();
 
             await new Promise<void>((resolve) => {
                 fs.readdir(this.app.options.pluginsPath, (error: Error | null, folders: string[]) => {
-                    for (const folder in folders) {
+                    for (const folder of folders) {
                         pluginFolders.add(folder);
                     }
 

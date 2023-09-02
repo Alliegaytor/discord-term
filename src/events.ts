@@ -19,7 +19,7 @@ export default function setupEvents(app: App): void {
         // Try to type if in a channel
         const { channel }: IState = app.state.get();
         if (channel) {
-            app.startTyping();
+            void app.startTyping();
         }
     });
 
@@ -137,7 +137,7 @@ export default function setupEvents(app: App): void {
     });
 
     app.options.nodes.input.key("C-c", () => {
-        app.shutdown();
+        void app.shutdown();
     });
 
     app.options.nodes.input.key("C-x", () => {

@@ -22,8 +22,8 @@ export default function uploadHandler(app: App, file: string, recipient: string 
     if (userdm) {
         app.client.users.fetch(recipient as string)
             .then(user => {
-                user.send({ files: [file] });
-                app.message.system(`Upload: Sent ${user} ${file}`);
+                void user.send({ files: [file] });
+                app.message.system(`Upload: Sent ${user.username} ${file}`);
             })
             .catch((error: Error) => {
                 app.message.error(`Upload: Unable to send image: ${error.message}`);

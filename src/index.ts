@@ -7,7 +7,7 @@ import App from "./app.js";
 const app: App = new App();
 
 try {
-    app.setup();
+    await app.setup();
 }
 catch (error: unknown) {
     console.log(error);
