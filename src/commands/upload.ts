@@ -33,7 +33,10 @@ export default function uploadHandler(app: App, file: string, recipient: string 
     // Channel message
     else {
         const channel: TextChannel = recipient as TextChannel;
-        channel.send({ files: [file] });
-        app.message.system(`Upload: Sent ${recipient} ${file}`);
+        void channel.send({ files: [file] })
+            .then(() => app.message.system(`Upload: Sent ${recipient as string} ${file}`))
+            .catch((error: Error) => {
+                app.message.error(`Upload: Unable to send image: ${error.message}`);
+            });
     }
 }
