@@ -92,4 +92,12 @@ export default abstract class Utils {
         // Return formatted with a gap of " "
         return str1 + " ".repeat(gap) + str2;
     }
+
+    // Type Guard. Currently only used for JSON theme
+    public static isType<T>(obj: unknown, keys: (keyof T)[]): obj is T {
+        if (obj) {
+            return typeof obj === "object" && keys.every(key => key in obj);
+        }
+        return false;
+    }
 }

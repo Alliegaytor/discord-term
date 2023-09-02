@@ -16,6 +16,7 @@ import { defaultState } from "./state/stateConstants.js";
 import MessageFactory from "./core/messageFactory.js";
 import Tags from "./tags.js";
 import Os from "os";
+import { IThemes, expectedThemeKeys } from "./state/theme.js";
 
 export interface IAppNodes {
     readonly input: Widgets.TextboxElement;
@@ -563,11 +564,24 @@ export default class App extends EventEmitter {
         else if (fs.existsSync(themePath)) {
             this.message.system(`Loading theme '{bold}${name}{/bold}' ...`);
 
-            // TODO: Verify schema.
             const theme: string = fs.readFileSync(themePath).toString();
+            const data: unknown = JSON.parse(theme);
 
-            // TODO: Catch possible parsing errors.
-            this.setTheme(name, JSON.parse(theme), theme.length);
+            if (!data) {
+                this.message.error("JSON Theme empty!");
+            }
+            // Cross reference parsed keys to expected keys with type-gaurd
+            else if (Utils.isType<IThemes>(data, expectedThemeKeys)) {
+                this.setTheme(name, data, theme.length);
+            }
+            // TODO: Add more helpful information (i.e, what key didn't match)
+            else {
+                this.message.error(
+                    "Invalid theme JSON!" +
+                    `\n\nobjects Expected:\n- ${expectedThemeKeys.join("\n- ")}` +
+                    `\n\nobjects Present: \n- ${Object.keys(data).join("\n- ")}`
+                );
+            }
         }
         else if (name === undefined) {
             this.loadTheme("dark-red");
@@ -592,8 +606,8 @@ export default class App extends EventEmitter {
 
         // Update each node to use the new theme
         Object.entries(this.options.nodes).forEach(([key, value]) => {
-            value.style.fg = themeData[key].foregroundColor;
-            value.style.bg = themeData[key].backgroundColor;
+            value.style.fg = themeData[key as keyof IThemes].foregroundColor;
+            value.style.bg = themeData[key as keyof IThemes].backgroundColor;
         });
 
         this.updateChannels();

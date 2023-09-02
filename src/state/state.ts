@@ -1,10 +1,10 @@
 import { Snowflake, TextChannel, Guild, Message } from "discord.js";
 import { EventEmitter } from "events";
-import { ForegroundColorName } from "chalk";
 import fs from "fs-extra";
 import path from "path";
 import { defaultState, excludeProperties } from "./stateConstants.js";
 import App from "../app.js";
+import { IThemes } from "./theme.js";
 
 export interface IStateOptions {
     stateFilePath: string;
@@ -42,14 +42,7 @@ export interface IState {
     readonly autoHideHeaderTimeout?: NodeJS.Timeout;
     readonly trackList: Snowflake[];
     readonly ignoredUsers: Snowflake[];
-    readonly themeData: { [key: string]: IThemeColors };
-}
-
-export interface IThemeColors {
-    readonly foregroundColor: ForegroundColorName;
-    readonly backgroundColor: string;
-    readonly backgroundColorHover?: string;
-    readonly foregroundColorHover?: string;
+    readonly themeData: IThemes;
 }
 
 export interface IStateCopy { [key: string]: unknown }
