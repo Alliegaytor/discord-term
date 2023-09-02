@@ -21,12 +21,14 @@ export const tips: string[] = [
 
 export interface IPermissions {
     deleteChannel: bigint[],
-    loadPrevious: bigint[]
+    loadPrevious: bigint[],
+    sendImage: bigint[]
 }
 
 export const permissionList: IPermissions = {
     deleteChannel: [PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ViewChannel],
-    loadPrevious: [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel]
+    loadPrevious: [PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ViewChannel],
+    sendImage: [PermissionsBitField.Flags.AttachFiles, PermissionsBitField.Flags.ViewChannel]
 };
 
 export const defaultAppOptions: IAppOptions = {
