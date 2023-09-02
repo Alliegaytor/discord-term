@@ -7,14 +7,16 @@ module.exports = {
     },
     extends: [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended-type-checked",
+        "plugin:@typescript-eslint/stylistic-type-checked"
     ],
     overrides: [
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
         ecmaVersion: "latest",
-        sourceType: "module"
+        sourceType: "module",
+        project: true
     },
     plugins: [
         "@typescript-eslint"
