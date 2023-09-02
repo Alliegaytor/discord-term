@@ -606,8 +606,8 @@ export default class App extends EventEmitter {
 
         // Update each node to use the new theme
         Object.entries(this.options.nodes).forEach(([key, value]) => {
-            value.style.fg = themeData[key as keyof IThemes].foregroundColor;
-            value.style.bg = themeData[key as keyof IThemes].backgroundColor;
+            value.style.fg = themeData[key as keyof IThemes].foregroundColor; //eslint-disable-line
+            value.style.bg = themeData[key as keyof IThemes].backgroundColor; //eslint-disable-line
         });
 
         this.updateChannels();
