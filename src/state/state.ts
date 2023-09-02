@@ -39,7 +39,7 @@ export interface IState {
     // TODO: Only grab the needed bits of the message to save on memory
     readonly messageHistory?: Message[];
     readonly typingTimeout?: NodeJS.Timeout;
-    readonly autoHideHeaderTimeout?: NodeJS.Timer;
+    readonly autoHideHeaderTimeout?: NodeJS.Timeout;
     readonly trackList: Snowflake[];
     readonly ignoredUsers: Snowflake[];
     readonly themeData: { [key: string]: IThemeColors };
