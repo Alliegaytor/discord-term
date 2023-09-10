@@ -3,4 +3,5 @@ dist/
 *.log
 .env
 state.json
-*.tgz  
+*.tgz
+bun.lockb
