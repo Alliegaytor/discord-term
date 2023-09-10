@@ -34,12 +34,30 @@ The project is looking for active maintainers. Please see [CONTRIBUTING.md](./CO
 
 Setting up is extremely easy. Just issue the following commands to install and run **Discord Term** locally:
 
+(Recommended) With NPM:
+
 ```shell
 git clone https://gitlab.com/Alliegaytor/discord-term.git
 cd discord-term
-npm install
+npm i
 npm run start
 ```
+
+<details>
+<summary>
+
+(Experimental) With Bun:
+
+</summary>
+
+```shell
+git clone https://gitlab.com/Alliegaytor/discord-term.git
+cd discord-term
+bun i
+bun start
+```
+
+</details>
 
 ### Help! My colors look weird!
 
@@ -68,6 +86,8 @@ dterm
 That's it! Although keep in mind that since the project is unfinished and WIP, you might encounter some bugs here and there. Please report them if you do find them!
 
 **This project is tested and developed under Linux, using Alacritty terminal with Node.js 16 and typescript 5.0.4**
+
+**It is also tested and confirmed working with [bun](https://bun.sh/)**
 
 Pst. Consider **starring** the repository if you like it! <3
 
@@ -223,7 +243,7 @@ You can also customise the location of the `/themes` by editing the `state.json`
 
 # License
 
-The project is licensed under the [ISC](./LICENSE) license. The previous owner of the repo had released the project into public domain with the [Unlicense](https://choosealicense.com/licenses/unlicense/) license ([see 361b603d](https://gitlab.com/Alliegaytor/discord-term/-/commit/361b603d2f53b541d2fcce3c80b66d13ea2b02f8)). If, in your jurisdiction, the Unlicense license cannot legally release code into the public domain, the project is to be considered to be licensed with the Unlicense license up to and including commit [2a36c2c7](https://gitlab.com/Alliegaytor/discord-term/-/commit/2a36c2c73d9be23f3713c8b1b6d47ac8435798f1). Consequently, this software comes with no warranty of any kind.
+The project is licensed under the [ISC](./LICENSE) license; and as such, it comes with no warranty of any kind.
 
 # Contributors
 
