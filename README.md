@@ -1,4 +1,6 @@
-# ⚠️ In active development!
+# ⚠️ Main Repo: [Alliegaytor/discord-term](https://gitlab.com/Alliegaytor/discord-term)
+
+This one is not setup as a mirror yet; and as such, won't be up to date.
 
 # ✨ Discord Terminal
 
